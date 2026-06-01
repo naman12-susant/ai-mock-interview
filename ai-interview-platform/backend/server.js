@@ -17,8 +17,23 @@ const app = express();
 
 // Middleware
 app.use(helmet()); // Security headers
+
+// CORS — allow the deployed frontend + localhost for development
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  'https://ai-mock-interview-1-2zpu.onrender.com', // deployed frontend (Render)
+  'http://localhost:3000',                           // local development
+].filter(Boolean); // remove undefined/null entries
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://ai-mock-interview-hqci.onrender.com',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g. curl, Postman, mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS policy: Origin ${origin} not allowed.`));
+  },
   credentials: true
 }));
 app.use(express.json());
