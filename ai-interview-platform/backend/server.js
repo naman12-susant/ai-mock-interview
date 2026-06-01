@@ -18,7 +18,7 @@ const app = express();
 // Middleware
 app.use(helmet()); // Security headers
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'https://ai-mock-interview-hqci.onrender.com',
   credentials: true
 }));
 app.use(express.json());

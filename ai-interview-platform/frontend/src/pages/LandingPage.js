@@ -79,7 +79,7 @@ const LandingPage = () => {
     // Fetch live proof from actual platform usage
     const fetchStats = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/public/stats');
+        const res = await fetch('https://ai-mock-interview-hqci.onrender.com/api/public/stats');
         const data = await res.json();
         if (data.success) {
           setRealStats(data.data);

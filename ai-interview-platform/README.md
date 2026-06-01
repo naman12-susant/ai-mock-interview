@@ -107,7 +107,7 @@ OPENAI_API_KEY=your_openai_api_key
 
 Create `.env` file in frontend directory:
 ```
-REACT_APP_API_URL=http://localhost:5000
+REACT_APP_API_URL=https://ai-mock-interview-hqci.onrender.com
 ```
 
 5. Run the Application
