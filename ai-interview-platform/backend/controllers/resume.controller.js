@@ -14,10 +14,10 @@ exports.uploadResume = async (req, res) => {
       });
     }
 
-    const { path: filePath, originalname, size } = req.file;
+    const { originalname, size, buffer } = req.file;
 
     // Extract text from PDF
-    let extractedText = await resumeService.extractTextFromPDF(filePath);
+    let extractedText = await resumeService.extractTextFromPDF(buffer);
     console.log('Extracted text length:', extractedText?.length);
     
     const cleanedText = resumeService.cleanText(extractedText);
@@ -26,13 +26,6 @@ exports.uploadResume = async (req, res) => {
     // If PDF extraction failed, inform user and do NOT use placeholder data
     if (!cleanedText || cleanedText.trim().length < 50) {
       console.warn('PDF text extraction failed.');
-      
-      // Clean up uploaded file
-      try {
-        await fs.unlink(filePath);
-      } catch (unlinkError) {
-        console.error('Error deleting file:', unlinkError);
-      }
 
       return res.status(400).json({
         success: false,
@@ -58,7 +51,7 @@ exports.uploadResume = async (req, res) => {
     const resume = await Resume.create({
       user: req.user.id,
       fileName: originalname,
-      filePath,
+      filePath: '',
       fileSize: size,
       extractedText: extractedText,
       analysis,
@@ -86,15 +79,6 @@ exports.uploadResume = async (req, res) => {
     });
   } catch (error) {
     console.error('Upload resume error:', error);
-    
-    // Clean up uploaded file on error
-    if (req.file) {
-      try {
-        await fs.unlink(req.file.path);
-      } catch (unlinkError) {
-        console.error('Error deleting file:', unlinkError);
-      }
-    }
 
     res.status(500).json({
       success: false,
@@ -172,9 +156,11 @@ exports.deleteResume = async (req, res) => {
       });
     }
 
-    // Delete file from filesystem
+    // Delete file from filesystem (if it exists)
     try {
-      await fs.unlink(resume.filePath);
+      if (resume.filePath && resume.filePath !== '') {
+        await fs.unlink(resume.filePath);
+      }
     } catch (error) {
       console.error('Error deleting file:', error);
     }

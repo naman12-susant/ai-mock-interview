@@ -2,11 +2,10 @@ const pdf = require('pdf-parse');
 const fs = require('fs').promises;
 
 class ResumeService {
-  // Extract text from PDF
-  async extractTextFromPDF(filePath) {
+  // Extract text from PDF buffer
+  async extractTextFromPDF(fileBuffer) {
     try {
-      const dataBuffer = await fs.readFile(filePath);
-      const data = await pdf(dataBuffer);
+      const data = await pdf(fileBuffer);
       return data.text;
     } catch (error) {
       console.error('Error extracting text from PDF:', error);
