@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { interviewAPI } from '../services/api';
-import { Mic, MicOff, Volume2, VolumeX, MessageSquare, Play, HelpCircle, Loader2, Sparkles, LogOut, SkipForward, ArrowRight, Cpu, CheckCircle } from 'lucide-react';
+import { Mic, MicOff, Volume2, VolumeX, MessageSquare, Play, Loader2, Sparkles, LogOut, SkipForward, ArrowRight, CheckCircle } from 'lucide-react';
 import interviewerAvatar from '../assets/ai_interviewer_avatar.png';
 
 const LiveAIInterview = () => {
@@ -29,7 +29,7 @@ const LiveAIInterview = () => {
   
   // Settings
   const [isTtsMuted, setIsTtsMuted] = useState(false);
-  const [speechVolume, setSpeechVolume] = useState(0.9);
+  const [speechVolume] = useState(0.9);
   
   // Timers and Refs
   const [timeSpent, setTimeSpent] = useState(0);
@@ -60,6 +60,7 @@ const LiveAIInterview = () => {
       stopSpeaking();
       stopVoiceRecognition();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // User-triggered start interview session (guarantees user gesture for TTS and precise timer)
@@ -96,6 +97,7 @@ const LiveAIInterview = () => {
       // Start speaking the main question
       speakText(`Question ${currentQuestionIndex + 1}. ${q.question}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestionIndex]);
 
   const fetchInterview = async () => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { Mic, Brain, Award, TrendingUp, ArrowRight, Star, Users, Target } from 'lucide-react';
+import { Mic, Brain, Award, TrendingUp, ArrowRight, Users, Target } from 'lucide-react';
 
 const Particle = ({ style }) => (
   <motion.div
