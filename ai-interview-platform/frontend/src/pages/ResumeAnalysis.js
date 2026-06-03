@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { resumeAPI } from '../services/api';
 import toast from 'react-hot-toast';
-import { exportDOCX } from '../utils/docxExporter';
+
 import {
   Target, TrendingUp, AlertCircle, CheckCircle, Sparkles,
   FileText, Zap, BarChart3, Brain, ArrowRight, Loader, ChevronDown,
@@ -690,7 +690,7 @@ const ResumeAnalysis = () => {
   const [optimizeResult, setOptimizeResult] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
-  const [downloadingDOCX, setDownloadingDOCX] = useState(false);
+
 
   const [selectedTemplate, setSelectedTemplate] = useState('modern-ats');
   const [contactDetails, setContactDetails] = useState({
@@ -828,20 +828,7 @@ const ResumeAnalysis = () => {
     }
   }, [optimizeResult, gapAnalysis, contactDetails]);
 
-  const handleDownloadDOCX = useCallback(async () => {
-    const data = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
-    if (!data) { toast.error('No optimized resume available. Click "One-Click Optimize" first.'); return; }
-    setDownloadingDOCX(true);
-    try {
-      await exportDOCX(data, contactDetails);
-      toast.success('DOCX downloaded!');
-    } catch (err) {
-      console.error('DOCX generation error:', err);
-      toast.error('Failed to generate DOCX');
-    } finally {
-      setDownloadingDOCX(false);
-    }
-  }, [optimizeResult, gapAnalysis, contactDetails]);
+
 
   const optimizedData = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
 
@@ -1002,10 +989,7 @@ const ResumeAnalysis = () => {
                   className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 disabled:opacity-50 transition font-bold shadow-md">
                   {downloadingPDF ? <Loader className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />} Download PDF
                 </button>
-                <button onClick={handleDownloadDOCX} disabled={downloadingDOCX}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 transition font-bold shadow-md">
-                  {downloadingDOCX ? <Loader className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Download DOCX
-                </button>
+
               </div>
 
               {/* Side-by-Side Resume Preview */}
