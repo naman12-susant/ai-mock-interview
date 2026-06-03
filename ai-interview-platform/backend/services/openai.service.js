@@ -43,7 +43,7 @@ function salvageArray(raw) {
 
   const end = raw.lastIndexOf(']');
   if (end > start) {
-    try { return JSON.parse(raw.substring(start, end + 1)); } catch {}
+    try { return JSON.parse(raw.substring(start, end + 1)); } catch { }
   }
 
   // Truncated — collect complete {...} objects
@@ -63,7 +63,7 @@ function salvageArray(raw) {
       if (depth === 0 && objStart !== -1) {
         try {
           objects.push(JSON.parse(partial.substring(objStart, i + 1)));
-        } catch {}
+        } catch { }
         objStart = -1;
       }
     }
@@ -98,22 +98,22 @@ class AIService {
     type = type || 'mixed';
     difficulty = difficulty || 'intermediate';
 
-    const skills = (resumeAnalysis.skills || []).map(function(s) { return s.name; }).join(', ');
-    const projects = (resumeAnalysis.projects || []).map(function(p) { return p.title; }).join(', ');
+    const skills = (resumeAnalysis.skills || []).map(function (s) { return s.name; }).join(', ');
+    const projects = (resumeAnalysis.projects || []).map(function (p) { return p.title; }).join(', ');
     const level = (resumeAnalysis.experience || {}).level || 'junior';
 
     const typeNote = type === 'technical' ? 'All technical questions.' : type === 'behavioral' ? 'All behavioral questions.' : '60% technical, 40% behavioral.';
-    
+
     // Attempt-driven progressive difficulty and mental pressure guidelines
     const diffNote = difficulty === 'easy' || difficulty === 'beginner'
       ? 'Entry-level difficulty. Focus on fundamentals, conceptual questions, supportive tone.'
       : difficulty === 'hard' || difficulty === 'advanced'
-      ? 'Senior-level difficulty. Deep technical questions, system design, optimization, edge cases, pressure-based follow-ups.'
-      : difficulty === 'faang'
-      ? 'FAANG-style difficulty. FAANG-level grilling, algorithms, deep technical performance trade-offs, architecture discussions, high interview pressure.'
-      : difficulty === 'startup'
-      ? 'Startup-style. Practical, fast-paced, full-stack thinking, MVP building.'
-      : 'Mid-level difficulty. Design patterns, debugging, architecture, practical scenarios.';
+        ? 'Senior-level difficulty. Deep technical questions, system design, optimization, edge cases, pressure-based follow-ups.'
+        : difficulty === 'faang'
+          ? 'FAANG-style difficulty. FAANG-level grilling, algorithms, deep technical performance trade-offs, architecture discussions, high interview pressure.'
+          : difficulty === 'startup'
+            ? 'Startup-style. Practical, fast-paced, full-stack thinking, MVP building.'
+            : 'Mid-level difficulty. Design patterns, debugging, architecture, practical scenarios.';
 
     let prompt = 'You are a senior technical interviewer.\n\n' +
       'Generate ' + count + ' interview questions STRICTLY based on:\n\n' +
@@ -183,11 +183,11 @@ class AIService {
       throw new Error('AI returned empty question list. Please try again.');
     }
 
-    return parsed.slice(0, count).map(function(q) {
+    return parsed.slice(0, count).map(function (q) {
       return {
         question: String(q.question || 'Tell me about your experience with ' + role),
-        difficulty: ['easy','medium','hard'].indexOf(q.difficulty) !== -1 ? q.difficulty : 'medium',
-        category: ['technical','behavioral'].indexOf(q.category) !== -1 ? q.category : 'technical',
+        difficulty: ['easy', 'medium', 'hard'].indexOf(q.difficulty) !== -1 ? q.difficulty : 'medium',
+        category: ['technical', 'behavioral'].indexOf(q.category) !== -1 ? q.category : 'technical',
         expectedAnswer: String(q.expectedAnswer || '')
       };
     });
@@ -264,11 +264,11 @@ class AIService {
 
   // ── Interview Feedback ───────────────────────────────────────
   async generateInterviewFeedback(questions, scores) {
-    const answered = questions.filter(function(q) { return q.userAnswer; });
-    const avg = answered.reduce(function(s, q) { return s + (q.score || 0); }, 0) / Math.max(answered.length, 1);
+    const answered = questions.filter(function (q) { return q.userAnswer; });
+    const avg = answered.reduce(function (s, q) { return s + (q.score || 0); }, 0) / Math.max(answered.length, 1);
 
-    const qSummary = answered.slice(0, 5).map(function(q, i) {
-      return 'Q' + (i+1) + ': ' + q.question + '\nA: ' + (q.userAnswer || '').substring(0, 100) + '\nScore: ' + (q.score || 0) + '/10';
+    const qSummary = answered.slice(0, 5).map(function (q, i) {
+      return 'Q' + (i + 1) + ': ' + q.question + '\nA: ' + (q.userAnswer || '').substring(0, 100) + '\nScore: ' + (q.score || 0) + '/10';
     }).join('\n\n');
 
     const prompt = 'Generate interview feedback.\n\n' +
@@ -291,15 +291,18 @@ class AIService {
   }
 
   // ── Gap Analysis ─────────────────────────────────────────────
-  async performGapAnalysis(resumeText, resumeAnalysis, targetRole) {
+  async performGapAnalysis(resumeText, resumeAnalysis, targetRole, jobDescription = '') {
     if (!resumeText || resumeText.trim().length < 50) throw new Error('Resume text is too short.');
     if (!targetRole || !targetRole.trim()) throw new Error('Target role is required.');
 
-    const skills = (resumeAnalysis.skills || []).map(function(s) { return s.name; }).join(', ');
-    const projects = (resumeAnalysis.projects || []).map(function(p) { return p.title + ' (' + (p.technologies || []).join(', ') + ')'; }).join('; ');
+    const skills = (resumeAnalysis.skills || []).map(function (s) { return s.name; }).join(', ');
+    const projects = (resumeAnalysis.projects || []).map(function (p) { return p.title + ' (' + (p.technologies || []).join(', ') + ')'; }).join('; ');
 
-    const prompt = 'Perform a comprehensive gap analysis for this resume targeting ' + targetRole + '.\n\n' +
-      'RESUME TEXT:\n' + resumeText + '\n\n' +
+    let prompt = 'Perform a comprehensive gap analysis for this resume targeting ' + targetRole + '.\n\n';
+    if (jobDescription && jobDescription.trim().length > 0) {
+      prompt += 'TARGET JOB DESCRIPTION:\n' + jobDescription.trim() + '\n\n';
+    }
+    prompt += 'RESUME TEXT:\n' + resumeText + '\n\n' +
       'PARSED DATA:\nSkills: ' + skills + '\nLevel: ' + ((resumeAnalysis.experience || {}).level || 'unknown') + '\nProjects: ' + (projects || 'none') + '\n\n' +
       'RULES:\n' +
       '- Base ALL feedback on the actual resume text\n' +
@@ -326,14 +329,17 @@ class AIService {
   }
 
   // ── One-Click Optimization ───────────────────────────────────
-  async optimizeResumeOneClick(resumeText, resumeAnalysis, targetRole) {
+  async optimizeResumeOneClick(resumeText, resumeAnalysis, targetRole, jobDescription = '') {
     if (!resumeText || resumeText.trim().length < 50) throw new Error('Resume text is too short.');
 
-    const skills = (resumeAnalysis.skills || []).map(function(s) { return s.name; }).join(', ');
-    const projects = (resumeAnalysis.projects || []).map(function(p) { return p.title; }).join(', ');
+    const skills = (resumeAnalysis.skills || []).map(function (s) { return s.name; }).join(', ');
+    const projects = (resumeAnalysis.projects || []).map(function (p) { return p.title; }).join(', ');
 
-    const prompt = 'You are a professional ATS resume writer.\n\n' +
-      'Current Resume:\n' + resumeText + '\n\n' +
+    let prompt = 'You are a professional ATS resume writer.\n\n';
+    if (jobDescription && jobDescription.trim().length > 0) {
+      prompt += 'TARGET JOB DESCRIPTION:\n' + jobDescription.trim() + '\n\n';
+    }
+    prompt += 'Current Resume:\n' + resumeText + '\n\n' +
       'Target Role: ' + targetRole + '\n\n' +
       'Parsed Skills: ' + (skills || 'none') + '\n' +
       'Parsed Projects: ' + (projects || 'none') + '\n\n' +
@@ -416,9 +422,9 @@ class AIService {
   // Enhanced local pre-validator — catches garbage BEFORE calling LLM
   classifyAnswerLocally(userAnswer) {
     if (!userAnswer || userAnswer.trim().length === 0) return 'EMPTY';
-    
+
     const text = userAnswer.trim();
-    
+
     // Too short to be meaningful
     if (text.length < 3) return 'EMPTY';
     if (text.length < 10) return 'TOO_SHORT';
@@ -446,7 +452,7 @@ class AIService {
     }
 
     // Gibberish detection — words with no vowels and length > 3
-    const gibberish = words.filter(function(w) { return !/[aeiou]/i.test(w) && w.length > 3; });
+    const gibberish = words.filter(function (w) { return !/[aeiou]/i.test(w) && w.length > 3; });
     if (gibberish.length / Math.max(words.length, 1) > 0.5) return 'RANDOM';
 
     // Repeated character patterns (e.g., "aaaaaaa", "asdasdasd")
@@ -538,23 +544,23 @@ class AIService {
 
     // ── STEP 2: Build rich conversation memory ──
     const recentHistory = conversationHistory.slice(-8);
-    
+
     // Extract structured metadata from history
     const scoreHistory = conversationHistory
-      .filter(function(e) { return e.score !== undefined; })
-      .map(function(e) { return e.score; });
+      .filter(function (e) { return e.score !== undefined; })
+      .map(function (e) { return e.score; });
     const classificationHistory = conversationHistory
-      .filter(function(e) { return e.classification; })
-      .map(function(e) { return e.classification; });
+      .filter(function (e) { return e.classification; })
+      .map(function (e) { return e.classification; });
     const detectedSkills = conversationHistory
-      .filter(function(e) { return e.detectedSkills; })
-      .reduce(function(acc, e) { return acc.concat(e.detectedSkills); }, []);
+      .filter(function (e) { return e.detectedSkills; })
+      .reduce(function (acc, e) { return acc.concat(e.detectedSkills); }, []);
     const weakAreas = conversationHistory
-      .filter(function(e) { return e.weakAreas; })
-      .reduce(function(acc, e) { return acc.concat(e.weakAreas); }, []);
+      .filter(function (e) { return e.weakAreas; })
+      .reduce(function (acc, e) { return acc.concat(e.weakAreas); }, []);
 
     // Format history as structured conversation
-    const historyText = recentHistory.map(function(e) {
+    const historyText = recentHistory.map(function (e) {
       let line = e.role + ': ' + e.content;
       if (e.score !== undefined) line += ' [Score: ' + e.score + '/10]';
       if (e.classification) line += ' [Classification: ' + e.classification + ']';
@@ -563,42 +569,42 @@ class AIService {
 
     // ── STEP 3: Adaptive difficulty from score trend ──
     const avg = scoreHistory.length
-      ? scoreHistory.reduce(function(a, b) { return a + b; }, 0) / scoreHistory.length
+      ? scoreHistory.reduce(function (a, b) { return a + b; }, 0) / scoreHistory.length
       : 5;
     const recentScores = scoreHistory.slice(-3);
     const recentAvg = recentScores.length
-      ? recentScores.reduce(function(a, b) { return a + b; }, 0) / recentScores.length
+      ? recentScores.reduce(function (a, b) { return a + b; }, 0) / recentScores.length
       : 5;
     const trend = recentAvg >= 8 ? 'EXCELLING' : recentAvg >= 6 ? 'PERFORMING_WELL' : recentAvg >= 4 ? 'AVERAGE' : recentAvg >= 2 ? 'STRUGGLING' : 'NEEDS_SUPPORT';
 
     // Count classifications for pattern detection
-    const strongCount = classificationHistory.filter(function(c) { return c === 'STRONG' || c === 'GOOD'; }).length;
-    const weakCount = classificationHistory.filter(function(c) { return c === 'WEAK' || c === 'INCORRECT' || c === 'NO_KNOWLEDGE'; }).length;
+    const strongCount = classificationHistory.filter(function (c) { return c === 'STRONG' || c === 'GOOD'; }).length;
+    const weakCount = classificationHistory.filter(function (c) { return c === 'WEAK' || c === 'INCORRECT' || c === 'NO_KNOWLEDGE'; }).length;
 
     // ── STEP 4: Role-specific topic domains ──
     // Use generic topics so we don't force specific frameworks (like React) unless the user brings them up
     const roleTopics = {
-      'Frontend Developer':       'frontend architecture, JavaScript/TypeScript fundamentals, UI/UX implementation, state management, performance, accessibility, browser APIs',
-      'Backend Developer':        'backend architecture, APIs, databases, authentication, caching, microservices, system design, security, scalability',
-      'Full Stack Developer':     'frontend and backend architecture, databases, REST/GraphQL APIs, deployment, CI/CD, authentication, system design',
-      'Data Scientist':           'machine learning principles, statistics, data manipulation, data visualization, model evaluation, feature engineering',
-      'Machine Learning Engineer':'model training pipelines, data preprocessing, deep learning architectures, MLOps, model deployment',
-      'DevOps Engineer':          'containerization, orchestration, CI/CD pipelines, cloud infrastructure, monitoring, Linux, scripting, networking',
-      'Mobile Developer':         'mobile UI architecture, state management, native APIs, app deployment, mobile performance optimization',
-      'UI/UX Designer':           'user research, wireframing, prototyping, design systems, accessibility, usability testing',
-      'Product Manager':          'product roadmap, user stories, prioritization, metrics, stakeholder management, agile methodologies, go-to-market strategy',
-      'Software Architect':       'system design, scalability, microservices, design patterns, trade-offs, distributed systems, API design',
-      'Software Engineer':        'data structures, algorithms, object-oriented programming, system design, testing, debugging, software principles'
+      'Frontend Developer': 'frontend architecture, JavaScript/TypeScript fundamentals, UI/UX implementation, state management, performance, accessibility, browser APIs',
+      'Backend Developer': 'backend architecture, APIs, databases, authentication, caching, microservices, system design, security, scalability',
+      'Full Stack Developer': 'frontend and backend architecture, databases, REST/GraphQL APIs, deployment, CI/CD, authentication, system design',
+      'Data Scientist': 'machine learning principles, statistics, data manipulation, data visualization, model evaluation, feature engineering',
+      'Machine Learning Engineer': 'model training pipelines, data preprocessing, deep learning architectures, MLOps, model deployment',
+      'DevOps Engineer': 'containerization, orchestration, CI/CD pipelines, cloud infrastructure, monitoring, Linux, scripting, networking',
+      'Mobile Developer': 'mobile UI architecture, state management, native APIs, app deployment, mobile performance optimization',
+      'UI/UX Designer': 'user research, wireframing, prototyping, design systems, accessibility, usability testing',
+      'Product Manager': 'product roadmap, user stories, prioritization, metrics, stakeholder management, agile methodologies, go-to-market strategy',
+      'Software Architect': 'system design, scalability, microservices, design patterns, trade-offs, distributed systems, API design',
+      'Software Engineer': 'data structures, algorithms, object-oriented programming, system design, testing, debugging, software principles'
     };
 
     const topics = roleTopics[role] || (role + ' specific technical concepts, tools, and best practices');
 
     const difficultyInstruction =
-      difficulty === 'faang'    ? 'FAANG-level: ask about scalability, edge cases, system design, algorithmic complexity.' :
-      difficulty === 'startup'  ? 'Startup-style: practical, fast-paced, full-stack thinking, real-world problem solving.' :
-      difficulty === 'advanced' ? 'Advanced: deep technical questions, optimization, architecture decisions.' :
-      difficulty === 'beginner' ? 'Beginner-friendly: focus on fundamentals and basic concepts.' :
-      'Mid-level: design patterns, debugging, architecture, best practices.';
+      difficulty === 'faang' ? 'FAANG-level: ask about scalability, edge cases, system design, algorithmic complexity.' :
+        difficulty === 'startup' ? 'Startup-style: practical, fast-paced, full-stack thinking, real-world problem solving.' :
+          difficulty === 'advanced' ? 'Advanced: deep technical questions, optimization, architecture decisions.' :
+            difficulty === 'beginner' ? 'Beginner-friendly: focus on fundamentals and basic concepts.' :
+              'Mid-level: design patterns, debugging, architecture, best practices.';
 
     // ── STEP 5: AI Personality & Decision Engine ──
     const personalityMap = {
@@ -611,7 +617,7 @@ class AIService {
     const personality = personalityMap[difficulty] || 'Professional Interviewer';
 
     let decisionContext = '\nInterview Round: ' + interviewRound + '\n';
-    
+
     // Modify behavior based on Round and Performance
     if (interviewRound === 'Warm-up') {
       decisionContext += 'Context: This is the warm-up round. Keep questions straightforward. Be encouraging.\n';
@@ -631,7 +637,7 @@ class AIService {
     } else if (trend === 'STRUGGLING' || trend === 'NEEDS_SUPPORT') {
       decisionContext += '\nCandidate is struggling (avg ' + recentAvg.toFixed(1) + '/10). Demonstrate emotional intelligence. Be supportive: "That\'s alright, let\'s simplify this." Ask easier fundamentals.\n';
     }
-    
+
     if (weakCount > 2 && strongCount === 0) {
       decisionContext += '\nPattern: Multiple weak answers. Pivot to a different fundamental topic within ' + role + '.\n';
     }

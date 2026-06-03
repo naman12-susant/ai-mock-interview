@@ -190,7 +190,7 @@ exports.deleteResume = async (req, res) => {
 // Perform gap analysis for a specific role
 exports.performGapAnalysis = async (req, res) => {
   try {
-    const { targetRole } = req.body;
+    const { targetRole, jobDescription } = req.body;
 
     if (!targetRole) {
       return res.status(400).json({
@@ -216,8 +216,14 @@ exports.performGapAnalysis = async (req, res) => {
     const gapAnalysis = await openaiService.performGapAnalysis(
       resume.extractedText,
       resume.analysis,
-      targetRole
+      targetRole,
+      jobDescription || ''
     );
+
+    // Save job description alongside analysis
+    if (jobDescription) {
+      gapAnalysis.jobDescription = jobDescription;
+    }
 
     // Update resume with gap analysis
     resume.gapAnalysis = gapAnalysis;
@@ -366,7 +372,7 @@ exports.getIndustrySkills = async (req, res) => {
 // One-click resume optimization
 exports.optimizeResume = async (req, res) => {
   try {
-    const { targetRole } = req.body;
+    const { targetRole, jobDescription } = req.body;
 
     // Get active resume
     const resume = await Resume.findOne({
@@ -382,12 +388,14 @@ exports.optimizeResume = async (req, res) => {
     }
 
     const role = targetRole || resume.gapAnalysis?.targetRole || 'Software Developer';
+    const jd = jobDescription || resume.gapAnalysis?.jobDescription || '';
 
     // Optimize resume
     const optimization = await openaiService.optimizeResumeOneClick(
       resume.extractedText,
       resume.analysis,
-      role
+      role,
+      jd
     );
 
     // Update resume with optimizations

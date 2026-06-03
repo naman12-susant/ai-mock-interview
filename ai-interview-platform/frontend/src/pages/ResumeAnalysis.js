@@ -10,178 +10,48 @@ import {
   Download, Eye, FileDown, Copy
 } from 'lucide-react';
 
-/* ── PDF Generator ── */
-const generatePDF = async (optimizedResume) => {
+/* ── PDF Generator (Canvas based) ── */
+const generatePDF = async (element, filename = 'TalentForge_Optimized_Resume.pdf') => {
+  const { default: html2canvas } = await import('html2canvas');
   const { default: jsPDF } = await import('jspdf');
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 18;
-  const maxWidth = pageWidth - margin * 2;
-  let y = 20;
 
-  const addPageIfNeeded = (needed = 12) => {
-    if (y + needed > 280) { doc.addPage(); y = 20; }
-  };
+  if (!element) return;
 
-  // Name / Header
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(20);
-  doc.setTextColor(30, 30, 30);
-  doc.text('Optimized Resume', margin, y);
-  y += 10;
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    allowTaint: true,
+    logging: false
+  });
 
-  // Summary
-  if (optimizedResume.summary) {
-    doc.setDrawColor(59, 130, 246);
-    doc.setLineWidth(0.6);
-    doc.line(margin, y, pageWidth - margin, y);
-    y += 7;
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('PROFESSIONAL SUMMARY', margin, y);
-    y += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(60, 60, 60);
-    const lines = doc.splitTextToSize(optimizedResume.summary, maxWidth);
-    doc.text(lines, margin, y);
-    y += lines.length * 5 + 6;
+  const imgData = canvas.toDataURL('image/jpeg', 1.0);
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const imgWidth = 210;
+  const pageHeight = 297;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+  heightLeft -= pageHeight;
+
+  while (heightLeft >= 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+    heightLeft -= pageHeight;
   }
 
-  // Skills
-  if (optimizedResume.skills?.length > 0) {
-    addPageIfNeeded(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('SKILLS', margin, y);
-    y += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(60, 60, 60);
-    const skillText = optimizedResume.skills.join('  •  ');
-    const skillLines = doc.splitTextToSize(skillText, maxWidth);
-    doc.text(skillLines, margin, y);
-    y += skillLines.length * 5 + 6;
-  }
-
-  // Experience
-  if (optimizedResume.experience?.length > 0) {
-    addPageIfNeeded(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('EXPERIENCE', margin, y);
-    y += 7;
-    optimizedResume.experience.forEach(exp => {
-      addPageIfNeeded(18);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.setTextColor(30, 30, 30);
-      doc.text(`${exp.title || 'Role'} — ${exp.company || 'Company'}`, margin, y);
-      y += 5;
-      if (exp.duration) {
-        doc.setFont('helvetica', 'italic');
-        doc.setFontSize(9);
-        doc.setTextColor(120, 120, 120);
-        doc.text(exp.duration, margin, y);
-        y += 5;
-      }
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.setTextColor(60, 60, 60);
-      (exp.bullets || []).forEach(bullet => {
-        addPageIfNeeded(8);
-        const bLines = doc.splitTextToSize(`•  ${bullet}`, maxWidth - 4);
-        doc.text(bLines, margin + 3, y);
-        y += bLines.length * 5 + 1;
-      });
-      y += 4;
-    });
-  }
-
-  // Projects
-  if (optimizedResume.projects?.length > 0) {
-    addPageIfNeeded(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('PROJECTS', margin, y);
-    y += 7;
-    optimizedResume.projects.forEach(proj => {
-      addPageIfNeeded(14);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(11);
-      doc.setTextColor(30, 30, 30);
-      doc.text(proj.title || 'Project', margin, y);
-      y += 5;
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
-      doc.setTextColor(60, 60, 60);
-      if (proj.description) {
-        const pLines = doc.splitTextToSize(proj.description, maxWidth);
-        doc.text(pLines, margin, y);
-        y += pLines.length * 5 + 1;
-      }
-      if (proj.technologies?.length > 0) {
-        doc.setFont('helvetica', 'italic');
-        doc.setFontSize(9);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Tech: ${proj.technologies.join(', ')}`, margin, y);
-        y += 5;
-      }
-      y += 3;
-    });
-  }
-
-  // Education
-  if (optimizedResume.education?.length > 0) {
-    addPageIfNeeded(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('EDUCATION', margin, y);
-    y += 7;
-    optimizedResume.education.forEach(edu => {
-      addPageIfNeeded(10);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(10);
-      doc.setTextColor(30, 30, 30);
-      doc.text(`${edu.degree || 'Degree'} — ${edu.institution || 'Institution'}`, margin, y);
-      if (edu.year) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(120, 120, 120);
-        doc.text(edu.year, pageWidth - margin - 20, y);
-      }
-      y += 6;
-    });
-  }
-
-  // Certifications
-  if (optimizedResume.certifications?.length > 0) {
-    addPageIfNeeded(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(13);
-    doc.setTextColor(59, 130, 246);
-    doc.text('CERTIFICATIONS', margin, y);
-    y += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(60, 60, 60);
-    optimizedResume.certifications.forEach(cert => {
-      addPageIfNeeded(6);
-      doc.text(`•  ${cert}`, margin + 3, y);
-      y += 5;
-    });
-  }
-
-  doc.save('TalentForge_Optimized_Resume.pdf');
+  pdf.save(filename);
 };
 
 /* ── DOCX Generator ── */
-const generateDOCX = async (optimizedResume) => {
+const generateDOCX = async (optimizedResume, contactDetails) => {
   const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = require('docx');
   const { saveAs } = await import('file-saver');
 
@@ -194,11 +64,24 @@ const generateDOCX = async (optimizedResume) => {
 
   const children = [];
 
-  // Title
+  // Name Header
   children.push(new Paragraph({
-    children: [new TextRun({ text: 'Optimized Resume', bold: true, size: 40, color: '1E1E1E', font: 'Calibri' })],
+    children: [new TextRun({ text: contactDetails.name || 'Your Name', bold: true, size: 36, color: '1E1E1E', font: 'Calibri' })],
     heading: HeadingLevel.HEADING_1,
-    alignment: AlignmentType.LEFT,
+    alignment: AlignmentType.CENTER,
+    spacing: { after: 100 }
+  }));
+
+  // Contact Info
+  const contactParts = [];
+  if (contactDetails.email) contactParts.push(contactDetails.email);
+  if (contactDetails.phone) contactParts.push(contactDetails.phone);
+  if (contactDetails.linkedin) contactParts.push(contactDetails.linkedin);
+  if (contactDetails.github) contactParts.push(contactDetails.github);
+
+  children.push(new Paragraph({
+    children: [new TextRun({ text: contactParts.join('  |  '), size: 18, font: 'Calibri', color: '555555' })],
+    alignment: AlignmentType.CENTER,
     spacing: { after: 200 }
   }));
 
@@ -295,6 +178,536 @@ const generateDOCX = async (optimizedResume) => {
   saveAs(blob, 'TalentForge_Optimized_Resume.docx');
 };
 
+/* ── Resume Canvas Preview Component ── */
+const ResumeCanvas = React.forwardRef(({ data, contact, template }, ref) => {
+  if (!data) return null;
+
+  const { name, email, phone, linkedin, github } = contact;
+  const { summary, skills, experience, projects, education, certifications } = data;
+
+  if (template === 'modern-ats') {
+    return (
+      <div ref={ref} id="resume-canvas-preview" className="font-sans text-gray-900 bg-white p-10 shadow-lg max-w-[800px] mx-auto text-left border border-gray-200">
+        <div className="border-b-2 border-gray-900 pb-4 mb-6">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 uppercase">{name || 'Your Name'}</h1>
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-xs font-semibold text-gray-600">
+            {email && <span>{email}</span>}
+            {phone && <span>| {phone}</span>}
+            {linkedin && <span>| LinkedIn: {linkedin}</span>}
+            {github && <span>| GitHub: {github}</span>}
+          </div>
+        </div>
+
+        {summary && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Professional Summary</h2>
+            <p className="text-xs text-gray-700 leading-relaxed">{summary}</p>
+          </div>
+        )}
+
+        {skills?.length > 0 && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Skills</h2>
+            <p className="text-xs text-gray-700 leading-relaxed font-semibold">{skills.map(s => typeof s === 'object' ? s.name : s).join('  •  ')}</p>
+          </div>
+        )}
+
+        {experience?.length > 0 && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Work Experience</h2>
+            <div className="space-y-4">
+              {experience.map((exp, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between font-bold text-xs text-gray-900">
+                    <span>{exp.title} — {exp.company}</span>
+                    <span>{exp.duration}</span>
+                  </div>
+                  {exp.bullets?.length > 0 && (
+                    <ul className="list-disc pl-4 mt-1 space-y-1">
+                      {exp.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="text-xs text-gray-700 leading-normal">{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {projects?.length > 0 && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Projects</h2>
+            <div className="space-y-3">
+              {projects.map((proj, idx) => (
+                <div key={idx}>
+                  <div className="font-bold text-xs text-gray-900">{proj.title}</div>
+                  {proj.description && <p className="text-xs text-gray-700 mt-0.5">{proj.description}</p>}
+                  {proj.technologies?.length > 0 && (
+                    <p className="text-xs text-gray-500 italic mt-0.5">Technologies: {proj.technologies.join(', ')}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {education?.length > 0 && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Education</h2>
+            <div className="space-y-1">
+              {education.map((edu, idx) => (
+                <div key={idx} className="flex justify-between text-xs text-gray-700">
+                  <span className="font-bold">{edu.degree} — {edu.institution}</span>
+                  <span>{edu.year}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {certifications?.length > 0 && (
+          <div>
+            <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider border-b border-gray-300 pb-0.5 mb-2">Certifications</h2>
+            <ul className="list-disc pl-4 space-y-0.5 text-xs text-gray-700">
+              {certifications.map((cert, idx) => (
+                <li key={idx}>{cert}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (template === 'professional-corporate') {
+    return (
+      <div ref={ref} id="resume-canvas-preview" className="font-serif text-[#1f2937] bg-white p-12 shadow-lg max-w-[800px] mx-auto text-left border border-gray-200">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-[#1e3a8a]">{name || 'Your Name'}</h1>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2 text-xs italic text-gray-600">
+            {email && <span>{email}</span>}
+            {phone && <span>• {phone}</span>}
+            {linkedin && <span>• {linkedin}</span>}
+            {github && <span>• {github}</span>}
+          </div>
+        </div>
+
+        {summary && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Professional Summary</h2>
+            <p className="text-xs text-gray-700 leading-relaxed italic">{summary}</p>
+          </div>
+        )}
+
+        {skills?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Key Expertise</h2>
+            <p className="text-xs text-gray-700 leading-relaxed font-semibold">{skills.map(s => typeof s === 'object' ? s.name : s).join('  •  ')}</p>
+          </div>
+        )}
+
+        {experience?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Professional Experience</h2>
+            <div className="space-y-4">
+              {experience.map((exp, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between font-bold text-xs text-gray-900">
+                    <span>{exp.title}</span>
+                    <span className="font-normal text-gray-600 italic">{exp.duration}</span>
+                  </div>
+                  <div className="text-xs text-[#1e3a8a] italic font-semibold">{exp.company}</div>
+                  {exp.bullets?.length > 0 && (
+                    <ul className="list-disc pl-4 mt-1 space-y-1">
+                      {exp.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="text-xs text-gray-700 leading-relaxed">{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {projects?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Notable Projects</h2>
+            <div className="space-y-3">
+              {projects.map((proj, idx) => (
+                <div key={idx}>
+                  <div className="font-bold text-xs text-gray-950">{proj.title}</div>
+                  {proj.description && <p className="text-xs text-gray-700 mt-0.5">{proj.description}</p>}
+                  {proj.technologies?.length > 0 && (
+                    <p className="text-xs text-gray-500 italic mt-0.5">Technologies: {proj.technologies.join(', ')}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {education?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Academic Background</h2>
+            <div className="space-y-1">
+              {education.map((edu, idx) => (
+                <div key={idx} className="flex justify-between text-xs text-gray-700">
+                  <span className="font-bold">{edu.degree} — {edu.institution}</span>
+                  <span>{edu.year}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {certifications?.length > 0 && (
+          <div>
+            <h2 className="text-sm font-bold text-[#1e3a8a] uppercase tracking-wider border-b-2 border-[#1e3a8a] pb-0.5 mb-2">Certifications</h2>
+            <ul className="list-disc pl-4 space-y-0.5 text-xs text-gray-700">
+              {certifications.map((cert, idx) => (
+                <li key={idx}>{cert}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (template === 'software-engineer') {
+    return (
+      <div ref={ref} id="resume-canvas-preview" className="font-sans text-slate-800 bg-white p-8 shadow-lg max-w-[800px] mx-auto text-left border border-gray-200 flex gap-6">
+        <div className="w-[33%] bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col gap-5">
+          <div>
+            <h1 className="text-xl font-black text-slate-900 leading-tight">{name || 'Your Name'}</h1>
+            <div className="mt-3 space-y-2 text-[11px] text-slate-600 break-all">
+              {email && <div className="flex flex-col"><span className="font-bold text-[9px] uppercase tracking-wider text-slate-400">Email</span>{email}</div>}
+              {phone && <div className="flex flex-col"><span className="font-bold text-[9px] uppercase tracking-wider text-slate-400">Phone</span>{phone}</div>}
+              {linkedin && <div className="flex flex-col"><span className="font-bold text-[9px] uppercase tracking-wider text-slate-400">LinkedIn</span>{linkedin}</div>}
+              {github && <div className="flex flex-col"><span className="font-bold text-[9px] uppercase tracking-wider text-slate-400">GitHub</span>{github}</div>}
+            </div>
+          </div>
+
+          {skills?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">Technical Skills</h2>
+              <div className="flex flex-wrap gap-1.5">
+                {skills.map((s, idx) => (
+                  <span key={idx} className="px-2 py-0.5 bg-slate-200 text-slate-800 text-[10px] rounded font-semibold">
+                    {typeof s === 'object' ? s.name : s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {education?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">Education</h2>
+              <div className="space-y-3">
+                {education.map((edu, idx) => (
+                  <div key={idx} className="text-[11px] text-slate-700">
+                    <div className="font-bold">{edu.degree}</div>
+                    <div>{edu.institution}</div>
+                    <div className="text-slate-500 italic mt-0.5">{edu.year}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {certifications?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">Certifications</h2>
+              <ul className="list-disc pl-4 space-y-1 text-[11px] text-slate-700">
+                {certifications.map((cert, idx) => (
+                  <li key={idx}>{cert}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="w-[67%] flex flex-col gap-5">
+          {summary && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">About Me</h2>
+              <p className="text-xs text-slate-700 leading-relaxed">{summary}</p>
+            </div>
+          )}
+
+          {experience?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">Experience</h2>
+              <div className="space-y-4">
+                {experience.map((exp, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between font-bold text-xs text-slate-900">
+                      <span>{exp.title}</span>
+                      <span className="font-normal text-slate-500 text-[10px]">{exp.duration}</span>
+                    </div>
+                    <div className="text-xs text-blue-600 font-bold">{exp.company}</div>
+                    {exp.bullets?.length > 0 && (
+                      <ul className="list-disc pl-4 mt-1.5 space-y-1">
+                        {exp.bullets.map((bullet, bIdx) => (
+                          <li key={bIdx} className="text-xs text-slate-700 leading-normal">{bullet}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {projects?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider mb-2 pb-1 border-b-2 border-slate-900">Key Projects</h2>
+              <div className="space-y-3">
+                {projects.map((proj, idx) => (
+                  <div key={idx} className="p-2 border border-slate-100 rounded-lg">
+                    <div className="font-bold text-xs text-slate-900">{proj.title}</div>
+                    {proj.description && <p className="text-xs text-slate-700 mt-1">{proj.description}</p>}
+                    {proj.technologies?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {proj.technologies.map((tech, tIdx) => (
+                          <span key={tIdx} className="px-1.5 py-0.5 bg-blue-50 text-blue-700 text-[9px] rounded font-bold">{tech}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (template === 'data-scientist') {
+    return (
+      <div ref={ref} id="resume-canvas-preview" className="font-sans text-gray-800 bg-white p-10 shadow-lg max-w-[800px] mx-auto text-left border border-gray-200">
+        <div className="flex justify-between items-start border-b-4 border-[#047857] pb-4 mb-6">
+          <div>
+            <h1 className="text-3xl font-black text-gray-900 uppercase tracking-tight">{name || 'Your Name'}</h1>
+            <div className="text-xs text-[#047857] font-bold mt-1 uppercase tracking-widest">Data Scientist / Analyst</div>
+          </div>
+          <div className="text-right text-[11px] text-gray-600 space-y-0.5">
+            {email && <div>{email}</div>}
+            {phone && <div>{phone}</div>}
+            {linkedin && <div>{linkedin}</div>}
+            {github && <div>{github}</div>}
+          </div>
+        </div>
+
+        {summary && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Executive Summary</h2>
+            <p className="text-xs text-gray-700 leading-relaxed bg-emerald-50/30 p-3 rounded-lg border-l-4 border-[#047857]">{summary}</p>
+          </div>
+        )}
+
+        {skills?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Core Competencies</h2>
+            <div className="flex flex-wrap gap-2">
+              {skills.map((s, idx) => (
+                <span key={idx} className="px-2.5 py-1 bg-emerald-50 text-[#065f46] text-xs rounded border border-emerald-100 font-semibold">
+                  {typeof s === 'object' ? s.name : s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {experience?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Professional Practice</h2>
+            <div className="space-y-4">
+              {experience.map((exp, idx) => (
+                <div key={idx} className="border-l border-emerald-100 pl-4 relative">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#047857] absolute -left-[5px] top-1" />
+                  <div className="flex justify-between font-bold text-xs text-gray-900">
+                    <span>{exp.title} — {exp.company}</span>
+                    <span className="font-normal text-gray-500">{exp.duration}</span>
+                  </div>
+                  {exp.bullets?.length > 0 && (
+                    <ul className="list-disc pl-4 mt-1.5 space-y-1">
+                      {exp.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="text-xs text-gray-700 leading-normal">{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {projects?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Projects & Research</h2>
+            <div className="grid grid-cols-2 gap-4">
+              {projects.map((proj, idx) => (
+                <div key={idx} className="p-3 bg-gray-50 rounded-lg border border-gray-100 flex flex-col justify-between">
+                  <div>
+                    <div className="font-bold text-xs text-gray-900">{proj.title}</div>
+                    {proj.description && <p className="text-[11px] text-gray-600 mt-1 leading-relaxed">{proj.description}</p>}
+                  </div>
+                  {proj.technologies?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {proj.technologies.map((tech, tIdx) => (
+                        <span key={tIdx} className="px-1.5 py-0.5 bg-emerald-100/50 text-[#047857] text-[9px] rounded font-bold">{tech}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-6">
+          {education?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Education</h2>
+              <div className="space-y-2">
+                {education.map((edu, idx) => (
+                  <div key={idx} className="text-xs text-gray-700">
+                    <div className="font-bold">{edu.degree}</div>
+                    <div>{edu.institution}</div>
+                    <div className="text-gray-500 italic">{edu.year}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {certifications?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-bold text-[#047857] uppercase tracking-wider mb-2">Certifications</h2>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-gray-700">
+                {certifications.map((cert, idx) => (
+                  <li key={idx}>{cert}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (template === 'product-manager') {
+    return (
+      <div ref={ref} id="resume-canvas-preview" className="font-sans text-gray-900 bg-white p-10 shadow-lg max-w-[800px] mx-auto text-left border border-gray-200">
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-black text-[#6d28d9] uppercase tracking-wider">{name || 'Your Name'}</h1>
+          <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-2 text-xs font-semibold text-gray-500">
+            {email && <span>{email}</span>}
+            {phone && <span>• {phone}</span>}
+            {linkedin && <span>• {linkedin}</span>}
+            {github && <span>• {github}</span>}
+          </div>
+        </div>
+
+        {summary && (
+          <div className="mb-6 text-center max-w-xl mx-auto">
+            <p className="text-xs text-gray-700 leading-relaxed italic">{summary}</p>
+          </div>
+        )}
+
+        {skills?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-black text-center text-[#6d28d9] uppercase tracking-widest border-t-2 border-b-2 border-[#6d28d9]/10 py-1 mb-3">Product Competencies</h2>
+            <div className="flex flex-wrap justify-center gap-2">
+              {skills.map((s, idx) => (
+                <span key={idx} className="px-3 py-1 bg-purple-50 text-[#5b21b6] text-xs rounded-full border border-purple-100 font-bold">
+                  {typeof s === 'object' ? s.name : s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {experience?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-black text-[#6d28d9] uppercase tracking-wider border-b border-purple-200 pb-1 mb-3">Professional Experience</h2>
+            <div className="space-y-4">
+              {experience.map((exp, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between font-bold text-xs text-gray-900">
+                    <span>{exp.title}</span>
+                    <span className="text-[#6d28d9]">{exp.company}</span>
+                  </div>
+                  <div className="text-[10px] text-gray-500 italic mt-0.5">{exp.duration}</div>
+                  {exp.bullets?.length > 0 && (
+                    <ul className="list-disc pl-4 mt-2 space-y-1.5">
+                      {exp.bullets.map((bullet, bIdx) => (
+                        <li key={bIdx} className="text-xs text-gray-700 leading-normal">{bullet}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {projects?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-black text-[#6d28d9] uppercase tracking-wider border-b border-purple-200 pb-1 mb-3">Impact Initiatives</h2>
+            <div className="space-y-3">
+              {projects.map((proj, idx) => (
+                <div key={idx}>
+                  <div className="font-bold text-xs text-gray-905">{proj.title}</div>
+                  {proj.description && <p className="text-xs text-gray-700 mt-1 leading-relaxed">{proj.description}</p>}
+                  {proj.technologies?.length > 0 && (
+                    <p className="text-xs text-purple-700 font-bold mt-1">Focus: {proj.technologies.join(', ')}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-6">
+          {education?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-[#6d28d9] uppercase tracking-wider border-b border-purple-200 pb-1 mb-2">Education</h2>
+              <div className="space-y-2">
+                {education.map((edu, idx) => (
+                  <div key={idx} className="text-xs text-gray-700">
+                    <div className="font-bold">{edu.degree}</div>
+                    <div>{edu.institution}</div>
+                    <div className="text-gray-500 italic">{edu.year}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {certifications?.length > 0 && (
+            <div>
+              <h2 className="text-xs font-black text-[#6d28d9] uppercase tracking-wider border-b border-purple-200 pb-1 mb-2">Credentials</h2>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-gray-700">
+                {certifications.map((cert, idx) => (
+                  <li key={idx}>{cert}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+});
+
 /* ── Score Ring Component ── */
 const ScoreRing = ({ score, max, label, color }) => {
   const pct = Math.round((score / max) * 100);
@@ -384,124 +797,7 @@ const Section = ({ title, icon, children, defaultOpen = true, badge }) => {
   );
 };
 
-/* ── Optimized Resume Preview Card ── */
-const ResumePreviewCard = ({ title, data, variant = 'original' }) => {
-  const isOptimized = variant === 'optimized';
-  const borderColor = isOptimized ? 'border-green-200 dark:border-green-800' : 'border-gray-200 dark:border-gray-700';
-  const headerBg = isOptimized
-    ? 'bg-gradient-to-r from-green-500 to-emerald-600'
-    : 'bg-gradient-to-r from-gray-500 to-gray-600';
 
-  return (
-    <div className={`rounded-2xl border-2 ${borderColor} overflow-hidden flex flex-col`}>
-      <div className={`${headerBg} text-white px-5 py-3 flex items-center gap-2`}>
-        {isOptimized ? <Zap className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
-        <span className="font-bold text-sm">{title}</span>
-      </div>
-      <div className="p-5 space-y-5 bg-white dark:bg-gray-950 flex-1">
-        {/* Summary */}
-        {data?.summary && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Professional Summary</h4>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{data.summary}</p>
-          </div>
-        )}
-
-        {/* Skills */}
-        {data?.skills?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Skills</h4>
-            <div className="flex flex-wrap gap-1.5">
-              {data.skills.map((s, i) => (
-                <span key={i} className={`px-2 py-0.5 text-xs rounded-md font-medium ${
-                  isOptimized
-                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
-                }`}>
-                  {typeof s === 'object' ? s.name : s}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Experience */}
-        {data?.experience?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Experience</h4>
-            <div className="space-y-3">
-              {data.experience.map((exp, i) => (
-                <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
-                  <p className="font-semibold text-sm text-gray-900 dark:text-white">
-                    {exp.title || exp.role || 'Role'} — {exp.company || 'Company'}
-                  </p>
-                  {exp.duration && <p className="text-xs text-gray-500 dark:text-gray-400 italic">{exp.duration}</p>}
-                  {exp.bullets?.length > 0 && (
-                    <ul className="mt-2 space-y-1">
-                      {exp.bullets.map((b, j) => (
-                        <li key={j} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
-                          <span className="text-blue-500 mt-0.5">•</span>{b}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Projects */}
-        {data?.projects?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Projects</h4>
-            <div className="space-y-3">
-              {data.projects.map((proj, i) => (
-                <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
-                  <p className="font-semibold text-sm text-gray-900 dark:text-white">{proj.title}</p>
-                  {proj.description && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{proj.description}</p>}
-                  {proj.technologies?.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {proj.technologies.map((t, j) => (
-                        <span key={j} className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 text-[10px] rounded font-medium">{t}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Education */}
-        {data?.education?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Education</h4>
-            {data.education.map((edu, i) => (
-              <p key={i} className="text-sm text-gray-700 dark:text-gray-300">
-                <span className="font-medium">{edu.degree}</span> — {edu.institution} {edu.year && <span className="text-gray-500">({edu.year})</span>}
-              </p>
-            ))}
-          </div>
-        )}
-
-        {/* Certifications */}
-        {data?.certifications?.length > 0 && (
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Certifications</h4>
-            <ul className="space-y-1">
-              {data.certifications.map((c, i) => (
-                <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
-                  <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />{c}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
 /* ── Main Page ── */
 const ResumeAnalysis = () => {
@@ -509,6 +805,7 @@ const ResumeAnalysis = () => {
   const [activeResume, setActiveResume] = useState(null);
   const [gapAnalysis, setGapAnalysis] = useState(null);
   const [targetRole, setTargetRole] = useState('');
+  const [jobDescription, setJobDescription] = useState('');
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
   const [optimizing, setOptimizing] = useState(false);
@@ -520,6 +817,16 @@ const ResumeAnalysis = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [downloadingPDF, setDownloadingPDF] = useState(false);
   const [downloadingDOCX, setDownloadingDOCX] = useState(false);
+
+  const [selectedTemplate, setSelectedTemplate] = useState('modern-ats');
+  const [contactDetails, setContactDetails] = useState({
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    phone: '+1 (555) 019-2834',
+    linkedin: 'linkedin.com/in/johndoe',
+    github: 'github.com/johndoe'
+  });
+  const resumeCanvasRef = React.useRef(null);
 
   const popularRoles = [
     'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
@@ -533,6 +840,16 @@ const ResumeAnalysis = () => {
 
   useEffect(() => { fetchData(); }, []);
 
+  useEffect(() => {
+    if (activeResume) {
+      setContactDetails(prev => ({
+        ...prev,
+        name: activeResume.user?.name || prev.name,
+        email: activeResume.user?.email || prev.email
+      }));
+    }
+  }, [activeResume]);
+
   const fetchData = async () => {
     try {
       const resumeRes = await resumeAPI.getActive().catch(() => null);
@@ -543,6 +860,7 @@ const ResumeAnalysis = () => {
       if (analysisRes?.data?.gapAnalysis) {
         setGapAnalysis(analysisRes.data.gapAnalysis);
         setTargetRole(analysisRes.data.gapAnalysis.targetRole || '');
+        setJobDescription(analysisRes.data.gapAnalysis.jobDescription || '');
       }
     } catch (err) {
       console.error('fetchData error:', err);
@@ -555,7 +873,10 @@ const ResumeAnalysis = () => {
     if (!targetRole.trim()) { toast.error('Please select or enter a target role'); return; }
     setAnalyzing(true);
     try {
-      const res = await resumeAPI.performGapAnalysis({ targetRole: targetRole.trim() });
+      const res = await resumeAPI.performGapAnalysis({
+        targetRole: targetRole.trim(),
+        jobDescription: jobDescription.trim()
+      });
       setGapAnalysis(res.data.gapAnalysis);
       toast.success('Gap analysis complete!');
     } catch (err) {
@@ -576,7 +897,10 @@ const ResumeAnalysis = () => {
     setOptimizeResult(null);
     setShowPreview(false);
     try {
-      const res = await resumeAPI.optimizeResume({ targetRole: targetRole.trim() || 'Software Developer' });
+      const res = await resumeAPI.optimizeResume({
+        targetRole: targetRole.trim() || 'Software Developer',
+        jobDescription: jobDescription.trim()
+      });
       setOptimizeResult(res.data);
       setShowPreview(true);
       toast.success('Resume optimized successfully!');
@@ -620,7 +944,7 @@ const ResumeAnalysis = () => {
     if (!data) { toast.error('No optimized resume available. Click "One-Click Optimize" first.'); return; }
     setDownloadingPDF(true);
     try {
-      await generatePDF(data);
+      await generatePDF(resumeCanvasRef.current, `${contactDetails.name.replace(/\s+/g, '_')}_Optimized_Resume.pdf`);
       toast.success('PDF downloaded!');
     } catch (err) {
       console.error('PDF generation error:', err);
@@ -628,14 +952,14 @@ const ResumeAnalysis = () => {
     } finally {
       setDownloadingPDF(false);
     }
-  }, [optimizeResult, gapAnalysis]);
+  }, [optimizeResult, gapAnalysis, contactDetails]);
 
   const handleDownloadDOCX = useCallback(async () => {
     const data = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
     if (!data) { toast.error('No optimized resume available. Click "One-Click Optimize" first.'); return; }
     setDownloadingDOCX(true);
     try {
-      await generateDOCX(data);
+      await generateDOCX(data, contactDetails);
       toast.success('DOCX downloaded!');
     } catch (err) {
       console.error('DOCX generation error:', err);
@@ -643,17 +967,7 @@ const ResumeAnalysis = () => {
     } finally {
       setDownloadingDOCX(false);
     }
-  }, [optimizeResult, gapAnalysis]);
-
-  // Build original resume data from the parsed analysis for side-by-side comparison
-  const originalResumeData = activeResume?.analysis ? {
-    summary: activeResume.analysis.summary,
-    skills: activeResume.analysis.skills?.map(s => s?.name).filter(Boolean) || [],
-    experience: [], // raw extraction doesn't have structured experience bullets
-    projects: activeResume.analysis.projects || [],
-    education: activeResume.analysis.education || [],
-    certifications: activeResume.analysis.certifications || []
-  } : null;
+  }, [optimizeResult, gapAnalysis, contactDetails]);
 
   const optimizedData = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
 
@@ -711,18 +1025,23 @@ const ResumeAnalysis = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border-2 border-gray-100 dark:border-gray-800">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary-600" /> Select Target Role
+            <Target className="w-5 h-5 text-primary-600" /> Select Target Role & Requirements
           </h2>
           <div className="space-y-4">
-            <input
-              type="text" value={targetRole} onChange={e => setTargetRole(e.target.value)}
-              placeholder="e.g., Frontend Developer"
-              list="roles-list"
-              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
-            />
-            <datalist id="roles-list">
-              {popularRoles.map(r => <option key={r} value={r} />)}
-            </datalist>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                Target Role
+              </label>
+              <input
+                type="text" value={targetRole} onChange={e => setTargetRole(e.target.value)}
+                placeholder="e.g., Frontend Developer"
+                list="roles-list"
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+              />
+              <datalist id="roles-list">
+                {popularRoles.map(r => <option key={r} value={r} />)}
+              </datalist>
+            </div>
             <div className="flex flex-wrap gap-2">
               {popularRoles.slice(0, 6).map(role => (
                 <button key={role} onClick={() => setTargetRole(role)}
@@ -734,6 +1053,17 @@ const ResumeAnalysis = () => {
                   {role}
                 </button>
               ))}
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+                Job Description (Optional)
+              </label>
+              <textarea
+                value={jobDescription} onChange={e => setJobDescription(e.target.value)}
+                placeholder="Paste the job description or posting here to analyze gaps and optimize your resume..."
+                rows={4}
+                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition resize-none"
+              />
             </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <button onClick={handleAnalyze} disabled={analyzing || !targetRole.trim()}
@@ -792,7 +1122,7 @@ const ResumeAnalysis = () => {
               <div className="flex flex-wrap gap-3">
                 <button onClick={() => setShowPreview(!showPreview)}
                   className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition font-bold">
-                  <Eye className="w-4 h-4" /> {showPreview ? 'Hide Preview' : 'Preview Comparison'}
+                  <Eye className="w-4 h-4" /> {showPreview ? 'Hide Preview Editor' : 'Customize Template & Preview'}
                 </button>
                 <button onClick={handleDownloadPDF} disabled={downloadingPDF}
                   className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 disabled:opacity-50 transition font-bold shadow-md">
@@ -812,11 +1142,110 @@ const ResumeAnalysis = () => {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+                    className="overflow-hidden space-y-6"
                   >
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <ResumePreviewCard title="Original Resume" data={originalResumeData} variant="original" />
-                      <ResumePreviewCard title="AI Optimized Resume" data={optimizedData} variant="optimized" />
+                    <div className="grid lg:grid-cols-12 gap-6">
+                      
+                      {/* Left: Template Selector & Contact Editor */}
+                      <div className="lg:col-span-4 space-y-6">
+                        
+                        {/* Template Selection */}
+                        <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl border-2 border-gray-100 dark:border-gray-800 shadow-md">
+                          <h3 className="font-bold text-gray-950 dark:text-white mb-3 text-sm uppercase tracking-wide">Select Template Layout</h3>
+                          <div className="flex flex-col gap-2">
+                            {[
+                              { id: 'modern-ats', name: 'Modern ATS', desc: 'Clean, plain & highly parseable single-column layout' },
+                              { id: 'professional-corporate', name: 'Professional Corporate', desc: 'Elegant serif headers & right-aligned dates' },
+                              { id: 'software-engineer', name: 'Software Engineer', desc: 'Modern 2-column slate design for tech roles' },
+                              { id: 'data-scientist', name: 'Data Scientist', desc: 'Emerald green accents & structured grid layout' },
+                              { id: 'product-manager', name: 'Product Manager', desc: 'Purple theme with centered header & bolded metrics' }
+                            ].map(t => (
+                              <button
+                                key={t.id}
+                                onClick={() => setSelectedTemplate(t.id)}
+                                className={`p-3 rounded-xl border text-left transition flex flex-col ${
+                                  selectedTemplate === t.id
+                                    ? 'border-primary-500 bg-primary-50/50 dark:bg-primary-950/20 text-primary-950 dark:text-primary-400 font-semibold ring-2 ring-primary-500/20'
+                                    : 'border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                                }`}
+                              >
+                                <span className="text-sm">{t.name}</span>
+                                <span className="text-[10px] text-gray-500 dark:text-gray-400 font-normal mt-0.5">{t.desc}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Contact Details Form */}
+                        <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl border-2 border-gray-100 dark:border-gray-800 shadow-md space-y-3">
+                          <h3 className="font-bold text-gray-950 dark:text-white text-sm uppercase tracking-wide">Edit Contact Details</h3>
+                          <div className="space-y-2">
+                            <div>
+                              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Full Name</label>
+                              <input
+                                type="text"
+                                value={contactDetails.name}
+                                onChange={e => setContactDetails(prev => ({ ...prev, name: e.target.value }))}
+                                className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-850 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Email Address</label>
+                              <input
+                                type="text"
+                                value={contactDetails.email}
+                                onChange={e => setContactDetails(prev => ({ ...prev, email: e.target.value }))}
+                                className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-850 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">Phone Number</label>
+                              <input
+                                type="text"
+                                value={contactDetails.phone}
+                                onChange={e => setContactDetails(prev => ({ ...prev, phone: e.target.value }))}
+                                className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-850 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">LinkedIn URL</label>
+                              <input
+                                type="text"
+                                value={contactDetails.linkedin}
+                                onChange={e => setContactDetails(prev => ({ ...prev, linkedin: e.target.value }))}
+                                className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-850 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block mb-1">GitHub URL</label>
+                              <input
+                                type="text"
+                                value={contactDetails.github}
+                                onChange={e => setContactDetails(prev => ({ ...prev, github: e.target.value }))}
+                                className="w-full px-3 py-2 text-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-850 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      {/* Right: Live Resume Canvas Preview */}
+                      <div className="lg:col-span-8 space-y-4">
+                        <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-850 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800">
+                          <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">Live Preview Canvas</span>
+                          <span className="text-[11px] text-gray-500 italic">Downloads will export this rendering</span>
+                        </div>
+                        <div className="overflow-x-auto p-4 bg-gray-100 dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 flex justify-center">
+                          <ResumeCanvas
+                            ref={resumeCanvasRef}
+                            data={optimizedData}
+                            contact={contactDetails}
+                            template={selectedTemplate}
+                          />
+                        </div>
+                      </div>
+
                     </div>
                   </motion.div>
                 )}

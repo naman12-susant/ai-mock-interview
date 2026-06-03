@@ -52,6 +52,7 @@ const resumeSchema = new mongoose.Schema({
   // AI Resume Gap Analysis & ATS Optimization
   gapAnalysis: {
     targetRole: String,
+    jobDescription: String,
     overallScore: {
       type: Number,
       min: 0,
