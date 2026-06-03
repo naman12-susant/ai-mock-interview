@@ -17,6 +17,23 @@ function getGroq() {
   return _groq;
 }
 
+async function groqChatCompletion(options) {
+  try {
+    return await getGroq().chat.completions.create(options);
+  } catch (error) {
+    const isRateLimit = error.status === 429 ||
+                        error.message?.includes('rate_limit') ||
+                        error.message?.includes('Rate limit') ||
+                        error.message?.includes('429');
+    if (isRateLimit && options.model === 'llama-3.3-70b-versatile') {
+      console.warn(`[Groq] llama-3.3-70b-versatile rate limited. Falling back to llama-3.1-8b-instant. Error: ${error.message}`);
+      const fallbackOptions = { ...options, model: 'llama-3.1-8b-instant' };
+      return await getGroq().chat.completions.create(fallbackOptions);
+    }
+    throw error;
+  }
+}
+
 const MODEL = 'llama-3.3-70b-versatile';
 
 function stripJSON(raw) {
@@ -79,7 +96,7 @@ class AIService {
       throw new Error('Resume text is too short. Please upload a valid PDF resume.');
     }
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are an expert resume parser. Extract structured data accurately. Return ONLY valid JSON. Do NOT invent information.' },
@@ -155,7 +172,7 @@ class AIService {
       'NEVER default to React questions unless React exists in candidate skills.\n' +
       'Return ONLY a valid JSON array. No markdown. No text outside the array.';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: systemMessage },
@@ -234,7 +251,7 @@ class AIService {
       'Return ONLY this JSON (no markdown):\n' +
       '{"score":<0-10>,"classification":"STRONG|GOOD|PARTIAL|WEAK|INCORRECT|NO_KNOWLEDGE|RANDOM","isCorrect":<bool>,"confidenceLevel":"HIGH|MEDIUM|LOW|NONE","strengths":["<specific strength>"],"weaknesses":["<specific weakness>"],"suggestions":["<actionable suggestion>"],"improvedAnswer":"<what a strong answer includes>","communicationScore":<0-10>,"technicalScore":<0-10>,"confidenceScore":<0-10>}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are a strict professional technical interviewer. Evaluate answers HONESTLY and CRITICALLY. Do NOT give fake praise. Do NOT say "great answer" unless the answer truly deserves it. Return ONLY valid JSON.' },
@@ -277,7 +294,7 @@ class AIService {
       'Return ONLY this JSON (no markdown):\n' +
       '{"summary":"<honest assessment>","strengths":["<genuine strength>"],"areasOfImprovement":["<specific area>"],"recommendations":["<actionable recommendation>"]}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are a strict professional interviewer giving post-interview feedback. Be honest and direct. Return ONLY valid JSON.' },
@@ -312,7 +329,7 @@ class AIService {
       'Return ONLY this JSON (no markdown):\n' +
       '{"overallScore":<0-100>,"categoryScores":{"technicalSkills":<0-10>,"projects":<0-10>,"experience":<0-10>,"atsOptimization":<0-10>,"education":<0-10>},"skillMatchPercentage":<0-100>,"presentSkills":[{"skill":"<skill>","proficiency":"beginner|intermediate|advanced|expert"}],"missingSkills":[{"skill":"<skill>","importance":"critical|important|nice-to-have","reason":"<specific reason>"}],"strengths":["<specific strength>"],"weaknesses":["<specific weakness>"],"aiSuggestions":[{"category":"skills|projects|experience|education|ats|wording","priority":"high|medium|low","suggestion":"<specific suggestion>","impact":"<expected impact>"}],"atsAnalysis":{"score":<0-100>,"keywords":{"present":["<keyword>"],"missing":["<keyword>"]},"formatting":{"score":<0-10>,"issues":["<issue>"]},"actionVerbs":{"count":<number>,"examples":["<verb>"],"suggestions":["<better verb>"]},"readability":{"score":<0-10>,"issues":["<issue>"]}}}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are a senior technical recruiter and ATS specialist. Analyze resumes honestly and specifically. Base all feedback on actual resume content. Return ONLY valid JSON.' },
@@ -367,7 +384,7 @@ class AIService {
       '  "overallImprovements": ["<improvement>"]\n' +
       '}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are an expert resume writer and ATS specialist. Rewrite resumes into a structured JSON format optimized for ATS systems and the target role. Keep all information truthful. Return ONLY valid JSON.' },
@@ -388,7 +405,7 @@ class AIService {
       'Return ONLY this JSON (no markdown):\n' +
       '{"improved":"<rewritten version>","changes":["<change made>"],"reasoning":"<why better>"}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are an expert resume writer. Return ONLY valid JSON.' },
@@ -403,7 +420,7 @@ class AIService {
 
   // ── Industry Skills ──────────────────────────────────────────
   async getIndustrySkills(role) {
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are a technical recruiter. Return ONLY valid JSON.' },
@@ -479,7 +496,7 @@ class AIService {
       'Return ONLY a JSON object:\n' +
       '{"greeting": "<the spoken text>"}';
 
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: 'You are AIRA, a professional enterprise interviewer. Return ONLY valid JSON.' },
@@ -692,7 +709,7 @@ class AIService {
       '{"classification":"STRONG|GOOD|PARTIAL|WEAK|INCORRECT|NO_KNOWLEDGE|RANDOM","score":<0-10>,"isRelevant":<bool>,"isCorrect":<bool>,"needsRetry":<bool>,"confidenceLevel":"HIGH|MEDIUM|LOW|NONE","feedback":"<internal evaluation with specific technical details>","response":"<2-3 sentence spoken response as AIRA — be specific, natural human phrasing>","followUpQuestionOnly":"<follow-up question strictly about ' + role + ' topics>","detectedSkills":["<skill shown>"],"weakAreas":["<gap identified>"]}';
 
     // ── STEP 8: Call LLM ──
-    const res = await getGroq().chat.completions.create({
+    const res = await groqChatCompletion({
       model: MODEL,
       messages: [
         { role: 'system', content: systemPrompt },
