@@ -61,8 +61,8 @@ exports.uploadResume = async (req, res) => {
     // Update user profile
     await User.findByIdAndUpdate(req.user.id, {
       resumeUploaded: true,
-      skills: analysis.skills.map(s => s.name),
-      experienceLevel: analysis.experience.level
+      skills: analysis?.skills?.map(s => s.name) || [],
+      experienceLevel: analysis?.experience?.level || 'fresher'
     });
 
     res.status(201).json({
