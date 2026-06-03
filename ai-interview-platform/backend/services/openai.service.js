@@ -348,9 +348,15 @@ class AIService {
   // ── One-Click Optimization ───────────────────────────────────
   async optimizeResumeOneClick(resumeText, resumeAnalysis, targetRole, jobDescription = '') {
     if (!resumeText || resumeText.trim().length < 50) throw new Error('Resume text is too short.');
+    if (!resumeAnalysis) throw new Error('Resume analysis data is missing.');
+    if (!targetRole) throw new Error('Target role is required.');
 
-    const skills = (resumeAnalysis.skills || []).map(function (s) { return s.name; }).join(', ');
-    const projects = (resumeAnalysis.projects || []).map(function (p) { return p.title; }).join(', ');
+    const skills = resumeAnalysis && resumeAnalysis.skills && Array.isArray(resumeAnalysis.skills) 
+      ? resumeAnalysis.skills.map(function (s) { return s.name || s; }).filter(Boolean).join(', ')
+      : 'none';
+    const projects = resumeAnalysis && resumeAnalysis.projects && Array.isArray(resumeAnalysis.projects)
+      ? resumeAnalysis.projects.map(function (p) { return p.title || p; }).filter(Boolean).join(', ')
+      : 'none';
 
     let prompt = 'You are a professional ATS resume writer.\n\n';
     if (jobDescription && jobDescription.trim().length > 0) {
@@ -378,9 +384,9 @@ class AIService {
       '    "education": [{"degree": "<degree>", "institution": "<institution>", "year": "<year>"}],\n' +
       '    "certifications": ["<cert>"]\n' +
       '  },\n' +
-      '  "improvedSections": [{"section": "Summary|Experience|Skills|Projects|Education", "original": "<original text>", "improved": "<rewritten version>", "reason": "<why better>"}],\n' +
-      '  "atsScore": {"before": <0-100>, "after": <0-100>},\n' +
-      '  "keyChanges": ["<key change>"],\n' +
+      '  "improvedSections": [{"section": "Summary", "original": "<original text>", "improved": "<rewritten version>", "reason": "<why better>"}, {"section": "Experience", "original": "<original>", "improved": "<improved>", "reason": "<why>"}],\n' +
+      '  "atsScore": {"before": 50, "after": 85},\n' +
+      '  "keyChanges": ["<key change 1>", "<key change 2>"],\n' +
       '  "overallImprovements": ["<improvement>"]\n' +
       '}';
 
