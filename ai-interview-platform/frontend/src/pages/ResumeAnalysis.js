@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { resumeAPI } from '../services/api';
@@ -6,8 +6,294 @@ import toast from 'react-hot-toast';
 import {
   Target, TrendingUp, AlertCircle, CheckCircle, Sparkles,
   FileText, Zap, BarChart3, Brain, ArrowRight, Loader, ChevronDown,
-  ChevronUp, Star, XCircle, Lightbulb, Shield, Edit3, RefreshCw
+  ChevronUp, Star, XCircle, Lightbulb, Shield, Edit3, RefreshCw,
+  Download, Eye, FileDown, Copy
 } from 'lucide-react';
+
+/* ── PDF Generator ── */
+const generatePDF = async (optimizedResume) => {
+  const { default: jsPDF } = await import('jspdf');
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  const maxWidth = pageWidth - margin * 2;
+  let y = 20;
+
+  const addPageIfNeeded = (needed = 12) => {
+    if (y + needed > 280) { doc.addPage(); y = 20; }
+  };
+
+  // Name / Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(30, 30, 30);
+  doc.text('Optimized Resume', margin, y);
+  y += 10;
+
+  // Summary
+  if (optimizedResume.summary) {
+    doc.setDrawColor(59, 130, 246);
+    doc.setLineWidth(0.6);
+    doc.line(margin, y, pageWidth - margin, y);
+    y += 7;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('PROFESSIONAL SUMMARY', margin, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    const lines = doc.splitTextToSize(optimizedResume.summary, maxWidth);
+    doc.text(lines, margin, y);
+    y += lines.length * 5 + 6;
+  }
+
+  // Skills
+  if (optimizedResume.skills?.length > 0) {
+    addPageIfNeeded(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('SKILLS', margin, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    const skillText = optimizedResume.skills.join('  •  ');
+    const skillLines = doc.splitTextToSize(skillText, maxWidth);
+    doc.text(skillLines, margin, y);
+    y += skillLines.length * 5 + 6;
+  }
+
+  // Experience
+  if (optimizedResume.experience?.length > 0) {
+    addPageIfNeeded(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('EXPERIENCE', margin, y);
+    y += 7;
+    optimizedResume.experience.forEach(exp => {
+      addPageIfNeeded(18);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(30, 30, 30);
+      doc.text(`${exp.title || 'Role'} — ${exp.company || 'Company'}`, margin, y);
+      y += 5;
+      if (exp.duration) {
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(9);
+        doc.setTextColor(120, 120, 120);
+        doc.text(exp.duration, margin, y);
+        y += 5;
+      }
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(60, 60, 60);
+      (exp.bullets || []).forEach(bullet => {
+        addPageIfNeeded(8);
+        const bLines = doc.splitTextToSize(`•  ${bullet}`, maxWidth - 4);
+        doc.text(bLines, margin + 3, y);
+        y += bLines.length * 5 + 1;
+      });
+      y += 4;
+    });
+  }
+
+  // Projects
+  if (optimizedResume.projects?.length > 0) {
+    addPageIfNeeded(20);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('PROJECTS', margin, y);
+    y += 7;
+    optimizedResume.projects.forEach(proj => {
+      addPageIfNeeded(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(30, 30, 30);
+      doc.text(proj.title || 'Project', margin, y);
+      y += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.setTextColor(60, 60, 60);
+      if (proj.description) {
+        const pLines = doc.splitTextToSize(proj.description, maxWidth);
+        doc.text(pLines, margin, y);
+        y += pLines.length * 5 + 1;
+      }
+      if (proj.technologies?.length > 0) {
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Tech: ${proj.technologies.join(', ')}`, margin, y);
+        y += 5;
+      }
+      y += 3;
+    });
+  }
+
+  // Education
+  if (optimizedResume.education?.length > 0) {
+    addPageIfNeeded(16);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('EDUCATION', margin, y);
+    y += 7;
+    optimizedResume.education.forEach(edu => {
+      addPageIfNeeded(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(30, 30, 30);
+      doc.text(`${edu.degree || 'Degree'} — ${edu.institution || 'Institution'}`, margin, y);
+      if (edu.year) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(9);
+        doc.setTextColor(120, 120, 120);
+        doc.text(edu.year, pageWidth - margin - 20, y);
+      }
+      y += 6;
+    });
+  }
+
+  // Certifications
+  if (optimizedResume.certifications?.length > 0) {
+    addPageIfNeeded(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(59, 130, 246);
+    doc.text('CERTIFICATIONS', margin, y);
+    y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    optimizedResume.certifications.forEach(cert => {
+      addPageIfNeeded(6);
+      doc.text(`•  ${cert}`, margin + 3, y);
+      y += 5;
+    });
+  }
+
+  doc.save('TalentForge_Optimized_Resume.pdf');
+};
+
+/* ── DOCX Generator ── */
+const generateDOCX = async (optimizedResume) => {
+  const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, BorderStyle } = require('docx');
+  const { saveAs } = await import('file-saver');
+
+  const sectionTitle = (text) => new Paragraph({
+    children: [new TextRun({ text, bold: true, size: 26, color: '3B82F6', font: 'Calibri' })],
+    heading: HeadingLevel.HEADING_2,
+    spacing: { before: 300, after: 100 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 1, color: '3B82F6' } }
+  });
+
+  const children = [];
+
+  // Title
+  children.push(new Paragraph({
+    children: [new TextRun({ text: 'Optimized Resume', bold: true, size: 40, color: '1E1E1E', font: 'Calibri' })],
+    heading: HeadingLevel.HEADING_1,
+    alignment: AlignmentType.LEFT,
+    spacing: { after: 200 }
+  }));
+
+  // Summary
+  if (optimizedResume.summary) {
+    children.push(sectionTitle('PROFESSIONAL SUMMARY'));
+    children.push(new Paragraph({
+      children: [new TextRun({ text: optimizedResume.summary, size: 21, font: 'Calibri', color: '3C3C3C' })],
+      spacing: { after: 150 }
+    }));
+  }
+
+  // Skills
+  if (optimizedResume.skills?.length > 0) {
+    children.push(sectionTitle('SKILLS'));
+    children.push(new Paragraph({
+      children: [new TextRun({ text: optimizedResume.skills.join('  •  '), size: 21, font: 'Calibri', color: '3C3C3C' })],
+      spacing: { after: 150 }
+    }));
+  }
+
+  // Experience
+  if (optimizedResume.experience?.length > 0) {
+    children.push(sectionTitle('EXPERIENCE'));
+    optimizedResume.experience.forEach(exp => {
+      children.push(new Paragraph({
+        children: [
+          new TextRun({ text: `${exp.title || 'Role'} — ${exp.company || 'Company'}`, bold: true, size: 22, font: 'Calibri' }),
+          ...(exp.duration ? [new TextRun({ text: `  |  ${exp.duration}`, italics: true, size: 20, color: '787878', font: 'Calibri' })] : [])
+        ],
+        spacing: { before: 100, after: 60 }
+      }));
+      (exp.bullets || []).forEach(bullet => {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: bullet, size: 21, font: 'Calibri', color: '3C3C3C' })],
+          bullet: { level: 0 },
+          spacing: { after: 30 }
+        }));
+      });
+    });
+  }
+
+  // Projects
+  if (optimizedResume.projects?.length > 0) {
+    children.push(sectionTitle('PROJECTS'));
+    optimizedResume.projects.forEach(proj => {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: proj.title || 'Project', bold: true, size: 22, font: 'Calibri' })],
+        spacing: { before: 100, after: 40 }
+      }));
+      if (proj.description) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: proj.description, size: 21, font: 'Calibri', color: '3C3C3C' })],
+          spacing: { after: 30 }
+        }));
+      }
+      if (proj.technologies?.length > 0) {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: `Technologies: ${proj.technologies.join(', ')}`, italics: true, size: 20, color: '646464', font: 'Calibri' })],
+          spacing: { after: 80 }
+        }));
+      }
+    });
+  }
+
+  // Education
+  if (optimizedResume.education?.length > 0) {
+    children.push(sectionTitle('EDUCATION'));
+    optimizedResume.education.forEach(edu => {
+      children.push(new Paragraph({
+        children: [
+          new TextRun({ text: `${edu.degree || 'Degree'} — ${edu.institution || 'Institution'}`, bold: true, size: 22, font: 'Calibri' }),
+          ...(edu.year ? [new TextRun({ text: `  (${edu.year})`, size: 20, color: '787878', font: 'Calibri' })] : [])
+        ],
+        spacing: { after: 60 }
+      }));
+    });
+  }
+
+  // Certifications
+  if (optimizedResume.certifications?.length > 0) {
+    children.push(sectionTitle('CERTIFICATIONS'));
+    optimizedResume.certifications.forEach(cert => {
+      children.push(new Paragraph({
+        children: [new TextRun({ text: cert, size: 21, font: 'Calibri', color: '3C3C3C' })],
+        bullet: { level: 0 },
+        spacing: { after: 30 }
+      }));
+    });
+  }
+
+  const doc = new Document({ sections: [{ children }] });
+  const blob = await Packer.toBlob(doc);
+  saveAs(blob, 'TalentForge_Optimized_Resume.docx');
+};
 
 /* ── Score Ring Component ── */
 const ScoreRing = ({ score, max, label, color }) => {
@@ -98,6 +384,125 @@ const Section = ({ title, icon, children, defaultOpen = true, badge }) => {
   );
 };
 
+/* ── Optimized Resume Preview Card ── */
+const ResumePreviewCard = ({ title, data, variant = 'original' }) => {
+  const isOptimized = variant === 'optimized';
+  const borderColor = isOptimized ? 'border-green-200 dark:border-green-800' : 'border-gray-200 dark:border-gray-700';
+  const headerBg = isOptimized
+    ? 'bg-gradient-to-r from-green-500 to-emerald-600'
+    : 'bg-gradient-to-r from-gray-500 to-gray-600';
+
+  return (
+    <div className={`rounded-2xl border-2 ${borderColor} overflow-hidden flex flex-col`}>
+      <div className={`${headerBg} text-white px-5 py-3 flex items-center gap-2`}>
+        {isOptimized ? <Zap className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
+        <span className="font-bold text-sm">{title}</span>
+      </div>
+      <div className="p-5 space-y-5 bg-white dark:bg-gray-950 flex-1">
+        {/* Summary */}
+        {data?.summary && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Professional Summary</h4>
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{data.summary}</p>
+          </div>
+        )}
+
+        {/* Skills */}
+        {data?.skills?.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Skills</h4>
+            <div className="flex flex-wrap gap-1.5">
+              {data.skills.map((s, i) => (
+                <span key={i} className={`px-2 py-0.5 text-xs rounded-md font-medium ${
+                  isOptimized
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700'
+                }`}>
+                  {typeof s === 'object' ? s.name : s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Experience */}
+        {data?.experience?.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Experience</h4>
+            <div className="space-y-3">
+              {data.experience.map((exp, i) => (
+                <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+                  <p className="font-semibold text-sm text-gray-900 dark:text-white">
+                    {exp.title || exp.role || 'Role'} — {exp.company || 'Company'}
+                  </p>
+                  {exp.duration && <p className="text-xs text-gray-500 dark:text-gray-400 italic">{exp.duration}</p>}
+                  {exp.bullets?.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {exp.bullets.map((b, j) => (
+                        <li key={j} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
+                          <span className="text-blue-500 mt-0.5">•</span>{b}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Projects */}
+        {data?.projects?.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Projects</h4>
+            <div className="space-y-3">
+              {data.projects.map((proj, i) => (
+                <div key={i} className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 border border-gray-100 dark:border-gray-800">
+                  <p className="font-semibold text-sm text-gray-900 dark:text-white">{proj.title}</p>
+                  {proj.description && <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{proj.description}</p>}
+                  {proj.technologies?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {proj.technologies.map((t, j) => (
+                        <span key={j} className="px-1.5 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 text-[10px] rounded font-medium">{t}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Education */}
+        {data?.education?.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Education</h4>
+            {data.education.map((edu, i) => (
+              <p key={i} className="text-sm text-gray-700 dark:text-gray-300">
+                <span className="font-medium">{edu.degree}</span> — {edu.institution} {edu.year && <span className="text-gray-500">({edu.year})</span>}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {/* Certifications */}
+        {data?.certifications?.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2">Certifications</h4>
+            <ul className="space-y-1">
+              {data.certifications.map((c, i) => (
+                <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
+                  <CheckCircle className="w-3 h-3 text-green-500 mt-0.5 flex-shrink-0" />{c}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 /* ── Main Page ── */
 const ResumeAnalysis = () => {
   const navigate = useNavigate();
@@ -112,6 +517,9 @@ const ResumeAnalysis = () => {
   const [rewriting, setRewriting] = useState(false);
   const [rewriteResult, setRewriteResult] = useState(null);
   const [optimizeResult, setOptimizeResult] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [downloadingPDF, setDownloadingPDF] = useState(false);
+  const [downloadingDOCX, setDownloadingDOCX] = useState(false);
 
   const popularRoles = [
     'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
@@ -166,10 +574,12 @@ const ResumeAnalysis = () => {
   const handleOptimize = async () => {
     setOptimizing(true);
     setOptimizeResult(null);
+    setShowPreview(false);
     try {
       const res = await resumeAPI.optimizeResume({ targetRole: targetRole.trim() || 'Software Developer' });
       setOptimizeResult(res.data);
-      toast.success('Resume optimized!');
+      setShowPreview(true);
+      toast.success('Resume optimized successfully!');
       const ar = await resumeAPI.getGapAnalysis().catch(() => null);
       if (ar?.data?.gapAnalysis) setGapAnalysis(ar.data.gapAnalysis);
     } catch (err) {
@@ -204,6 +614,48 @@ const ResumeAnalysis = () => {
       setRewriting(false);
     }
   };
+
+  const handleDownloadPDF = useCallback(async () => {
+    const data = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
+    if (!data) { toast.error('No optimized resume available. Click "One-Click Optimize" first.'); return; }
+    setDownloadingPDF(true);
+    try {
+      await generatePDF(data);
+      toast.success('PDF downloaded!');
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      toast.error('Failed to generate PDF');
+    } finally {
+      setDownloadingPDF(false);
+    }
+  }, [optimizeResult, gapAnalysis]);
+
+  const handleDownloadDOCX = useCallback(async () => {
+    const data = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
+    if (!data) { toast.error('No optimized resume available. Click "One-Click Optimize" first.'); return; }
+    setDownloadingDOCX(true);
+    try {
+      await generateDOCX(data);
+      toast.success('DOCX downloaded!');
+    } catch (err) {
+      console.error('DOCX generation error:', err);
+      toast.error('Failed to generate DOCX');
+    } finally {
+      setDownloadingDOCX(false);
+    }
+  }, [optimizeResult, gapAnalysis]);
+
+  // Build original resume data from the parsed analysis for side-by-side comparison
+  const originalResumeData = activeResume?.analysis ? {
+    summary: activeResume.analysis.summary,
+    skills: activeResume.analysis.skills?.map(s => s?.name).filter(Boolean) || [],
+    experience: [], // raw extraction doesn't have structured experience bullets
+    projects: activeResume.analysis.projects || [],
+    education: activeResume.analysis.education || [],
+    certifications: activeResume.analysis.certifications || []
+  } : null;
+
+  const optimizedData = optimizeResult?.optimizedResume || gapAnalysis?.optimizedResume;
 
   if (loading) {
     return (
@@ -302,7 +754,117 @@ const ResumeAnalysis = () => {
           </div>
         </motion.div>
 
-        {/* Gap Analysis Results */}
+        {/* ═══════════════ OPTIMIZED RESUME PREVIEW & DOWNLOAD ═══════════════ */}
+        <AnimatePresence>
+          {(optimizeResult || optimizedData) && (
+            <motion.div key="preview-section" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+
+              {/* ATS Score Banner */}
+              {(optimizeResult?.atsScore || optimizedData?.atsScore) && (
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                  className="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 rounded-2xl p-6 text-white shadow-xl">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                        <Sparkles className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black">Resume Optimized Successfully!</h3>
+                        <p className="text-green-100 text-sm">Your resume has been rewritten for ATS compatibility</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <div className="text-center">
+                        <p className="text-xs text-green-200 uppercase tracking-wider">Before</p>
+                        <p className="text-3xl font-black">{(optimizeResult?.atsScore || optimizedData?.atsScore)?.before || '?'}%</p>
+                      </div>
+                      <ArrowRight className="w-6 h-6 text-green-200" />
+                      <div className="text-center">
+                        <p className="text-xs text-green-200 uppercase tracking-wider">After</p>
+                        <p className="text-3xl font-black text-yellow-300">{(optimizeResult?.atsScore || optimizedData?.atsScore)?.after || '?'}%</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Download & Preview Buttons */}
+              <div className="flex flex-wrap gap-3">
+                <button onClick={() => setShowPreview(!showPreview)}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition font-bold">
+                  <Eye className="w-4 h-4" /> {showPreview ? 'Hide Preview' : 'Preview Comparison'}
+                </button>
+                <button onClick={handleDownloadPDF} disabled={downloadingPDF}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 disabled:opacity-50 transition font-bold shadow-md">
+                  {downloadingPDF ? <Loader className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />} Download PDF
+                </button>
+                <button onClick={handleDownloadDOCX} disabled={downloadingDOCX}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 transition font-bold shadow-md">
+                  {downloadingDOCX ? <Loader className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />} Download DOCX
+                </button>
+              </div>
+
+              {/* Side-by-Side Resume Preview */}
+              <AnimatePresence>
+                {showPreview && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <ResumePreviewCard title="Original Resume" data={originalResumeData} variant="original" />
+                      <ResumePreviewCard title="AI Optimized Resume" data={optimizedData} variant="optimized" />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Key Changes */}
+              {(optimizeResult?.keyChanges?.length > 0 || optimizedData?.keyChanges?.length > 0) && (
+                <Section title="Key Changes Made" icon={<Zap className="w-5 h-5 text-green-500" />}
+                  badge={`${(optimizeResult?.keyChanges || optimizedData?.keyChanges || []).length} changes`}>
+                  <ul className="space-y-2">
+                    {(optimizeResult?.keyChanges || optimizedData?.keyChanges || []).map((c, i) => (
+                      <motion.li key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                        <ArrowRight className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" /> {c}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </Section>
+              )}
+
+              {/* Improved Sections (Before/After diffs) */}
+              {optimizeResult?.improvedSections?.length > 0 && (
+                <Section title="Section-by-Section Improvements" icon={<Edit3 className="w-5 h-5 text-purple-500" />}
+                  badge={optimizeResult.improvedSections.length} defaultOpen={false}>
+                  {optimizeResult.improvedSections.map((sec, i) => (
+                    <div key={i} className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                      <h4 className="font-bold text-primary-600 mb-3 capitalize">{sec.section}</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs font-bold text-red-600 mb-1">BEFORE</p>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg">{sec.original}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-green-600 mb-1">AFTER</p>
+                          <p className="text-xs text-gray-700 dark:text-gray-300 bg-green-50 dark:bg-green-900/10 p-3 rounded-lg">{sec.improved}</p>
+                        </div>
+                      </div>
+                      {sec.reason && <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">{sec.reason}</p>}
+                    </div>
+                  ))}
+                </Section>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ═══════════════ GAP ANALYSIS RESULTS ═══════════════ */}
         <AnimatePresence>
           {gapAnalysis && (
             <motion.div key="results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -489,45 +1051,6 @@ const ResumeAnalysis = () => {
           )}
         </AnimatePresence>
 
-        {/* One-Click Optimize Results */}
-        <AnimatePresence>
-          {optimizeResult && (
-            <motion.div key="optimize" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <Section title="One-Click Optimization Results" icon={<Zap className="w-5 h-5 text-green-500" />}
-                badge={`ATS: ${optimizeResult.atsScore?.before || '?'} → ${optimizeResult.atsScore?.after || '?'}`}>
-                {optimizeResult.keyChanges?.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="font-bold text-gray-800 dark:text-gray-200 mb-2 text-sm">Key Changes Made</h4>
-                    <ul className="space-y-1">
-                      {optimizeResult.keyChanges.map((c, i) => (
-                        <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2">
-                          <ArrowRight className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" /> {c}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {optimizeResult.improvedSections?.map((sec, i) => (
-                  <div key={i} className="mb-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
-                    <h4 className="font-bold text-primary-600 mb-3 capitalize">{sec.section}</h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-xs font-bold text-red-600 mb-1">BEFORE</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 bg-red-50 dark:bg-red-900/10 p-3 rounded-lg">{sec.original}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-green-600 mb-1">AFTER</p>
-                        <p className="text-xs text-gray-700 dark:text-gray-300 bg-green-50 dark:bg-green-900/10 p-3 rounded-lg">{sec.improved}</p>
-                      </div>
-                    </div>
-                    {sec.reason && <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 italic">{sec.reason}</p>}
-                  </div>
-                ))}
-              </Section>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Section Rewriter */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border-2 border-gray-100 dark:border-gray-800">
@@ -581,8 +1104,8 @@ const ResumeAnalysis = () => {
                   </div>
                 )}
                 <button onClick={() => { navigator.clipboard.writeText(rewriteResult.improved); toast.success('Copied to clipboard!'); }}
-                  className="text-sm text-primary-600 hover:text-primary-700 font-medium underline">
-                  Copy improved text
+                  className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium">
+                  <Copy className="w-3.5 h-3.5" /> Copy improved text
                 </button>
               </motion.div>
             )}

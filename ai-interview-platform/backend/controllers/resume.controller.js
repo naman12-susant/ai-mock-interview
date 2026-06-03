@@ -403,6 +403,16 @@ exports.optimizeResume = async (req, res) => {
       }
       resume.gapAnalysis.atsAnalysis.score = optimization.atsScore.after;
     }
+
+    // Save structured optimized resume for preview & export
+    if (optimization.optimizedResume) {
+      resume.gapAnalysis.optimizedResume = {
+        ...optimization.optimizedResume,
+        atsScore: optimization.atsScore || { before: 0, after: 0 },
+        keyChanges: optimization.keyChanges || [],
+        generatedAt: new Date()
+      };
+    }
     
     await resume.save();
 

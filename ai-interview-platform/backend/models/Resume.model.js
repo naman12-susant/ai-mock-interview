@@ -126,6 +126,34 @@ const resumeSchema = new mongoose.Schema({
       improved: String,
       reason: String
     }],
+    // Structured optimized resume output for preview & export
+    optimizedResume: {
+      summary: String,
+      skills: [String],
+      experience: [{
+        title: String,
+        company: String,
+        duration: String,
+        bullets: [String]
+      }],
+      projects: [{
+        title: String,
+        description: String,
+        technologies: [String]
+      }],
+      education: [{
+        degree: String,
+        institution: String,
+        year: String
+      }],
+      certifications: [String],
+      atsScore: {
+        before: { type: Number, min: 0, max: 100, default: 0 },
+        after: { type: Number, min: 0, max: 100, default: 0 }
+      },
+      keyChanges: [String],
+      generatedAt: Date
+    },
     analyzedAt: Date
   },
   isActive: {

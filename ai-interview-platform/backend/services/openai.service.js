@@ -329,25 +329,46 @@ class AIService {
   async optimizeResumeOneClick(resumeText, resumeAnalysis, targetRole) {
     if (!resumeText || resumeText.trim().length < 50) throw new Error('Resume text is too short.');
 
-    const prompt = 'Optimize this resume for ' + targetRole + '.\n\n' +
-      'ORIGINAL RESUME:\n' + resumeText + '\n\n' +
+    const skills = (resumeAnalysis.skills || []).map(function(s) { return s.name; }).join(', ');
+    const projects = (resumeAnalysis.projects || []).map(function(p) { return p.title; }).join(', ');
+
+    const prompt = 'You are a professional ATS resume writer.\n\n' +
+      'Current Resume:\n' + resumeText + '\n\n' +
+      'Target Role: ' + targetRole + '\n\n' +
+      'Parsed Skills: ' + (skills || 'none') + '\n' +
+      'Parsed Projects: ' + (projects || 'none') + '\n\n' +
       'RULES:\n' +
-      '- Do NOT add fake experience\n' +
-      '- Use strong action verbs: Engineered, Architected, Spearheaded, Optimized\n' +
-      '- Add quantifiable metrics where implied\n' +
-      '- Optimize for ATS keywords for ' + targetRole + '\n' +
-      '- Keep all information truthful\n\n' +
+      '- Keep truthful information. Do NOT invent fake experience.\n' +
+      '- Improve wording with strong action verbs: Engineered, Architected, Spearheaded, Optimized\n' +
+      '- Highlight transferable skills relevant to ' + targetRole + '\n' +
+      '- Add ATS-friendly keywords for ' + targetRole + '\n' +
+      '- Improve project descriptions with quantifiable metrics where implied\n' +
+      '- Optimize the summary section for ' + targetRole + '\n' +
+      '- Add quantifiable metrics where reasonable (e.g. "Reduced load time by 40%")\n\n' +
       'Return ONLY this JSON (no markdown):\n' +
-      '{"improvedSections":[{"section":"Summary|Experience|Skills|Projects|Education","original":"<original text>","improved":"<rewritten version>","reason":"<why better>"}],"overallImprovements":["<improvement>"],"atsScore":{"before":<0-100>,"after":<0-100>},"keyChanges":["<key change>"]}';
+      '{\n' +
+      '  "optimizedResume": {\n' +
+      '    "summary": "<2-3 sentence professional summary optimized for ' + targetRole + '>",\n' +
+      '    "skills": ["<skill1>", "<skill2>"],\n' +
+      '    "experience": [{"title": "<job title>", "company": "<company>", "duration": "<duration>", "bullets": ["<achievement bullet>"]}],\n' +
+      '    "projects": [{"title": "<project title>", "description": "<ATS-optimized description>", "technologies": ["<tech>"]}],\n' +
+      '    "education": [{"degree": "<degree>", "institution": "<institution>", "year": "<year>"}],\n' +
+      '    "certifications": ["<cert>"]\n' +
+      '  },\n' +
+      '  "improvedSections": [{"section": "Summary|Experience|Skills|Projects|Education", "original": "<original text>", "improved": "<rewritten version>", "reason": "<why better>"}],\n' +
+      '  "atsScore": {"before": <0-100>, "after": <0-100>},\n' +
+      '  "keyChanges": ["<key change>"],\n' +
+      '  "overallImprovements": ["<improvement>"]\n' +
+      '}';
 
     const res = await getGroq().chat.completions.create({
       model: MODEL,
       messages: [
-        { role: 'system', content: 'You are an expert resume writer and ATS specialist. Improve resumes truthfully. Return ONLY valid JSON.' },
+        { role: 'system', content: 'You are an expert resume writer and ATS specialist. Rewrite resumes into a structured JSON format optimized for ATS systems and the target role. Keep all information truthful. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
       temperature: 0.5,
-      max_tokens: 4000
+      max_tokens: 6000
     });
 
     return safeParseJSON(res.choices[0].message.content, 'optimizeResumeOneClick');
