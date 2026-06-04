@@ -10,61 +10,116 @@ exports.uploadResume = async (req, res) => {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: 'Please upload a PDF file'
+        message: 'Please upload a resume file',
+        error: 'NO_FILE_UPLOADED'
       });
     }
 
-    const { originalname, size, buffer } = req.file;
+    const { originalname, size, buffer, mimetype } = req.file;
+    console.log(`\n[UPLOAD] Starting resume upload: ${originalname}`);
 
-    // Extract text from PDF
-    let extractedText = await resumeService.extractTextFromPDF(buffer);
-    console.log('Extracted text length:', extractedText?.length);
-    
-    const cleanedText = resumeService.cleanText(extractedText);
-    console.log('Cleaned text length:', cleanedText?.length);
-
-    // If PDF extraction failed, inform user and do NOT use placeholder data
-    if (!cleanedText || cleanedText.trim().length < 50) {
-      console.warn('PDF text extraction failed.');
-
+    // ========================================
+    // STEP 1: EXTRACT TEXT (Multiple Methods)
+    // ========================================
+    let extractedText;
+    try {
+      extractedText = await resumeService.extractText(buffer, originalname, mimetype);
+    } catch (extractionError) {
+      console.error('[UPLOAD] Extraction failed:', extractionError.message);
       return res.status(400).json({
         success: false,
-        message: 'Could not extract text from PDF. Please ensure your resume is a text-based PDF (not an image or scanned document). Try uploading again or try a different PDF.',
-        error: 'PDF_EXTRACTION_FAILED'
+        message: '❌ Unable to Read Resume\n\nYour resume may be scanned or image-based.\n\nTry uploading:\n• A text-based PDF\n• DOCX file\n• Higher quality scan',
+        error: 'TEXT_EXTRACTION_FAILED',
+        details: extractionError.message
       });
     }
 
-    // Validate resume content
-    resumeService.validateResumeContent(cleanedText);
-    extractedText = cleanedText;
-    
-    // Analyze resume using AI
-    const analysis = await openaiService.analyzeResume(cleanedText);
+    // ========================================
+    // STEP 2: VALIDATE EXTRACTION QUALITY
+    // ========================================
+    try {
+      resumeService.validateExtractionQuality(extractedText);
+    } catch (validationError) {
+      console.error('[UPLOAD] Extraction quality validation failed:', validationError.message);
+      return res.status(400).json({
+        success: false,
+        message: '❌ Unable to Read Resume\n\n' + validationError.message,
+        error: 'EXTRACTION_QUALITY_FAILED'
+      });
+    }
 
-    // Deactivate previous resumes
+    // Clean the text
+    const cleanedText = resumeService.cleanText(extractedText);
+    console.log(`[UPLOAD] Text extracted and cleaned (${cleanedText.length} characters)`);
+
+    // ========================================
+    // STEP 3: VALIDATE IT'S ACTUALLY A RESUME
+    // ========================================
+    const resumeValidation = await resumeService.validateIsResume(cleanedText, true);
+    console.log('[UPLOAD] Resume validation result:', resumeValidation);
+
+    if (!resumeValidation.isResume || resumeValidation.confidence < 40) {
+      console.warn('[UPLOAD] Document is not a resume');
+      return res.status(400).json({
+        success: false,
+        message: '❌ Resume Not Detected\n\nThe uploaded document appears to be something other than a resume.\n\nPlease upload your professional CV or Resume.',
+        error: 'NOT_A_RESUME',
+        details: resumeValidation.reason
+      });
+    }
+
+    // ========================================
+    // STEP 4: EXTRACT PREVIEW DATA
+    // ========================================
+    const previewData = resumeService.extractPreviewData(cleanedText);
+    console.log('[UPLOAD] Preview data extracted:', previewData.name);
+
+    // ========================================
+    // STEP 5: VALIDATE RESUME CONTENT
+    // ========================================
+    resumeService.validateResumeContent(cleanedText);
+
+    // ========================================
+    // STEP 6: ANALYZE RESUME WITH AI
+    // ========================================
+    console.log('[UPLOAD] Starting AI analysis...');
+    const analysis = await openaiService.analyzeResume(cleanedText);
+    console.log('[UPLOAD] AI analysis complete');
+
+    // ========================================
+    // STEP 7: DEACTIVATE PREVIOUS RESUMES
+    // ========================================
     await Resume.updateMany(
       { user: req.user.id, isActive: true },
       { isActive: false }
     );
 
-    // Save resume to database
+    // ========================================
+    // STEP 8: SAVE TO DATABASE
+    // ========================================
     const resume = await Resume.create({
       user: req.user.id,
       fileName: originalname,
       filePath: '',
       fileSize: size,
-      extractedText: extractedText,
+      extractedText: cleanedText,
       analysis,
       isActive: true
     });
 
-    // Update user profile
+    // ========================================
+    // STEP 9: UPDATE USER PROFILE
+    // ========================================
     await User.findByIdAndUpdate(req.user.id, {
       resumeUploaded: true,
       skills: (analysis?.skills?.map(s => s?.name).filter(name => name && typeof name === 'string')) || [],
       experienceLevel: analysis?.experience?.level || 'fresher'
     });
 
+    // ========================================
+    // STEP 10: RETURN SUCCESS WITH PREVIEW
+    // ========================================
+    console.log('[UPLOAD] Resume upload successful');
     res.status(201).json({
       success: true,
       message: 'Resume uploaded and analyzed successfully',
@@ -74,16 +129,24 @@ exports.uploadResume = async (req, res) => {
           fileName: resume.fileName,
           analysis: resume.analysis,
           createdAt: resume.createdAt
+        },
+        preview: {
+          detected: true,
+          confidence: resumeValidation.confidence,
+          name: previewData.name,
+          email: previewData.email,
+          skills: previewData.skills,
+          previewText: previewData.preview
         }
       }
     });
   } catch (error) {
-    console.error('Upload resume error:', error);
+    console.error('[UPLOAD] Unhandled error:', error);
 
     res.status(500).json({
       success: false,
-      message: 'Error uploading resume',
-      error: error.message
+      message: 'Error uploading resume: ' + error.message,
+      error: 'UPLOAD_ERROR'
     });
   }
 };

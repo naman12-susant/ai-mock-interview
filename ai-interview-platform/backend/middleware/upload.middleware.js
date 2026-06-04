@@ -11,20 +11,32 @@ if (!fs.existsSync(uploadDir)) {
 // Configure storage to use memory (better for Render/Vercel)
 const storage = multer.memoryStorage();
 
-// File filter - only allow PDFs
+/**
+ * File filter - allow PDF, DOC, and DOCX files
+ */
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /pdf/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  const allowedMimeTypes = [
+    'application/pdf',
+    'application/msword', // DOC
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
+  ];
 
-  if (mimetype && extname) {
+  const allowedExtensions = ['.pdf', '.doc', '.docx'];
+  const fileExtension = path.extname(file.originalname).toLowerCase();
+
+  const isMimeTypeAllowed = allowedMimeTypes.includes(file.mimetype);
+  const isExtensionAllowed = allowedExtensions.includes(fileExtension);
+
+  if (isMimeTypeAllowed && isExtensionAllowed) {
     return cb(null, true);
   } else {
-    cb(new Error('Only PDF files are allowed!'));
+    cb(new Error('Only PDF, DOC, and DOCX files are allowed!'));
   }
 };
 
-// Configure multer
+/**
+ * Configure multer
+ */
 const upload = multer({
   storage: storage,
   limits: {
@@ -33,23 +45,28 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// Error handling middleware for multer
+/**
+ * Error handling middleware for multer
+ */
 const handleMulterError = (err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({
         success: false,
-        message: 'File size too large. Maximum size is 5MB.'
+        message: 'File size too large. Maximum size is 5MB.',
+        error: 'FILE_TOO_LARGE'
       });
     }
     return res.status(400).json({
       success: false,
-      message: err.message
+      message: err.message,
+      error: 'UPLOAD_ERROR'
     });
   } else if (err) {
     return res.status(400).json({
       success: false,
-      message: err.message
+      message: err.message || 'Invalid file type. Only PDF, DOC, and DOCX files are allowed.',
+      error: 'INVALID_FILE_TYPE'
     });
   }
   next();
