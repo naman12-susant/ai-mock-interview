@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    const token = sessionStorage.getItem('token');
+    const savedUser = sessionStorage.getItem('user');
 
     if (token && savedUser) {
       try {
@@ -43,8 +43,8 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.login({ email, password });
       const { user, token } = response.data;
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('user', JSON.stringify(user));
 
       setUser(user);
       setIsAuthenticated(true);
@@ -62,8 +62,8 @@ export const AuthProvider = ({ children }) => {
       const response = await authAPI.register({ name, email, password });
       const { user, token } = response.data;
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('user', JSON.stringify(user));
 
       setUser(user);
       setIsAuthenticated(true);
@@ -77,8 +77,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
     toast.success('Logged out successfully');
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = (userData) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    sessionStorage.setItem('user', JSON.stringify(userData));
   };
 
   const value = {

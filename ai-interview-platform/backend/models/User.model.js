@@ -59,7 +59,20 @@ const userSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
-  }
+  },
+  visitCount: {
+    type: Number,
+    default: 0
+  },
+  lastLogin: {
+    type: Date,
+    default: null
+  },
+  loginHistory: [{
+    date: Date,
+    ip: String,
+    browser: String
+  }]
 }, {
   timestamps: true
 });

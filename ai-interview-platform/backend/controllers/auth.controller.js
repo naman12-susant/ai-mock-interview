@@ -19,7 +19,14 @@ exports.register = async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password
+      password,
+      visitCount: 1,
+      lastLogin: new Date(),
+      loginHistory: [{
+        date: new Date(),
+        ip: req.ip || req.connection.remoteAddress,
+        browser: req.headers['user-agent']
+      }]
     });
 
     // Generate token
@@ -34,7 +41,9 @@ exports.register = async (req, res) => {
           name: user.name,
           email: user.email,
           avatar: user.avatar,
-          role: user.role
+          role: user.role,
+          visitCount: user.visitCount,
+          lastLogin: user.lastLogin
         },
         token
       }
@@ -80,6 +89,23 @@ exports.login = async (req, res) => {
       });
     }
 
+    // Update visit count and last login
+    user.visitCount = (user.visitCount || 0) + 1;
+    user.lastLogin = new Date();
+    
+    // Add to login history
+    if (!user.loginHistory) {
+      user.loginHistory = [];
+    }
+    user.loginHistory.push({
+      date: new Date(),
+      ip: req.ip || req.connection.remoteAddress,
+      browser: req.headers['user-agent']
+    });
+    
+    // Save updated user
+    await user.save();
+
     // Generate token
     const token = generateToken(user._id);
 
@@ -97,7 +123,9 @@ exports.login = async (req, res) => {
           skills: user.skills,
           experienceLevel: user.experienceLevel,
           totalInterviews: user.totalInterviews,
-          averageScore: user.averageScore
+          averageScore: user.averageScore,
+          visitCount: user.visitCount,
+          lastLogin: user.lastLogin
         },
         token
       }
@@ -132,6 +160,8 @@ exports.getProfile = async (req, res) => {
           preferredRole: user.preferredRole,
           totalInterviews: user.totalInterviews,
           averageScore: user.averageScore,
+          visitCount: user.visitCount,
+          lastLogin: user.lastLogin,
           createdAt: user.createdAt
         }
       }
