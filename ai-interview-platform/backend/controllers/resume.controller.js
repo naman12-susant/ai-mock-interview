@@ -62,32 +62,43 @@ exports.uploadResume = async (req, res) => {
       console.warn('[UPLOAD] Document is not a resume');
       return res.status(400).json({
         success: false,
-        message: '❌ Resume Not Detected\n\nThe uploaded document appears to be something other than a resume.\n\nPlease upload your professional CV or Resume.',
+        message: '❌ Invalid Resume\n\nThe uploaded file does not appear to be a professional resume or CV.\n\nPlease upload:\n• PDF Resume\n• DOCX Resume\n• Resume Image (JPG/PNG)\n\nSupported formats: PDF, DOC, DOCX, JPG, PNG',
         error: 'NOT_A_RESUME',
         details: resumeValidation.reason
       });
     }
 
     // ========================================
-    // STEP 4: EXTRACT PREVIEW DATA
+    // STEP 4: VALIDATE RESUME STRUCTURE
+    // ========================================
+    const structureValidation = resumeService.validateResumeStructure(cleanedText);
+    console.log('[UPLOAD] Resume structure validation:', structureValidation);
+
+    // Warn if missing contact info (but don't fail)
+    if (!structureValidation.hasContactInfo) {
+      console.warn('[UPLOAD] Warning: Resume missing contact information');
+    }
+
+    // ========================================
+    // STEP 5: EXTRACT PREVIEW DATA
     // ========================================
     const previewData = resumeService.extractPreviewData(cleanedText);
     console.log('[UPLOAD] Preview data extracted:', previewData.name);
 
     // ========================================
-    // STEP 5: VALIDATE RESUME CONTENT
+    // STEP 6: VALIDATE RESUME CONTENT
     // ========================================
     resumeService.validateResumeContent(cleanedText);
 
     // ========================================
-    // STEP 6: ANALYZE RESUME WITH AI
+    // STEP 7: ANALYZE RESUME WITH AI
     // ========================================
     console.log('[UPLOAD] Starting AI analysis...');
     const analysis = await openaiService.analyzeResume(cleanedText);
     console.log('[UPLOAD] AI analysis complete');
 
     // ========================================
-    // STEP 7: DEACTIVATE PREVIOUS RESUMES
+    // STEP 8: DEACTIVATE PREVIOUS RESUMES
     // ========================================
     await Resume.updateMany(
       { user: req.user.id, isActive: true },
@@ -95,7 +106,7 @@ exports.uploadResume = async (req, res) => {
     );
 
     // ========================================
-    // STEP 8: SAVE TO DATABASE
+    // STEP 9: SAVE TO DATABASE
     // ========================================
     const resume = await Resume.create({
       user: req.user.id,
@@ -108,7 +119,7 @@ exports.uploadResume = async (req, res) => {
     });
 
     // ========================================
-    // STEP 9: UPDATE USER PROFILE
+    // STEP 10: UPDATE USER PROFILE
     // ========================================
     await User.findByIdAndUpdate(req.user.id, {
       resumeUploaded: true,
@@ -117,7 +128,7 @@ exports.uploadResume = async (req, res) => {
     });
 
     // ========================================
-    // STEP 10: RETURN SUCCESS WITH PREVIEW
+    // STEP 11: RETURN SUCCESS WITH PREVIEW
     // ========================================
     console.log('[UPLOAD] Resume upload successful');
     res.status(201).json({

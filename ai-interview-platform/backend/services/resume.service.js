@@ -12,6 +12,7 @@ class ResumeService {
   /**
    * Main extraction method with fallback system
    * Try: PDF Parse → PDF.js → OCR → Fail
+   * Also handles images (JPG, PNG)
    */
   async extractText(fileBuffer, originalFileName, mimetype) {
     console.log(`[EXTRACTION] Starting extraction for ${originalFileName} (${mimetype})`);
@@ -20,12 +21,19 @@ class ResumeService {
     const isDocx = mimetype?.includes('wordprocessingml') || originalFileName?.endsWith('.docx');
     const isDoc = mimetype?.includes('msword') && !isDocx;
     const isPdf = mimetype?.includes('pdf') || originalFileName?.endsWith('.pdf');
+    const isImage = mimetype?.includes('image') || /\.(jpg|jpeg|png)$/i.test(originalFileName);
 
     try {
       // DOCX/DOC extraction
       if (isDocx || isDoc) {
         console.log('[EXTRACTION] Attempting DOCX extraction...');
         return await this.extractFromDOCX(fileBuffer);
+      }
+
+      // Image extraction (JPG, PNG) - use OCR directly
+      if (isImage) {
+        console.log('[EXTRACTION] Image detected, using OCR...');
+        return await this.extractFromImage(fileBuffer);
       }
 
       // PDF extraction with fallbacks
@@ -140,6 +148,38 @@ class ResumeService {
     }
   }
 
+  /**
+   * Extract text from image files (JPG, PNG) using OCR
+   */
+  async extractFromImage(fileBuffer) {
+    try {
+      console.log('[EXTRACTION] Starting image OCR extraction...');
+      
+      // Convert buffer to base64 for Tesseract
+      const base64 = fileBuffer.toString('base64');
+      const result = await Tesseract.recognize(
+        `data:image/png;base64,${base64}`,
+        'eng',
+        {
+          logger: (m) => {
+            if (m.status === 'recognizing text') {
+              console.log(`[OCR] Image processing: ${Math.round(m.progress * 100)}%`);
+            }
+          }
+        }
+      );
+
+      const text = result.data.text;
+      if (!text || text.trim().length === 0) {
+        throw new Error('Image OCR returned empty text');
+      }
+      console.log('[EXTRACTION] Image OCR successful');
+      return text;
+    } catch (error) {
+      throw new Error(`Image extraction failed: ${error.message}`);
+    }
+  }
+
   // ===========================
   // TEXT PROCESSING
   // ===========================
@@ -249,41 +289,67 @@ class ResumeService {
   }
 
   /**
-   * Use OpenAI to validate if document is a resume
+   * Use AI (Groq) to validate if document is a resume
+   * More accurate than keyword matching alone
    */
   async validateResumeWithAI(text) {
     try {
-      const openaiService = require('./openai.service');
+      const Groq = require('groq-sdk');
+      const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
       
-      // Use first 1500 characters for validation
-      const sampleText = text.substring(0, 1500);
+      // Use first 2000 characters for validation
+      const sampleText = text.substring(0, 2000);
       
-      const response = await openaiService.makeRequest(
-        `You are a document classifier. Determine whether this document is a professional resume/CV.
+      const message = await groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          {
+            role: 'user',
+            content: `You are a document classifier. Analyze this document and determine if it is a professional resume or CV.
 
-Return JSON only (no markdown, no extra text):
+A valid resume typically contains:
+- Name or contact header
+- Email address or phone number
+- Education section
+- Work experience or projects
+- Skills or technical abilities
+- Professional summary or objective (optional)
+
+Return ONLY valid JSON (no markdown, no extra text):
 {
   "isResume": true/false,
   "confidence": 0-100,
   "reason": "brief explanation"
 }
 
-Document:
-${sampleText}`,
-        'gpt-3.5-turbo',
-        0.3
-      );
+DOCUMENT TEXT:
+${sampleText}`
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 150
+      });
 
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
+      const responseText = message.choices[0]?.message?.content || '';
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      
       if (!jsonMatch) {
-        throw new Error('Invalid JSON response from AI');
+        console.warn('[VALIDATION] Could not parse AI response, using fallback');
+        return {
+          isResume: true,
+          confidence: 60,
+          reason: 'AI validation unavailable, using keyword matching'
+        };
       }
 
       const result = JSON.parse(jsonMatch[0]);
-      console.log('[VALIDATION] AI validation result:', result);
+      console.log('[VALIDATION] Groq classification result:', result);
+      
+      // Ensure confidence is a number
+      result.confidence = Math.max(0, Math.min(100, parseInt(result.confidence) || 50));
       return result;
     } catch (error) {
-      console.warn('[VALIDATION] AI validation failed, falling back to keyword match:', error.message);
+      console.warn('[VALIDATION] Groq validation failed, falling back to keyword match:', error.message);
       return {
         isResume: true,
         confidence: 60,
@@ -305,6 +371,47 @@ ${sampleText}`,
     }
 
     return true;
+  }
+
+  /**
+   * Enhanced resume structure validation
+   * Checks for: email/phone + at least 2 major resume sections
+   */
+  validateResumeStructure(text) {
+    const lowerText = text.toLowerCase();
+    
+    // Check for contact information
+    const hasEmail = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(text);
+    const hasPhone = /\b\d{10}\b|\b\d{3}[-.\s]\d{3}[-.\s]\d{4}\b/.test(text);
+    
+    // Check for major resume sections
+    const resumeSections = [
+      { name: 'education', keywords: ['education', 'degree', 'university', 'college', 'bachelor', 'master', 'graduation'] },
+      { name: 'skills', keywords: ['skills', 'technical', 'proficient', 'expertise', 'programming', 'languages'] },
+      { name: 'experience', keywords: ['experience', 'employment', 'work history', 'worked', 'responsible', 'managed', 'led'] },
+      { name: 'projects', keywords: ['projects', 'project', 'built', 'developed', 'created', 'implemented'] },
+      { name: 'certifications', keywords: ['certification', 'certified', 'license', 'course', 'training', 'credential'] },
+      { name: 'summary', keywords: ['professional summary', 'objective', 'profile', 'about me', 'introduction'] }
+    ];
+
+    const foundSections = [];
+    resumeSections.forEach(section => {
+      const hasSection = section.keywords.some(keyword => lowerText.includes(keyword));
+      if (hasSection) {
+        foundSections.push(section.name);
+      }
+    });
+
+    const validationResult = {
+      hasContactInfo: hasEmail || hasPhone,
+      hasEmail,
+      hasPhone,
+      sectionsFound: foundSections,
+      isValid: (hasEmail || hasPhone) && foundSections.length >= 2
+    };
+
+    console.log('[VALIDATION] Resume structure check:', validationResult);
+    return validationResult;
   }
 
   // ===========================

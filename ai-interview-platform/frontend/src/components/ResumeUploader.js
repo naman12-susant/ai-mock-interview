@@ -15,7 +15,9 @@ const ResumeUploader = ({ onUploadSuccess }) => {
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/png': ['.png']
     },
     maxFiles: 1,
     maxSize: 5242880, // 5MB
@@ -31,7 +33,7 @@ const ResumeUploader = ({ onUploadSuccess }) => {
       if (error?.code === 'file-too-large') {
         toast.error('File is too large. Maximum size is 5MB.');
       } else if (error?.code === 'file-invalid-type') {
-        toast.error('Only PDF, DOC, and DOCX files are allowed.');
+        toast.error('Only PDF, DOC, DOCX, JPG, and PNG files are allowed.');
       } else {
         toast.error('File upload failed.');
       }
@@ -68,12 +70,14 @@ const ResumeUploader = ({ onUploadSuccess }) => {
       setUploadError(errorMessage);
       
       // Display user-friendly error messages
-      if (errorMessage.includes('Resume Not Detected')) {
+      if (errorMessage.includes('Invalid Resume')) {
+        toast.error('❌ Invalid Resume\n\nThe uploaded file does not appear to be a professional resume or CV.\n\nPlease upload: PDF, DOCX, JPG, or PNG');
+      } else if (errorMessage.includes('Resume Not Detected')) {
         toast.error('❌ Resume Not Detected\n\nPlease upload your professional CV or Resume.');
       } else if (errorMessage.includes('Unable to Read Resume')) {
         toast.error('❌ Unable to Read Resume\n\nTry uploading a text-based PDF or DOCX file.');
       } else if (errorMessage.includes('Unsupported File')) {
-        toast.error('❌ Unsupported File\n\nPlease upload PDF, DOC or DOCX format.');
+        toast.error('❌ Unsupported File\n\nPlease upload PDF, DOC, DOCX, JPG or PNG format.');
       } else {
         toast.error(errorMessage);
       }
@@ -110,7 +114,7 @@ const ResumeUploader = ({ onUploadSuccess }) => {
             {isDragActive ? 'Drop your resume here' : 'Drag & drop your resume'}
           </p>
           <p className="text-sm text-gray-500 mb-4">or click to browse</p>
-          <p className="text-xs text-gray-400">PDF, DOC or DOCX • Max 5MB</p>
+          <p className="text-xs text-gray-400">PDF, DOC, DOCX, JPG, or PNG • Max 5MB</p>
         </div>
       ) : (
         <div className="border-2 border-primary-500 rounded-xl p-6 bg-primary-50">

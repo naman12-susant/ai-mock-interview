@@ -12,16 +12,19 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.memoryStorage();
 
 /**
- * File filter - allow PDF, DOC, and DOCX files
+ * File filter - allow PDF, DOC, DOCX, JPG, JPEG, and PNG files
  */
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
     'application/pdf',
     'application/msword', // DOC
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // DOCX
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+    'image/jpeg',
+    'image/jpg',
+    'image/png'
   ];
 
-  const allowedExtensions = ['.pdf', '.doc', '.docx'];
+  const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png'];
   const fileExtension = path.extname(file.originalname).toLowerCase();
 
   const isMimeTypeAllowed = allowedMimeTypes.includes(file.mimetype);
@@ -30,7 +33,7 @@ const fileFilter = (req, file, cb) => {
   if (isMimeTypeAllowed && isExtensionAllowed) {
     return cb(null, true);
   } else {
-    cb(new Error('Only PDF, DOC, and DOCX files are allowed!'));
+    cb(new Error('Only PDF, DOC, DOCX, JPG, and PNG files are allowed!'));
   }
 };
 
@@ -65,7 +68,7 @@ const handleMulterError = (err, req, res, next) => {
   } else if (err) {
     return res.status(400).json({
       success: false,
-      message: err.message || 'Invalid file type. Only PDF, DOC, and DOCX files are allowed.',
+      message: err.message || 'Invalid file type. Only PDF, DOC, DOCX, JPG, and PNG files are allowed.',
       error: 'INVALID_FILE_TYPE'
     });
   }
