@@ -1,5 +1,17 @@
 const pdf = require('pdf-parse');
-const pdfjs = require('pdfjs-dist/legacy/build/pdf');
+// pdfjs-dist has different entry points across versions/environments.
+// Try legacy path first, then fallback to the package root.
+let pdfjs;
+try {
+  pdfjs = require('pdfjs-dist/legacy/build/pdf');
+} catch (err) {
+  try {
+    pdfjs = require('pdfjs-dist');
+  } catch (err2) {
+    pdfjs = null;
+    console.warn('[EXTRACTION] pdfjs-dist not available:', err2.message);
+  }
+}
 const mammoth = require('mammoth');
 const Tesseract = require('tesseract.js');
 const fs = require('fs').promises;
@@ -80,6 +92,9 @@ class ResumeService {
    */
   async extractFromPDFJs(fileBuffer) {
     try {
+      if (!pdfjs || typeof pdfjs.getDocument !== 'function') {
+        throw new Error('pdfjs-dist is not available or does not expose getDocument(). Ensure pdfjs-dist is installed.');
+      }
       const doc = await pdfjs.getDocument({ data: fileBuffer }).promise;
       let text = '';
 
