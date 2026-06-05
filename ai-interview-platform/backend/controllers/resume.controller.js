@@ -1,7 +1,7 @@
 const Resume = require('../models/Resume.model');
 const User = require('../models/User.model');
 const resumeService = require('../services/resume.service');
-const openaiService = require('../services/openai.service');
+const groqService = require('../services/groq.service');
 const fs = require('fs').promises;
 
 // Upload and analyze resume
@@ -94,7 +94,7 @@ exports.uploadResume = async (req, res) => {
     // STEP 7: ANALYZE RESUME WITH AI
     // ========================================
     console.log('[UPLOAD] Starting AI analysis...');
-    const analysis = await openaiService.analyzeResume(cleanedText);
+    const analysis = await groqService.analyzeResume(cleanedText);
     console.log('[UPLOAD] AI analysis complete');
 
     // ========================================
@@ -287,7 +287,7 @@ exports.performGapAnalysis = async (req, res) => {
     }
 
     // Perform gap analysis
-    const gapAnalysis = await openaiService.performGapAnalysis(
+    const gapAnalysis = await groqService.performGapAnalysis(
       resume.extractedText,
       resume.analysis,
       targetRole,
@@ -375,7 +375,7 @@ exports.rewriteSection = async (req, res) => {
     const role = targetRole || resume?.gapAnalysis?.targetRole || 'Software Developer';
 
     // Rewrite section
-    const rewriteResult = await openaiService.rewriteResumeSection(
+    const rewriteResult = await groqService.rewriteResumeSection(
       sectionText,
       sectionType,
       role
@@ -427,7 +427,7 @@ exports.getIndustrySkills = async (req, res) => {
       });
     }
 
-    const industrySkills = await openaiService.getIndustrySkills(role);
+    const industrySkills = await groqService.getIndustrySkills(role);
 
     res.status(200).json({
       success: true,
@@ -465,7 +465,7 @@ exports.optimizeResume = async (req, res) => {
     const jd = jobDescription || resume.gapAnalysis?.jobDescription || '';
 
     // Optimize resume
-    const optimization = await openaiService.optimizeResumeOneClick(
+    const optimization = await groqService.optimizeResumeOneClick(
       resume.extractedText,
       resume.analysis,
       role,

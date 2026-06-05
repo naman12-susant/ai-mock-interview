@@ -2,7 +2,7 @@ const Interview = require('../models/Interview.model');
 const Resume = require('../models/Resume.model');
 const User = require('../models/User.model');
 const InterviewHistory = require('../models/InterviewHistory.model');
-const openaiService = require('../services/openai.service');
+const groqService = require('../services/groq.service');
 
 // Create new interview session
 exports.checkResume = async (req, res) => {
@@ -94,7 +94,7 @@ exports.createInterview = async (req, res) => {
     let questions = preGeneratedQuestions;
     if (!questions || !Array.isArray(questions) || questions.length === 0) {
       try {
-        questions = await openaiService.generateInterviewQuestions(
+        questions = await groqService.generateInterviewQuestions(
           resume.analysis,
           role,
           10,
@@ -104,7 +104,7 @@ exports.createInterview = async (req, res) => {
           weakAreas
         );
       } catch (error) {
-        console.error('OpenAI error:', error);
+        console.error('Groq error:', error);
         return res.status(500).json({
           success: false,
           message: 'Failed to generate interview questions. Please try again.'
@@ -220,7 +220,7 @@ exports.generateQuestionsEndpoint = async (req, res) => {
     }
 
     // Generate interview questions
-    const questions = await openaiService.generateInterviewQuestions(
+    const questions = await groqService.generateInterviewQuestions(
       resume.analysis,
       role,
       10,
@@ -278,7 +278,7 @@ exports.submitAnswer = async (req, res) => {
     const question = interview.questions[questionIndex];
 
     // Evaluate answer using AI
-    const evaluation = await openaiService.evaluateAnswer(
+    const evaluation = await groqService.evaluateAnswer(
       question.question,
       answer,
       question.expectedAnswer
@@ -369,7 +369,7 @@ exports.completeInterview = async (req, res) => {
     interview.calculateOverallScore();
 
     // Generate comprehensive feedback
-    const feedback = await openaiService.generateInterviewFeedback(
+    const feedback = await groqService.generateInterviewFeedback(
       interview.questions,
       interview.scores
     );
@@ -641,7 +641,7 @@ exports.getGreeting = async (req, res) => {
     const { role, interviewType } = req.body;
     const userName = req.user.name || 'Candidate';
 
-    const reply = await openaiService.generateInterviewGreeting(userName, role, interviewType || 'mixed');
+    const reply = await groqService.generateInterviewGreeting(userName, role, interviewType || 'mixed');
     
     res.status(200).json({
       success: true,
@@ -669,7 +669,7 @@ exports.getConversationalReply = async (req, res) => {
       });
     }
 
-    const reply = await openaiService.generateConversationalReply(
+    const reply = await groqService.generateConversationalReply(
       role,
       difficulty || 'intermediate',
       currentQuestion,
