@@ -46,15 +46,13 @@ const Navbar = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            {/* Circular icon matching the design */}
+            {/* Circular icon - blue ring with transparent center */}
             <div className="relative w-11 h-11 flex-shrink-0">
-              {/* Outer thick blue ring with gradient */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#5B8FF9] to-[#3B6FD9] p-[3px]">
-                <div className={`w-full h-full rounded-full ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}></div>
-              </div>
+              {/* Outer thick blue ring */}
+              <div className="absolute inset-0 rounded-full border-[5px] border-[#5B8FF9] group-hover:shadow-[0_0_20px_rgba(91,143,249,0.6)] transition-all duration-300"></div>
               
-              {/* Inner gray circle */}
-              <div className="absolute inset-[9px] rounded-full bg-gradient-to-br from-gray-600 to-gray-800 shadow-inner"></div>
+              {/* Inner smaller blue ring */}
+              <div className="absolute inset-[10px] rounded-full border-[3px] border-[#5B8FF9]/60"></div>
             </div>
             
             {/* Text content */}
