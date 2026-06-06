@@ -56,8 +56,7 @@ const Login = () => {
         transition={{ duration: 0.6 }}
       >
         <motion.div 
-          className="card-surface rounded-2xl shadow-xl p-8 border border-accent/20 card-3d"
-          whileHover={{ scale: 1.02, rotateY: 2, rotateX: 2 }}
+          className="card-surface rounded-2xl shadow-xl p-8 border border-accent/20"
           style={{ transformStyle: 'preserve-3d' }}
         >
           <motion.div 
@@ -132,7 +131,7 @@ const Login = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="w-full py-3 btn-brand btn-hover rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold"
+              className="w-full py-3 btn-brand btn-hover rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold cursor-pointer"
             >
               {loading ? (
                 <>

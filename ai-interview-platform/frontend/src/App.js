@@ -58,6 +58,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-page text-text transition-colors duration-300">
       {!isInterviewSession && <Navbar />}
+      <div className={!isInterviewSession ? 'pt-24' : ''}>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
@@ -154,6 +155,7 @@ function AppContent() {
           }
         />
       </Routes>
+      </div>
       <Toaster position="top-right" />
     </div>
   );

@@ -76,6 +76,7 @@ body.dark {
   color: white;
   box-shadow: 0 8px 30px rgba(0,0,0,0.12);
   transition: transform .22s ease, box-shadow .22s ease;
+  cursor: pointer;
 }
 .btn-brand:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 50px rgba(0,0,0,0.14); }
 

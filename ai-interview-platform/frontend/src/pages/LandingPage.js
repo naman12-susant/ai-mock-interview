@@ -102,7 +102,7 @@ const LandingPage = () => {
     <div className="min-h-screen overflow-x-hidden" style={{ background: bg }}>
 
       {/* ── HERO ── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden pt-20">
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Background effects */}
         {isDarkMode ? (
           <>

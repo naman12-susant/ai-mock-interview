@@ -78,8 +78,7 @@ const Register = () => {
         transition={{ duration: 0.6 }}
       >
         <motion.div 
-          className="card-surface rounded-2xl shadow-xl p-8 border border-accent/20 card-3d"
-          whileHover={{ scale: 1.01, rotateY: 1.5, rotateX: 1.5 }}
+          className="card-surface rounded-2xl shadow-xl p-8 border border-accent/20"
           style={{ transformStyle: 'preserve-3d' }}
         >
           <motion.div 
@@ -216,7 +215,7 @@ const Register = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="w-full py-3 btn-brand btn-hover rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold"
+              className="w-full py-3 btn-brand btn-hover rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold cursor-pointer"
             >
               {loading ? (
                 <>
