@@ -37,7 +37,7 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
           {/* Practice Mode Card */}
           <div 
             onClick={onSelectPractice}
-            className="group cursor-pointer border-2 border-blue-100 dark:border-blue-900/50 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-6 bg-white dark:bg-gray-800 hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1"
+            className="group cursor-pointer border-2 border-blue-100 dark:border-blue-900/50 hover:border-blue-500 dark:hover:border-blue-500 rounded-2xl p-6 card-surface hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -57,7 +57,7 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); onSelectPractice(); }}
-              className="mt-6 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition shadow-md shadow-blue-500/10 active:scale-[0.98]"
+              className="mt-6 w-full py-3 btn-cta btn-hover rounded-xl font-bold transition shadow-md active:scale-[0.98]"
             >
               Start Practice
             </button>
@@ -66,7 +66,7 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
           {/* Conversational Live AI Mode Card */}
           <div 
             onClick={onSelectLive}
-            className="group cursor-pointer border-2 border-purple-100 dark:border-purple-900/50 hover:border-purple-500 dark:hover:border-purple-500 rounded-2xl p-6 bg-white dark:bg-gray-800 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1"
+            className="group cursor-pointer border-2 border-purple-100 dark:border-purple-900/50 hover:border-purple-500 dark:hover:border-purple-500 rounded-2xl p-6 card-surface hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between transform hover:-translate-y-1"
           >
             <div>
               <div className="flex items-center justify-between mb-4">
@@ -86,7 +86,7 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); onSelectLive(); }}
-              className="mt-6 w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold transition shadow-md shadow-purple-500/10 active:scale-[0.98]"
+              className="mt-6 w-full py-3 btn-cta btn-hover rounded-xl font-bold transition shadow-md active:scale-[0.98]"
             >
               Start Live Interview
             </button>

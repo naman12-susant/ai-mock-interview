@@ -45,7 +45,8 @@
       "comments": [],
       "created": "2026-06-06T12:13:25.885934+00:00",
       "modified": "2026-06-06T12:13:25.885934+00:00",
-      "id": "var_73f77570978c"
+      "id": "var_73f77570978c",
+      "viewportScrollY": 12
     },
     "var_ebaffd451a1a": {
       "type": "variant",
@@ -87,7 +88,8 @@
       "comments": [],
       "created": "2026-06-06T12:13:26.989588+00:00",
       "modified": "2026-06-06T12:19:30.960138+00:00",
-      "id": "var_175ae898511e"
+      "id": "var_175ae898511e",
+      "viewportScrollY": 0
     }
   },
   "themes": {

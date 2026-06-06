@@ -156,7 +156,7 @@ const LandingPage = () => {
                 <motion.button
                 whileHover={{ scale:1.06, boxShadow:'0 20px 50px rgba(16,185,129,0.45)' }}
                 whileTap={{ scale:0.96 }}
-                className="relative inline-flex items-center gap-3 px-10 py-5 bg-[#10b981] dark:bg-gradient-to-r dark:from-[#6366f1] dark:to-[#a855f7] text-white rounded-2xl font-bold text-lg shadow-xl overflow-hidden">
+                className="relative inline-flex items-center gap-3 px-10 py-5 btn-brand tilt-3d rounded-2xl font-bold text-lg shadow-xl overflow-hidden">
                 <motion.div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                   animate={{ x:['-100%','200%'] }} transition={{ duration:2.5, repeat:Infinity, repeatDelay:1 }} />
                 <span className="relative">Start Free Trial</span>
@@ -265,7 +265,7 @@ const LandingPage = () => {
               <motion.button
                 whileHover={{ scale:1.08, boxShadow:'0 25px 60px rgba(0,0,0,0.3)' }}
                 whileTap={{ scale:0.96 }}
-                className="px-12 py-5 bg-white text-green-600 dark:text-purple-700 rounded-2xl font-black text-lg shadow-2xl">
+                className="px-12 py-5 btn-cta btn-hover rounded-2xl font-black text-lg shadow-2xl">
                 Start Your Journey Today
               </motion.button>
             </Link>

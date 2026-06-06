@@ -14,13 +14,94 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  @apply bg-white text-gray-900;
+  /* Use CSS variables for theme-aware colors */
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
 }
 
 body.dark {
-  @apply bg-black text-white;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
+
+/* Theme color variables (light mode defaults) */
+:root {
+  --color-bg: #FFFDD0; /* Warm Cream */
+  --color-surface: #FFFFFF; /* card surfaces */
+  --color-primary-50: #f5fbf3;
+  --color-primary-100: #e8f6e6;
+  --color-primary-200: #cfe9c9;
+  --color-primary-300: #b6dcb0;
+  --color-primary-400: #9DC183; /* Sage */
+  --color-primary-500: #9DC183;
+  --color-primary-600: #85a96f;
+  --color-primary-700: #6f8b56;
+  --color-primary-800: #56703f;
+  --color-primary-900: #3e4f2e;
+  --color-accent: #FFDAB9; /* Soft Peach */
+  --color-cta: #E2725B; /* Terracotta */
+  --color-text: #2B1E16; /* Espresso */
+  --color-orb: #9DC183;
+}
+
+/* Dark mode variables */
+.dark {
+  --color-bg: #121212; /* Obsidian */
+  --color-surface: #1E1E1E; /* Deep Charcoal */
+  --color-primary-50: #001f1f;
+  --color-primary-100: #003030;
+  --color-primary-200: #004848;
+  --color-primary-300: #006060;
+  --color-primary-400: #008a8a;
+  --color-primary-500: #00FFFF; /* Neon Cyan */
+  --color-accent: #0047AB; /* Cobalt */
+  --color-cta: #00FFFF; /* Neon Cyan for CTAs in dark */
+  --color-text: #E5E4E2; /* Platinum Gray */
+  --color-orb: #0047AB; /* Cobalt for orbs */
+}
+
+/* Map common utility classes to the theme variables (light & dark) */
+.bg-white { background-color: var(--color-surface) !important; }
+.text-gray-900 { color: var(--color-text) !important; }
+.dark .text-white { color: var(--color-text) !important; }
+
+/* Buttons */
+.btn-brand {
+  background: linear-gradient(180deg, var(--color-primary-400), var(--color-primary-600));
+  color: white;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+.btn-brand:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 18px 50px rgba(0,0,0,0.14); }
+
+.btn-cta {
+  background-color: var(--color-cta);
+  color: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+.dark .btn-cta { background-color: var(--color-cta); color: var(--color-text); }
+
+.btn-outline-cta {
+  background: transparent;
+  border: 2px solid var(--color-cta);
+  color: var(--color-cta);
+}
+
+/* Card surface */
+.card-surface { background-color: var(--color-surface); border: 1px solid rgba(0,0,0,0.04); }
+.dark .card-surface { border-color: rgba(255,255,255,0.04); }
+
+/* 3D helpers */
+.tilt-3d { animation: tilt 8s ease-in-out infinite; transform-style: preserve-3d; }
+.float-3d { animation: float3d 6s ease-in-out infinite; }
+.neon { animation: neonGlow 2.5s ease-in-out infinite; }
+
+@keyframes float3d { 0%{ transform: translateY(0) translateZ(0);} 50%{ transform: translateY(-12px) translateZ(8px);} 100%{ transform: translateY(0) translateZ(0);} }
+@keyframes neonGlow { 0%{ box-shadow: 0 0 6px rgba(0,255,255,0.12);} 50%{ box-shadow: 0 0 20px rgba(0,255,255,0.18);} 100%{ box-shadow: 0 0 6px rgba(0,255,255,0.12);} }
+
+/* Orb helper */
+.orb { background: radial-gradient(circle at center, var(--color-orb) 0%, transparent 60%); opacity: .18; }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

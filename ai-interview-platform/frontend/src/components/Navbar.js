@@ -107,12 +107,7 @@ const Navbar = () => {
                 >
                   Login
                 </Link>
-                <Link
-                  to="/register"
-                  className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition btn-hover"
-                >
-                  Get Started
-                </Link>
+                <Link to="/register" className="px-6 py-2 btn-cta btn-hover rounded-lg">Get Started</Link>
               </>
             )}
           </div>
@@ -158,7 +153,7 @@ const Navbar = () => {
                   ) : (
                     <div className="flex flex-col gap-2 mt-4">
                       <Link to="/login" onClick={() => setMobileOpen(false)} className="py-2">Login</Link>
-                      <Link to="/register" onClick={() => setMobileOpen(false)} className="px-4 py-2 bg-primary-600 text-white rounded-lg">Get Started</Link>
+                      <Link to="/register" onClick={() => setMobileOpen(false)} className="px-4 py-2 btn-cta rounded-lg">Get Started</Link>
                     </div>
                   )}
                 </div>
