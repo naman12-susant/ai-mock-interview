@@ -29,9 +29,14 @@ api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
-      sessionStorage.removeItem('token');
-      sessionStorage.removeItem('user');
-      window.location.href = '/login';
+      // Only redirect for non-auth routes (expired token scenario)
+      // Don't redirect when login/register fails with 401 — let the error toast show
+      const isAuthRoute = error.config?.url?.startsWith('/auth/');
+      if (!isAuthRoute) {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error.response?.data || error.message);
   }

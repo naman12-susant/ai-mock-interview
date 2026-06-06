@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LogOut, User, Home, FileText, Moon, Sun, Brain, Menu, X } from 'lucide-react';
+import { LogOut, Home, FileText, Moon, Sun, Brain, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -39,39 +40,21 @@ const Navbar = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${
-              isDarkMode ? 'bg-[#00FFFF]/15 border border-[#00FFFF]/30' : 'bg-[#9DC183]/20 border border-[#9DC183]/40'
-            }`}>
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                <rect x="3" y="3" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} />
-                <rect x="13" y="3" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} opacity="0.5" />
-                <rect x="3" y="13" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} opacity="0.5" />
-                <rect x="13" y="13" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#E2725B'} />
-              </svg>
-            </div>
-            <span className={`text-base font-bold tracking-tight font-body ${
-              isDarkMode ? 'text-white' : 'text-[#2B1E16]'
-            }`}>
-              AIRA<span className={isDarkMode ? 'text-[#00FFFF]' : 'text-[#9DC183]'}>.AI</span>
-            </span>
+            <img
+              src={logo}
+              alt="TalentForge"
+              className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+            />
           </Link>
 
           {/* Desktop Nav Links */}
-          <div className="hidden md:flex items-center gap-7">
-            {isAuthenticated ? (
-              <>
-                <NavLink to="/dashboard" dark={isDarkMode}><Home className="w-3.5 h-3.5" /> Dashboard</NavLink>
-                <NavLink to="/resume" dark={isDarkMode}><FileText className="w-3.5 h-3.5" /> Resume</NavLink>
-                <NavLink to="/resume-analysis" dark={isDarkMode}><Brain className="w-3.5 h-3.5" /> Gap Analysis</NavLink>
-              </>
-            ) : (
-              <>
-                <NavLink to="/" dark={isDarkMode}>Platform</NavLink>
-                <NavLink to="/register" dark={isDarkMode}>Simulations</NavLink>
-                <NavLink to="/register" dark={isDarkMode}>Pricing</NavLink>
-              </>
-            )}
-          </div>
+          {isAuthenticated && (
+            <div className="hidden md:flex items-center gap-7">
+              <NavLink to="/dashboard" dark={isDarkMode}><Home className="w-3.5 h-3.5" /> Dashboard</NavLink>
+              <NavLink to="/resume" dark={isDarkMode}><FileText className="w-3.5 h-3.5" /> Resume</NavLink>
+              <NavLink to="/resume-analysis" dark={isDarkMode}><Brain className="w-3.5 h-3.5" /> Gap Analysis</NavLink>
+            </div>
+          )}
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-3">

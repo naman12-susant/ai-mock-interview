@@ -52,8 +52,9 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
-      toast.error(error.message || 'Login failed');
-      return { success: false, error: error.message };
+      const message = typeof error === 'string' ? error : (error.message || 'Login failed');
+      toast.error(message);
+      return { success: false, error: message };
     }
   };
 
@@ -71,8 +72,9 @@ export const AuthProvider = ({ children }) => {
       toast.success('Registration successful!');
       return { success: true };
     } catch (error) {
-      toast.error(error.message || 'Registration failed');
-      return { success: false, error: error.message };
+      const message = typeof error === 'string' ? error : (error.message || 'Registration failed');
+      toast.error(message);
+      return { success: false, error: message };
     }
   };
 
