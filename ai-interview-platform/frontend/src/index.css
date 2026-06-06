@@ -213,8 +213,8 @@ code {
   @apply bg-gray-600;
 }
 
-/* Smooth transitions for dark mode */
-* {
+/* Smooth transitions for dark mode - exclude interactive elements */
+*:not(button):not(a):not(input):not(select):not(textarea) {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;

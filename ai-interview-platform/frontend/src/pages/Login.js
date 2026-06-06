@@ -123,15 +123,11 @@ const Login = () => {
               </div>
             </motion.div>
 
-            <motion.button
+            <button
               type="submit"
               disabled={loading}
-              whileHover={{ scale: 1.05, boxShadow: "0 10px 30px rgba(157, 193, 131, 0.35)" }}
-              whileTap={{ scale: 0.95 }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="w-full py-3 btn-brand btn-hover rounded-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold cursor-pointer"
+              style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+              className="w-full py-3 btn-brand rounded-lg disabled:opacity-50 flex items-center justify-center space-x-2 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
             >
               {loading ? (
                 <>
@@ -141,7 +137,7 @@ const Login = () => {
               ) : (
                 <span>Sign In</span>
               )}
-            </motion.button>
+            </button>
           </form>
 
           <motion.div 

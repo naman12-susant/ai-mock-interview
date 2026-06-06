@@ -32,8 +32,8 @@ const Navbar = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`w-full max-w-5xl rounded-full border transition-all duration-300 ${
           isDarkMode
-            ? 'bg-[#1a1a1a]/90 border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,255,255,0.05)]'
-            : 'bg-white/80 border-black/8 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.06)]'
+            ? 'bg-[#1a1a1a]/40 border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,255,255,0.05)]'
+            : 'bg-white/40 border-black/8 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.06)]'
         } ${scrolled ? 'shadow-lg' : ''}`}
       >
         <div className="flex items-center justify-between px-5 py-2.5">
