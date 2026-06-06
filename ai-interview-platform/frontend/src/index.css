@@ -301,6 +301,20 @@ code {
   animation: rotate-3d 20s linear infinite;
 }
 
+/* Slow Spin for Avatar Border */
+@keyframes spin-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
 /* Scale Pulse Animation */
 @keyframes scale-pulse {
   0%, 100% {

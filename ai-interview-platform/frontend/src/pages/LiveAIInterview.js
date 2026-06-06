@@ -691,34 +691,54 @@ const LiveAIInterview = () => {
                 />
               )}
 
-              {/* Glowing Inner Core */}
-              <div className={`w-40 h-40 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
-                aiState === 'speaking' || aiState === 'intro' ? 'bg-gradient-to-tr from-brand to-accent shadow-brand/40' :
-                aiState === 'listening' ? 'bg-gradient-to-tr from-accent to-brand shadow-accent/40 scale-105' :
-                aiState === 'thinking' ? 'bg-gradient-to-tr from-brand to-accent shadow-brand/40' :
-                'bg-page'
+              {/* Glowing Inner Core with Premium Styling */}
+              <div className={`relative w-40 h-40 rounded-full transition-all duration-500 ${
+                aiState === 'speaking' || aiState === 'intro' ? 'shadow-[0_0_60px_rgba(157,193,131,0.4)]' :
+                aiState === 'listening' ? 'shadow-[0_0_80px_rgba(226,114,91,0.5)] scale-105' :
+                aiState === 'thinking' ? 'shadow-[0_0_60px_rgba(157,193,131,0.4)]' :
+                'shadow-2xl'
               }`}>
-                <div className="w-36 h-36 rounded-full bg-page flex flex-col items-center justify-center border-4 border-transparent relative overflow-hidden">
-                  
-                  {/* Subtle pulsing background */}
-                  <div className={`absolute inset-0 opacity-10 transition-all duration-500 ${
-                    aiState === 'speaking' || aiState === 'intro' ? 'bg-brand animate-pulse' :
-                    aiState === 'listening' ? 'bg-accent animate-ping' :
+                {/* Animated Gradient Border Ring */}
+                <div className={`absolute inset-0 rounded-full p-[3px] transition-all duration-500 ${
+                  aiState === 'speaking' || aiState === 'intro' 
+                    ? 'bg-gradient-to-tr from-[#9DC183] via-[#FFDAB9] to-[#9DC183] animate-spin-slow' 
+                    : aiState === 'listening' 
+                    ? 'bg-gradient-to-tr from-[#E2725B] via-[#FFB347] to-[#E2725B] animate-spin-slow' 
+                    : aiState === 'thinking'
+                    ? 'bg-gradient-to-tr from-[#9DC183] via-[#E2725B] to-[#9DC183] animate-spin-slow'
+                    : 'bg-gradient-to-tr from-gray-400 to-gray-600'
+                }`}>
+                  <div className="w-full h-full rounded-full bg-page"></div>
+                </div>
+
+                {/* Avatar Container */}
+                <div className="absolute inset-[6px] rounded-full overflow-hidden border-2 border-white/10 shadow-inner">
+                  {/* Subtle pulsing background glow */}
+                  <div className={`absolute inset-0 opacity-20 transition-all duration-500 ${
+                    aiState === 'speaking' || aiState === 'intro' ? 'bg-gradient-to-br from-brand/50 to-transparent animate-pulse' :
+                    aiState === 'listening' ? 'bg-gradient-to-br from-accent/60 to-transparent animate-pulse' :
+                    aiState === 'thinking' ? 'bg-gradient-to-br from-cta/50 to-transparent animate-pulse' :
                     'bg-transparent'
                   }`}></div>
 
-                  <img src={interviewerAvatar} alt="AIRA" className="w-full h-full object-cover rounded-full" />
+                  <img src={interviewerAvatar} alt="AIRA" className="w-full h-full object-cover" />
                   
-                  {/* Subtle translucent status pill overlay */}
-                  <div className="absolute bottom-2 bg-black/70 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      aiState === 'speaking' || aiState === 'intro' ? 'bg-brand animate-bounce' :
-                      aiState === 'listening' ? 'bg-accent animate-pulse' :
-                      aiState === 'thinking' ? 'bg-cta animate-spin' :
-                      'bg-gray-500'
+                  {/* Premium Glass Status Badge */}
+                  <div className={`absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full flex items-center gap-2 z-10 transition-all duration-300 ${
+                    aiState === 'listening' 
+                      ? 'bg-[#E2725B]/90 backdrop-blur-md border border-white/20 shadow-[0_4px_20px_rgba(226,114,91,0.4)]'
+                      : 'bg-black/80 backdrop-blur-md border border-white/10 shadow-lg'
+                  }`}>
+                    <span className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      aiState === 'speaking' || aiState === 'intro' ? 'bg-[#9DC183] animate-pulse shadow-[0_0_8px_rgba(157,193,131,0.8)]' :
+                      aiState === 'listening' ? 'bg-white animate-pulse shadow-[0_0_10px_rgba(255,255,255,0.9)]' :
+                      aiState === 'thinking' ? 'bg-[#FFB347] animate-spin shadow-[0_0_8px_rgba(255,179,71,0.8)]' :
+                      'bg-gray-400'
                     }`} />
-                    <span className="text-[8px] font-black tracking-widest text-gray-200 uppercase">
-                      {aiState === 'speaking' || aiState === 'intro' ? 'AIRA' :
+                    <span className={`text-[10px] font-bold tracking-wider uppercase transition-colors ${
+                      aiState === 'listening' ? 'text-white' : 'text-gray-200'
+                    }`}>
+                      {aiState === 'speaking' || aiState === 'intro' ? 'Speaking' :
                        aiState === 'listening' ? 'Listening' :
                        aiState === 'thinking' ? 'Analyzing' : 'Ready'}
                     </span>
