@@ -7,35 +7,30 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        /* CSS-variable driven color tokens */
         primary: {
-          // Use CSS variables so light/dark palettes can be swapped via the `.dark` class
-          colors: {
-            primary: {
-              50: 'var(--color-primary-50)',
-              100: 'var(--color-primary-100)',
-              200: 'var(--color-primary-200)',
-              300: 'var(--color-primary-300)',
-              400: 'var(--color-primary-400)',
-              500: 'var(--color-primary-500)',
-              600: 'var(--color-primary-600)',
-              700: 'var(--color-primary-700)',
-              800: 'var(--color-primary-800)',
-              900: 'var(--color-primary-900)',
-            },
-            cta: 'var(--color-cta)',
-            accent: 'var(--color-accent)',
-            surface: 'var(--color-surface)',
-            page: 'var(--color-bg)',
-            brand: 'var(--color-primary-500)',
-            orb: 'var(--color-orb)',
-            text: 'var(--color-text)'
-          },
+          50: 'var(--color-primary-50)',
+          100: 'var(--color-primary-100)',
+          200: 'var(--color-primary-200)',
+          300: 'var(--color-primary-300)',
+          400: 'var(--color-primary-400)',
+          500: 'var(--color-primary-500)',
+          600: 'var(--color-primary-600)',
+          700: 'var(--color-primary-700)',
+          800: 'var(--color-primary-800)',
+          900: 'var(--color-primary-900)',
+        },
+        cta: 'var(--color-cta)',
+        accent: 'var(--color-accent)',
+        surface: 'var(--color-surface)',
+        page: 'var(--color-bg)',
+        brand: 'var(--color-primary-500)',
+        orb: 'var(--color-orb)',
+        text: 'var(--color-text)',
+        /* Helpful named fallbacks */
         terracotta: '#E2725B',
         'warm-cream': '#FFFDD0',
         espresso: '#2B1E16',
-        /* Dark mode palette */
-            'float-3d': 'float3d 6s ease-in-out infinite',
-            'tilt-3d': 'tilt3d 8s ease-in-out infinite',
         'neon-cyan': '#00FFFF',
         obsidian: '#121212',
         'deep-charcoal': '#1E1E1E',
@@ -46,16 +41,6 @@ module.exports = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            float3d: {
-              '0%': { transform: 'translateY(0px) translateZ(0px)' },
-              '50%': { transform: 'translateY(-14px) translateZ(8px)' },
-              '100%': { transform: 'translateY(0px) translateZ(0px)' },
-            },
-            tilt3d: {
-              '0%': { transform: 'rotateX(0deg) rotateY(0deg)' },
-              '50%': { transform: 'rotateX(3deg) rotateY(-3deg)' },
-              '100%': { transform: 'rotateX(0deg) rotateY(0deg)' },
-            },
         'float-3d': 'float3d 6s ease-in-out infinite',
         'tilt-3d': 'tilt3d 8s ease-in-out infinite',
         'rotate-3d-slow': 'rotate3dSlow 12s linear infinite',
