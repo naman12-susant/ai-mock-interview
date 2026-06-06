@@ -54,20 +54,20 @@ const Register = () => {
       <motion.div
         animate={{ y: [0, -30, 0], rotate: [0, 180, 360], scale: [1, 1.2, 1] }}
         transition={{ duration: 20, repeat: Infinity }}
-        className="absolute top-10 right-10 w-72 h-72 rounded-full blur-3xl hidden sm:block"
+        className="absolute top-10 right-10 w-72 h-72 rounded-full blur-3xl hidden sm:block pointer-events-none"
         style={{ background: 'radial-gradient(circle at center, var(--color-accent) 0%, transparent 60%)', opacity: 0.16 }}
       />
       <motion.div
         animate={{ y: [0, 30, 0], rotate: [360, 180, 0], scale: [1, 1.3, 1] }}
         transition={{ duration: 25, repeat: Infinity }}
-        className="absolute bottom-10 left-10 w-80 h-80 rounded-full blur-3xl hidden sm:block"
+        className="absolute bottom-10 left-10 w-80 h-80 rounded-full blur-3xl hidden sm:block pointer-events-none"
         style={{ background: 'radial-gradient(circle at center, var(--color-primary-400) 0%, transparent 60%)', opacity: 0.16 }}
       />
       {/* Extra orb for visual depth */}
       <motion.div
         animate={{ x: [0, 40, 0], y: [0, -20, 0] }}
         transition={{ duration: 30, repeat: Infinity }}
-        className="absolute top-1/2 left-1/4 w-56 h-56 rounded-full blur-3xl hidden lg:block"
+        className="absolute top-1/2 left-1/4 w-56 h-56 rounded-full blur-3xl hidden lg:block pointer-events-none"
         style={{ background: 'radial-gradient(circle at center, var(--color-cta) 0%, transparent 70%)', opacity: 0.08 }}
       />
 

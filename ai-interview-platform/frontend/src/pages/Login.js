@@ -39,13 +39,13 @@ const Login = () => {
       <motion.div
         animate={{ y: [0, -30, 0], rotate: [0, 180, 360], scale: [1, 1.15, 1] }}
         transition={{ duration: 20, repeat: Infinity }}
-        className="absolute top-10 right-10 w-72 h-72 rounded-full blur-3xl hidden sm:block orb"
+        className="absolute top-10 right-10 w-72 h-72 rounded-full blur-3xl hidden sm:block orb pointer-events-none"
         style={{ background: 'radial-gradient(circle at center, var(--color-primary-400) 0%, transparent 60%)', opacity: 0.18 }}
       />
       <motion.div
         animate={{ y: [0, 30, 0], rotate: [360, 180, 0], scale: [1, 1.25, 1] }}
         transition={{ duration: 25, repeat: Infinity }}
-        className="absolute bottom-10 left-10 w-80 h-80 rounded-full blur-3xl hidden sm:block orb"
+        className="absolute bottom-10 left-10 w-80 h-80 rounded-full blur-3xl hidden sm:block orb pointer-events-none"
         style={{ background: 'radial-gradient(circle at center, var(--color-accent) 0%, transparent 60%)', opacity: 0.14 }}
       />
 
