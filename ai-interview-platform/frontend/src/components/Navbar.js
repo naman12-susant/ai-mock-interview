@@ -43,7 +43,7 @@ const Navbar = () => {
             <img
               src={logo}
               alt="TalentForge"
-              className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
+              className="h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
             />
           </Link>
 
@@ -104,19 +104,18 @@ const Navbar = () => {
                 >
                   Log in
                 </Link>
-                <Link to="/register">
-                  <motion.button
-                    whileHover={{ scale: 1.04 }}
-                    whileTap={{ scale: 0.97 }}
-                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Link
+                    to="/register"
+                    className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-200 ${
                       isDarkMode
                         ? 'bg-[#00FFFF] text-[#121212] hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]'
                         : 'bg-[#9DC183] text-white hover:bg-[#85a96f] hover:shadow-[0_4px_20px_rgba(157,193,131,0.4)]'
                     }`}
                   >
                     Get Started
-                  </motion.button>
-                </Link>
+                  </Link>
+                </motion.div>
               </div>
             )}
           </div>

@@ -49,7 +49,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-page text-text py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-page text-text py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300 relative overflow-y-auto overflow-x-hidden">
       {/* Floating depth orbs */}
       <motion.div
         animate={{ y: [0, -30, 0], rotate: [0, 180, 360], scale: [1, 1.2, 1] }}
