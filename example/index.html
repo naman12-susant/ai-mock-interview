@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AI Mock Interview — Themed UI</title>
+    <link rel="stylesheet" href="/styles/theme.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="header">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn btn-primary">Brand</button>
+          <h1 style="margin:0">AI Mock Interview</h1>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <button id="themeToggle" class="btn">Toggle Theme</button>
+          <button class="btn btn-cta">Start Interview</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <div class="card" style="width:360px" data-tilt>
+          <h3>Session Overview</h3>
+          <p>Summary, next steps and recent score.</p>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div class="metric pulse">
+              <div style="font-weight:700;font-size:20px">85</div>
+              <div style="font-size:12px">Score</div>
+            </div>
+            <div class="metric">
+              <div style="font-weight:700;font-size:20px">4</div>
+              <div style="font-size:12px">Questions</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card orb-wrap" style="width:260px;height:260px">
+          <!-- Pure CSS orb -->
+          <div class="orb animate">
+            <div class="layer" style="transform: translateZ(20px) scale(0.96)"></div>
+            <div class="layer" style="transform: translateZ(40px) scale(0.93)"></div>
+          </div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:320px">
+          <h3>Interview Controls</h3>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <button class="btn btn-primary">Review</button>
+            <button class="btn btn-cta">Record</button>
+            <button class="btn">Settings</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/scripts/theme-toggle.js"></script>
+    <script src="/scripts/tilt-parallax.js"></script>
+  </body>
+</html>
