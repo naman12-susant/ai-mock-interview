@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { LogOut, Home, FileText, Moon, Sun, Brain, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -32,19 +31,42 @@ const Navbar = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`w-full max-w-5xl rounded-full border transition-all duration-300 ${
           isDarkMode
-            ? 'bg-[#1a1a1a]/40 border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,255,255,0.05)]'
-            : 'bg-white/40 border-black/8 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.06)]'
+            ? 'bg-[#0a0a0a]/30 border-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_1px_rgba(255,255,255,0.1)_inset]'
+            : 'bg-white/30 border-black/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(31,38,135,0.15),0_0_1px_rgba(255,255,255,0.5)_inset]'
         } ${scrolled ? 'shadow-lg' : ''}`}
+        style={{
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        }}
       >
         <div className="flex items-center justify-between px-5 py-2.5">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <img
-              src={logo}
-              alt="TalentForge"
-              className="h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-110"
-            />
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="relative">
+              {/* Circular icon with concentric circles */}
+              <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all duration-300 ${
+                isDarkMode 
+                  ? 'border-[#00FFFF] bg-[#00FFFF]/10 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]' 
+                  : 'border-[#4169E1] bg-[#4169E1]/10 group-hover:shadow-[0_0_20px_rgba(65,105,225,0.3)]'
+              }`}>
+                <div className={`w-6 h-6 rounded-full border-2 ${
+                  isDarkMode ? 'border-[#00FFFF]' : 'border-[#4169E1]'
+                }`}></div>
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <span className={`text-xl font-bold tracking-tight transition-colors ${
+                isDarkMode ? 'text-[#00FFFF]' : 'text-[#4169E1]'
+              }`}>
+                TalentForge
+              </span>
+              <span className={`text-[10px] font-medium tracking-wider uppercase ${
+                isDarkMode ? 'text-white/50' : 'text-gray-500'
+              }`}>
+                Where Talent Meets Intelligence
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav Links */}
