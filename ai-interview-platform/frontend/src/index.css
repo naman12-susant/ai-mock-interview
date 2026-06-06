@@ -29,20 +29,20 @@ body.dark {
 :root {
   --color-bg: #FFFDD0; /* Warm Cream */
   --color-surface: #FFFFFF; /* card surfaces */
-  --color-primary-50: #f5fbf3;
-  --color-primary-100: #e8f6e6;
-  --color-primary-200: #cfe9c9;
-  --color-primary-300: #b6dcb0;
-  --color-primary-400: #9DC183; /* Sage */
-  --color-primary-500: #9DC183;
-  --color-primary-600: #85a96f;
-  --color-primary-700: #6f8b56;
-  --color-primary-800: #56703f;
-  --color-primary-900: #3e4f2e;
-  --color-accent: #FFDAB9; /* Soft Peach */
-  --color-cta: #E2725B; /* Terracotta */
+  --color-primary-50: #f0f7ff;
+  --color-primary-100: #e0f0ff;
+  --color-primary-200: #b8dbff;
+  --color-primary-300: #8cc4ff;
+  --color-primary-400: #5B8FF9; /* Vibrant Blue */
+  --color-primary-500: #4169E1; /* Royal Blue */
+  --color-primary-600: #3451b2;
+  --color-primary-700: #283e85;
+  --color-primary-800: #1c2c5e;
+  --color-primary-900: #0f1b38;
+  --color-accent: #FF6B6B; /* Vibrant Coral */
+  --color-cta: #FF4757; /* Bright Red */
   --color-text: #2B1E16; /* Espresso */
-  --color-orb: #9DC183;
+  --color-orb: #5B8FF9;
 }
 
 /* Dark mode variables */
