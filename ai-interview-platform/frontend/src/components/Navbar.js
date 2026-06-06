@@ -31,40 +31,41 @@ const Navbar = () => {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`w-full max-w-5xl rounded-full border transition-all duration-300 ${
           isDarkMode
-            ? 'bg-[#0a0a0a]/30 border-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_1px_rgba(255,255,255,0.1)_inset]'
-            : 'bg-white/30 border-black/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(31,38,135,0.15),0_0_1px_rgba(255,255,255,0.5)_inset]'
-        } ${scrolled ? 'shadow-lg' : ''}`}
+            ? 'bg-black/20 border-white/10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
+            : 'bg-white/20 border-white/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(31,38,135,0.2)]'
+        } ${scrolled ? 'shadow-2xl' : ''}`}
         style={{
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          backdropFilter: 'blur(16px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+          boxShadow: isDarkMode 
+            ? '0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05)'
+            : '0 8px 32px 0 rgba(31, 38, 135, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.3)'
         }}
       >
         <div className="flex items-center justify-between px-5 py-2.5">
 
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="relative">
-              {/* Circular icon with concentric circles */}
-              <div className={`w-12 h-12 rounded-full border-4 flex items-center justify-center transition-all duration-300 ${
-                isDarkMode 
-                  ? 'border-[#00FFFF] bg-[#00FFFF]/10 group-hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]' 
-                  : 'border-[#4169E1] bg-[#4169E1]/10 group-hover:shadow-[0_0_20px_rgba(65,105,225,0.3)]'
-              }`}>
-                <div className={`w-6 h-6 rounded-full border-2 ${
-                  isDarkMode ? 'border-[#00FFFF]' : 'border-[#4169E1]'
-                }`}></div>
+            {/* Circular icon matching the design */}
+            <div className="relative w-11 h-11 flex-shrink-0">
+              {/* Outer thick blue ring with gradient */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#5B8FF9] to-[#3B6FD9] p-[3px]">
+                <div className={`w-full h-full rounded-full ${isDarkMode ? 'bg-[#0a0a0a]' : 'bg-white'}`}></div>
               </div>
+              
+              {/* Inner gray circle */}
+              <div className="absolute inset-[9px] rounded-full bg-gradient-to-br from-gray-600 to-gray-800 shadow-inner"></div>
             </div>
-            <div className="flex flex-col">
-              <span className={`text-xl font-bold tracking-tight transition-colors ${
-                isDarkMode ? 'text-[#00FFFF]' : 'text-[#4169E1]'
+            
+            {/* Text content */}
+            <div className="flex flex-col -space-y-0.5">
+              <span className={`text-[22px] font-bold tracking-tight leading-none ${
+                isDarkMode ? 'text-[#8BA9D9]' : 'text-[#5B8FF9]'
               }`}>
                 TalentForge
               </span>
-              <span className={`text-[10px] font-medium tracking-wider uppercase ${
-                isDarkMode ? 'text-white/50' : 'text-gray-500'
-              }`}>
-                Where Talent Meets Intelligence
+              <span className="text-[8.5px] font-semibold tracking-[0.2em] uppercase leading-none text-gray-500">
+                WHERE TALENT MEETS INTELLIGENCE
               </span>
             </div>
           </Link>
