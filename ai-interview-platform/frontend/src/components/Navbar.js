@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { LogOut, User, Home, FileText, Moon, Sun, Brain, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -16,154 +24,222 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-surface border-b border-accent/25 shadow-md sticky top-0 z-50 transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4">
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className={`w-full max-w-5xl rounded-full border transition-all duration-300 ${
+          isDarkMode
+            ? 'bg-[#1a1a1a]/90 border-white/10 backdrop-blur-xl shadow-[0_0_30px_rgba(0,255,255,0.05)]'
+            : 'bg-white/80 border-black/8 backdrop-blur-xl shadow-[0_4px_30px_rgba(0,0,0,0.06)]'
+        } ${scrolled ? 'shadow-lg' : ''}`}
+      >
+        <div className="flex items-center justify-between px-5 py-2.5">
+
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <div className="w-12 h-12 relative group-hover:scale-110 transition-transform duration-300">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  {/* Main Circle */}
-                  <circle cx="50" cy="50" r="45" fill="#2563EB"/>
-                  {/* Wavy Outer Seal */}
-                  <path d="M 50 20 Q 58 18 61 25 Q 68 23 71 30 Q 78 32 76 40 Q 83 45 78 51 Q 83 58 76 61 Q 78 69 71 70 Q 68 77 61 75 Q 55 82 50 78 Q 45 82 39 75 Q 32 77 29 70 Q 22 69 24 61 Q 17 58 22 51 Q 17 45 24 40 Q 22 32 29 30 Q 32 23 39 25 Q 42 18 50 20 Z" fill="#111827" />
-                  {/* Inner ring space (blue) */}
-                  <circle cx="50" cy="50" r="24" fill="#2563EB" />
-                  {/* Deep dark center */}
-                  <circle cx="50" cy="50" r="20" fill="#111827" />
-                  {/* Inner shine */}
-                  <path d="M 34 38 A 18 18 0 0 1 66 38" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                </svg>
-              </div>
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 ${
+              isDarkMode ? 'bg-[#00FFFF]/15 border border-[#00FFFF]/30' : 'bg-[#9DC183]/20 border border-[#9DC183]/40'
+            }`}>
+              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
+                <rect x="3" y="3" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} />
+                <rect x="13" y="3" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} opacity="0.5" />
+                <rect x="3" y="13" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#9DC183'} opacity="0.5" />
+                <rect x="13" y="13" width="8" height="8" rx="2" fill={isDarkMode ? '#00FFFF' : '#E2725B'} />
+              </svg>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-400 dark:via-blue-300 dark:to-blue-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-600 transition-all duration-300">
-                TalentForge
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1 tracking-wider">WHERE TALENT MEETS INTELLIGENCE</span>
-            </div>
+            <span className={`text-base font-bold tracking-tight font-body ${
+              isDarkMode ? 'text-white' : 'text-[#2B1E16]'
+            }`}>
+              AIRA<span className={isDarkMode ? 'text-[#00FFFF]' : 'text-[#9DC183]'}>.AI</span>
+            </span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg bg-page hover:bg-accent/40 border border-accent/30 transition-all duration-300"
-              aria-label="Toggle dark mode"
-            >
-              {isDarkMode ? (
-                <Sun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <Moon className="w-5 h-5 text-gray-700" />
-              )}
-            </button>
-
+          {/* Desktop Nav Links */}
+          <div className="hidden md:flex items-center gap-7">
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
-                >
-                  <Home className="w-4 h-4" />
-                  <span>Dashboard</span>
-                </Link>
-                <Link
-                  to="/resume"
-                  className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
-                >
-                  <FileText className="w-4 h-4" />
-                  <span>Resume</span>
-                </Link>
-                <Link
-                  to="/resume-analysis"
-                  className="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition"
-                >
-                  <Brain className="w-4 h-4" />
-                  <span>Gap Analysis</span>
-                </Link>
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{user?.name}</span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center space-x-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
+                <NavLink to="/dashboard" dark={isDarkMode}><Home className="w-3.5 h-3.5" /> Dashboard</NavLink>
+                <NavLink to="/resume" dark={isDarkMode}><FileText className="w-3.5 h-3.5" /> Resume</NavLink>
+                <NavLink to="/resume-analysis" dark={isDarkMode}><Brain className="w-3.5 h-3.5" /> Gap Analysis</NavLink>
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition font-medium"
-                >
-                  Login
-                </Link>
-                <Link to="/register" className="px-6 py-2 btn-cta btn-hover rounded-lg">Get Started</Link>
+                <NavLink to="/" dark={isDarkMode}>Platform</NavLink>
+                <NavLink to="/register" dark={isDarkMode}>Simulations</NavLink>
+                <NavLink to="/register" dark={isDarkMode}>Pricing</NavLink>
               </>
             )}
           </div>
 
-          {/* Mobile: hamburger */}
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setMobileOpen(true)} className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">
-              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+          {/* Right Actions */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full transition-all duration-300 ${
+                isDarkMode
+                  ? 'bg-white/5 hover:bg-white/10 text-[#00FFFF]'
+                  : 'bg-black/5 hover:bg-black/10 text-[#2B1E16]'
+              }`}
+              aria-label="Toggle dark mode"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
+
+            {isAuthenticated ? (
+              <div className="flex items-center gap-2">
+                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
+                  isDarkMode ? 'bg-white/5 text-white/80' : 'bg-black/5 text-[#2B1E16]/80'
+                }`}>
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                    isDarkMode ? 'bg-[#00FFFF]/20 text-[#00FFFF]' : 'bg-[#9DC183]/30 text-[#5a8a47]'
+                  }`}>
+                    {user?.name?.[0]?.toUpperCase() || 'U'}
+                  </div>
+                  {user?.name?.split(' ')[0]}
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
+                    isDarkMode
+                      ? 'bg-white/8 hover:bg-white/15 text-white/70 border border-white/10'
+                      : 'bg-black/6 hover:bg-black/12 text-[#2B1E16]/70'
+                  }`}
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/login"
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+                    isDarkMode ? 'text-white/70 hover:text-white' : 'text-[#2B1E16]/70 hover:text-[#2B1E16]'
+                  }`}
+                >
+                  Log in
+                </Link>
+                <Link to="/register">
+                  <motion.button
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                    className={`px-5 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+                      isDarkMode
+                        ? 'bg-[#00FFFF] text-[#121212] hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]'
+                        : 'bg-[#9DC183] text-white hover:bg-[#85a96f] hover:shadow-[0_4px_20px_rgba(157,193,131,0.4)]'
+                    }`}
+                  >
+                    Get Started
+                  </motion.button>
+                </Link>
+              </div>
+            )}
           </div>
 
-          {/* Mobile menu overlay */}
-          {mobileOpen && (
-            <div className="fixed inset-0 z-50">
-              <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-              <div className="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-surface border-l border-accent/20 p-6 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
-                      <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                    </div>
-                    <div>
-                      <div className="font-bold">{user?.name || 'Guest'}</div>
-                      <div className="text-xs text-gray-500">Account</div>
-                    </div>
-                  </div>
-                  <button onClick={() => setMobileOpen(false)} className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">
-                    <X className="w-5 h-5 text-gray-700 dark:text-gray-200" />
-                  </button>
-                </div>
-                <div className="flex flex-col space-y-4">
-                  <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-                    <Home className="w-4 h-4" /> Dashboard
-                  </Link>
-                  <Link to="/resume" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-                    <FileText className="w-4 h-4" /> Resume
-                  </Link>
-                  <Link to="/resume-analysis" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-                    <Brain className="w-4 h-4" /> Gap Analysis
-                  </Link>
-                  {isAuthenticated ? (
-                    <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg">Logout</button>
-                  ) : (
-                    <div className="flex flex-col gap-2 mt-4">
-                      <Link to="/login" onClick={() => setMobileOpen(false)} className="py-2">Login</Link>
-                      <Link to="/register" onClick={() => setMobileOpen(false)} className="px-4 py-2 btn-cta rounded-lg">Get Started</Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Mobile hamburger */}
+          <div className="md:hidden flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className={`p-2 rounded-full ${isDarkMode ? 'text-[#00FFFF]' : 'text-[#2B1E16]'}`}
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => setMobileOpen(true)}
+              className={`p-2 rounded-full ${isDarkMode ? 'bg-white/10 text-white' : 'bg-black/8 text-[#2B1E16]'}`}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </motion.nav>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50"
+          >
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              className={`absolute top-0 right-0 w-72 h-full p-6 shadow-2xl ${
+                isDarkMode ? 'bg-[#1a1a1a] border-l border-white/10' : 'bg-white border-l border-black/8'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-8">
+                <span className={`font-bold text-lg ${isDarkMode ? 'text-white' : 'text-[#2B1E16]'}`}>
+                  Menu
+                </span>
+                <button onClick={() => setMobileOpen(false)} className={`p-2 rounded-full ${isDarkMode ? 'bg-white/10' : 'bg-black/8'}`}>
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-4">
+                {isAuthenticated ? (
+                  <>
+                    <MobileNavLink to="/dashboard" dark={isDarkMode} onClick={() => setMobileOpen(false)}><Home className="w-4 h-4" /> Dashboard</MobileNavLink>
+                    <MobileNavLink to="/resume" dark={isDarkMode} onClick={() => setMobileOpen(false)}><FileText className="w-4 h-4" /> Resume</MobileNavLink>
+                    <MobileNavLink to="/resume-analysis" dark={isDarkMode} onClick={() => setMobileOpen(false)}><Brain className="w-4 h-4" /> Gap Analysis</MobileNavLink>
+                    <button
+                      onClick={() => { handleLogout(); setMobileOpen(false); }}
+                      className="mt-4 px-4 py-2.5 rounded-full text-sm font-semibold bg-red-500/80 text-white"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <MobileNavLink to="/login" dark={isDarkMode} onClick={() => setMobileOpen(false)}>Log in</MobileNavLink>
+                    <Link
+                      to="/register"
+                      onClick={() => setMobileOpen(false)}
+                      className={`px-4 py-2.5 rounded-full text-sm font-bold text-center ${
+                        isDarkMode ? 'bg-[#00FFFF] text-[#121212]' : 'bg-[#9DC183] text-white'
+                      }`}
+                    >
+                      Get Started
+                    </Link>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
+
+const NavLink = ({ to, children, dark }) => (
+  <Link
+    to={to}
+    className={`flex items-center gap-1.5 text-sm font-medium transition-colors duration-200 ${
+      dark ? 'text-white/60 hover:text-white' : 'text-[#2B1E16]/60 hover:text-[#2B1E16]'
+    }`}
+  >
+    {children}
+  </Link>
+);
+
+const MobileNavLink = ({ to, children, dark, onClick }) => (
+  <Link
+    to={to}
+    onClick={onClick}
+    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ${
+      dark ? 'text-white/70 hover:text-white hover:bg-white/8' : 'text-[#2B1E16]/70 hover:text-[#2B1E16] hover:bg-black/5'
+    }`}
+  >
+    {children}
+  </Link>
+);
 
 export default Navbar;

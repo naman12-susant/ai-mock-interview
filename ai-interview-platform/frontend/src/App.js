@@ -57,38 +57,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-page text-text transition-colors duration-300">
-      {isInterviewSession ? (
-        <header className="bg-transparent py-4 px-6 absolute top-0 left-0 w-full z-50">
-          <div className="max-w-7xl mx-auto flex items-center justify-start">
-            <div className="flex items-center space-x-3 group">
-              <div className="relative">
-                <div className="w-10 h-10 relative">
-                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                    {/* Main Circle */}
-                    <circle cx="50" cy="50" r="45" fill="#2563EB"/>
-                    {/* Wavy Outer Seal */}
-                    <path d="M 50 20 Q 58 18 61 25 Q 68 23 71 30 Q 78 32 76 40 Q 83 45 78 51 Q 83 58 76 61 Q 78 69 71 70 Q 68 77 61 75 Q 55 82 50 78 Q 45 82 39 75 Q 32 77 29 70 Q 22 69 24 61 Q 17 58 22 51 Q 17 45 24 40 Q 22 32 29 30 Q 32 23 39 25 Q 42 18 50 20 Z" fill="#111827" />
-                    {/* Inner ring space (blue) */}
-                    <circle cx="50" cy="50" r="24" fill="#2563EB" />
-                    {/* Deep dark center */}
-                    <circle cx="50" cy="50" r="20" fill="#111827" />
-                    {/* Inner shine */}
-                    <path d="M 34 38 A 18 18 0 0 1 66 38" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                  </svg>
-                </div>
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-lg font-bold bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 dark:from-blue-400 dark:via-blue-300 dark:to-blue-400 bg-clip-text text-transparent">
-                  TalentForge
-                </span>
-                <span className="text-[9px] text-gray-500 dark:text-gray-400 -mt-1 tracking-wider">WHERE TALENT MEETS INTELLIGENCE</span>
-              </div>
-            </div>
-          </div>
-        </header>
-      ) : (
-        <Navbar />
-      )}
+      {!isInterviewSession && <Navbar />}
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />

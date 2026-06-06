@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700;1,900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,9 +11,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Use CSS variables for theme-aware colors */
@@ -106,6 +106,21 @@ body.dark {
 
 /* Orb helper */
 .orb { background: radial-gradient(circle at center, var(--color-orb) 0%, transparent 60%); opacity: .18; }
+
+/* Headline / display font */
+.font-display { font-family: 'Playfair Display', Georgia, serif; }
+.font-body { font-family: 'DM Sans', sans-serif; }
+
+/* Blob animation for organic shapes */
+@keyframes blob {
+  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; transform: translate(0,0) scale(1); }
+  33% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; transform: translate(10px,-15px) scale(1.05); }
+  66% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; transform: translate(-8px,10px) scale(0.97); }
+}
+.animate-blob { animation: blob 10s ease-in-out infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+.animation-delay-6000 { animation-delay: 6s; }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -206,15 +221,14 @@ code {
 
 /* Neon glow effect for dark mode */
 .neon-glow {
-  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5),
-              0 0 40px rgba(99, 102, 241, 0.3),
-              0 0 60px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 0 20px rgba(157, 193, 131, 0.4),
+              0 0 40px rgba(157, 193, 131, 0.2);
 }
 
 .dark .neon-glow {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.8),
-              0 0 40px rgba(139, 92, 246, 0.5),
-              0 0 60px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.6),
+              0 0 40px rgba(0, 255, 255, 0.35),
+              0 0 60px rgba(0, 255, 255, 0.15);
 }
 
 /* Floating animation */
