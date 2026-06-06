@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LogOut, User, Home, FileText, Moon, Sun, Brain } from 'lucide-react';
+import { LogOut, User, Home, FileText, Moon, Sun, Brain, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -45,7 +46,7 @@ const Navbar = () => {
           </Link>
 
           {/* Navigation Links */}
-          <div className="flex items-center space-x-6">
+          <div className="hidden md:flex items-center space-x-6">
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
@@ -115,6 +116,55 @@ const Navbar = () => {
               </>
             )}
           </div>
+
+          {/* Mobile: hamburger */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setMobileOpen(true)} className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">
+              <Menu className="w-6 h-6 text-gray-700 dark:text-gray-200" />
+            </button>
+          </div>
+
+          {/* Mobile menu overlay */}
+          {mobileOpen && (
+            <div className="fixed inset-0 z-50">
+              <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+              <div className="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-white dark:bg-gray-900 p-6 shadow-xl">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+                    </div>
+                    <div>
+                      <div className="font-bold">{user?.name || 'Guest'}</div>
+                      <div className="text-xs text-gray-500">Account</div>
+                    </div>
+                  </div>
+                  <button onClick={() => setMobileOpen(false)} className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">
+                    <X className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+                  </button>
+                </div>
+                <div className="flex flex-col space-y-4">
+                  <Link to="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
+                    <Home className="w-4 h-4" /> Dashboard
+                  </Link>
+                  <Link to="/resume" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
+                    <FileText className="w-4 h-4" /> Resume
+                  </Link>
+                  <Link to="/resume-analysis" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
+                    <Brain className="w-4 h-4" /> Gap Analysis
+                  </Link>
+                  {isAuthenticated ? (
+                    <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg">Logout</button>
+                  ) : (
+                    <div className="flex flex-col gap-2 mt-4">
+                      <Link to="/login" onClick={() => setMobileOpen(false)} className="py-2">Login</Link>
+                      <Link to="/register" onClick={() => setMobileOpen(false)} className="px-4 py-2 bg-primary-600 text-white rounded-lg">Get Started</Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </nav>

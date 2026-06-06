@@ -108,13 +108,13 @@ const LandingPage = () => {
           <div className="absolute inset-0 bg-white" />
           <div ref={lightBlobRef} className="absolute inset-0 pointer-events-none transition-all duration-300" />
           <motion.div animate={{ opacity:[0.5,0.75,0.5] }} transition={{ duration:6, repeat:Infinity }}
-            className="absolute top-0 bottom-0 -left-32 w-72 pointer-events-none"
+            className="absolute top-0 bottom-0 -left-32 w-72 pointer-events-none hidden sm:block"
             style={{ background:'linear-gradient(to right, rgba(134,239,172,0.35) 0%, transparent 100%)' }} />
           <motion.div animate={{ opacity:[0.4,0.65,0.4] }} transition={{ duration:7, repeat:Infinity, delay:1 }}
-            className="absolute top-0 bottom-0 -right-32 w-72 pointer-events-none"
+            className="absolute top-0 bottom-0 -right-32 w-72 pointer-events-none hidden sm:block"
             style={{ background:'linear-gradient(to left, rgba(134,239,172,0.3) 0%, transparent 100%)' }} />
           <motion.div animate={{ opacity:[0.3,0.55,0.3] }} transition={{ duration:8, repeat:Infinity, delay:2 }}
-            className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none"
+            className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none hidden sm:block"
             style={{ background:'radial-gradient(circle at bottom right, rgba(167,243,208,0.4) 0%, transparent 65%)' }} />
         </div>
 
@@ -124,9 +124,9 @@ const LandingPage = () => {
           <div className="absolute inset-0 opacity-[0.07]"
             style={{ backgroundImage:'linear-gradient(rgba(99,102,241,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.5) 1px,transparent 1px)', backgroundSize:'60px 60px' }} />
           <motion.div animate={{ scale:[1,1.3,1], opacity:[0.25,0.5,0.25] }} transition={{ duration:5, repeat:Infinity }}
-            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/30 rounded-full blur-3xl" />
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/30 rounded-full blur-3xl hidden md:block" />
           <motion.div animate={{ scale:[1,1.4,1], opacity:[0.2,0.45,0.2] }} transition={{ duration:6, repeat:Infinity, delay:1.5 }}
-            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-3xl" />
+            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-3xl hidden md:block" />
           {PARTICLES.map((p, i) => <Particle key={i} style={p} />)}
         </div>
 
@@ -191,9 +191,9 @@ const LandingPage = () => {
             style={{ background:'linear-gradient(to left, rgba(134,239,172,0.25) 0%, transparent 100%)' }} />
         </div>
         <motion.div animate={{ scale:[1,1.2,1], opacity:[0.3,0.5,0.3] }} transition={{ duration:8, repeat:Infinity }}
-          className="absolute top-0 right-0 w-96 h-96 hidden dark:block bg-blue-900/20 rounded-full blur-3xl pointer-events-none" />
+          className="absolute top-0 right-0 w-96 h-96 hidden sm:dark:block bg-blue-900/20 rounded-full blur-3xl pointer-events-none" />
         <motion.div animate={{ scale:[1,1.3,1], opacity:[0.2,0.4,0.2] }} transition={{ duration:10, repeat:Infinity, delay:2 }}
-          className="absolute bottom-0 left-0 w-96 h-96 hidden dark:block bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
+          className="absolute bottom-0 left-0 w-96 h-96 hidden sm:dark:block bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
@@ -252,9 +252,9 @@ const LandingPage = () => {
       <section className="relative py-28 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 dark:from-blue-900 dark:via-purple-900 dark:to-indigo-900" />
         <motion.div animate={{ scale:[1,1.3,1], rotate:[0,90,0] }} transition={{ duration:20, repeat:Infinity }}
-          className="absolute -top-20 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          className="absolute -top-20 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl hidden sm:block" />
         <motion.div animate={{ scale:[1,1.4,1], rotate:[0,-90,0] }} transition={{ duration:25, repeat:Infinity }}
-          className="absolute -bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          className="absolute -bottom-20 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl hidden sm:block" />
         <div className="relative z-10 max-w-3xl mx-auto px-4 text-center text-white">
           <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}>
             <motion.h2 className="text-5xl md:text-6xl font-black mb-5" whileHover={{ scale:1.03 }}>

@@ -326,7 +326,7 @@ const InterviewSession = () => {
           scale: [1, 1.2, 1]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-100/30 to-emerald-100/30 dark:from-blue-500/20 dark:to-purple-500/20 rounded-full blur-3xl"
+        className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-100/30 to-emerald-100/30 dark:from-blue-500/20 dark:to-purple-500/20 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
       <motion.div
         animate={{ 
@@ -335,7 +335,7 @@ const InterviewSession = () => {
           scale: [1, 1.3, 1]
         }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-yellow-100/30 to-amber-100/30 dark:from-pink-500/20 dark:to-orange-500/20 rounded-full blur-3xl"
+        className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-yellow-100/30 to-amber-100/30 dark:from-pink-500/20 dark:to-orange-500/20 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">

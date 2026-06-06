@@ -97,13 +97,13 @@ const Dashboard = () => {
       {/* ── 3D floating orbs ── */}
       <motion.div animate={{ y:[0,-30,0], rotate:[0,180,360], scale:[1,1.15,1] }}
         transition={{ duration:18, repeat:Infinity, ease:'easeInOut' }}
-        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-green-200/25 to-emerald-200/25 dark:from-blue-500/15 dark:to-purple-500/15 rounded-full blur-3xl pointer-events-none" />
+        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-green-200/25 to-emerald-200/25 dark:from-blue-500/15 dark:to-purple-500/15 rounded-full blur-3xl pointer-events-none hidden sm:block" />
       <motion.div animate={{ y:[0,30,0], rotate:[360,180,0], scale:[1,1.2,1] }}
         transition={{ duration:22, repeat:Infinity, ease:'easeInOut' }}
-        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-yellow-200/20 to-amber-200/20 dark:from-pink-500/10 dark:to-orange-500/10 rounded-full blur-3xl pointer-events-none" />
+        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-yellow-200/20 to-amber-200/20 dark:from-pink-500/10 dark:to-orange-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
       <motion.div animate={{ x:[0,40,0], y:[0,-20,0], scale:[1,1.1,1] }}
         transition={{ duration:15, repeat:Infinity, ease:'easeInOut', delay:3 }}
-        className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br from-blue-100/15 to-indigo-100/15 dark:from-cyan-500/10 dark:to-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+        className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br from-blue-100/15 to-indigo-100/15 dark:from-cyan-500/10 dark:to-teal-500/10 rounded-full blur-3xl pointer-events-none hidden md:block" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 

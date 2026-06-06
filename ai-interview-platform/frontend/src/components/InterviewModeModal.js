@@ -9,8 +9,8 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
       <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl p-8 w-full max-w-3xl shadow-2xl relative overflow-hidden transition-all duration-300 transform scale-100">
         
         {/* Decorative Glow */}
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-purple-500/20 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-blue-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
 
         {/* Close Button */}
         <button

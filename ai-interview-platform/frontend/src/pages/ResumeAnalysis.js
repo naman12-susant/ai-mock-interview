@@ -864,10 +864,10 @@ const ResumeAnalysis = () => {
       {/* Background orbs */}
       <motion.div animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
         transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-blue-100/20 to-purple-100/20 dark:from-blue-500/10 dark:to-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-blue-100/20 to-purple-100/20 dark:from-blue-500/10 dark:to-purple-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
       <motion.div animate={{ y: [0, 30, 0], rotate: [360, 180, 0] }}
         transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-green-100/20 to-emerald-100/20 dark:from-green-500/10 dark:to-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-green-100/20 to-emerald-100/20 dark:from-green-500/10 dark:to-emerald-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
 

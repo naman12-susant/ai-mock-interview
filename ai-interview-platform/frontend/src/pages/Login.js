@@ -39,12 +39,12 @@ const Login = () => {
       <motion.div
         animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
         transition={{ duration: 20, repeat: Infinity }}
-        className="absolute top-10 right-10 w-64 h-64 bg-green-50/10 dark:bg-blue-500/20 rounded-full blur-3xl"
+        className="absolute top-10 right-10 w-64 h-64 bg-green-50/10 dark:bg-blue-500/20 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
       <motion.div
         animate={{ y: [0, 30, 0], rotate: [360, 180, 0] }}
         transition={{ duration: 25, repeat: Infinity }}
-        className="absolute bottom-10 left-10 w-80 h-80 bg-yellow-50/10 dark:bg-purple-500/20 rounded-full blur-3xl"
+        className="absolute bottom-10 left-10 w-80 h-80 bg-yellow-50/10 dark:bg-purple-500/20 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
 
       <motion.div 
