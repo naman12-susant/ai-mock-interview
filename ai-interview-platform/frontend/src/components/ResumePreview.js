@@ -3,48 +3,52 @@ import { CheckCircle, Edit2, Code2, Mail } from 'lucide-react';
 
 const ResumePreview = ({ data, onEdit }) => {
   return (
-    <div className="w-full bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-8">
+    <div className="w-full card-surface rounded-xl p-8 border"
+      style={{ borderColor: 'var(--color-primary-300)' }}>
       {/* Header with checkmark */}
       <div className="flex items-center space-x-3 mb-6">
-        <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0" />
+        <CheckCircle className="w-8 h-8 flex-shrink-0" style={{ color: 'var(--color-primary-500)' }} />
         <div>
-          <h3 className="text-xl font-bold text-green-900">Resume Detected ✓</h3>
-          <p className="text-sm text-green-700">
+          <h3 className="text-xl font-bold text-text">Resume Detected ✓</h3>
+          <p className="text-sm" style={{ color: 'var(--color-primary-600)' }}>
             Confidence: {data.confidence}%
           </p>
         </div>
       </div>
 
       {/* Separator */}
-      <div className="border-t-2 border-green-200 my-4"></div>
+      <div className="my-4" style={{ borderTop: '2px solid var(--color-primary-200)' }}></div>
 
       {/* Preview Content */}
       <div className="space-y-4 mb-6">
         {/* Name */}
         <div>
-          <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-1">
+          <p className="text-xs font-semibold uppercase tracking-wide mb-1"
+            style={{ color: 'var(--color-primary-600)' }}>
             Name
           </p>
-          <p className="text-lg font-semibold text-gray-900">{data.name}</p>
+          <p className="text-lg font-semibold text-text">{data.name}</p>
         </div>
 
         {/* Email */}
         <div>
           <div className="flex items-center space-x-2 mb-1">
-            <Mail className="w-4 h-4 text-green-600" />
-            <p className="text-xs font-semibold text-green-700 uppercase tracking-wide">
+            <Mail className="w-4 h-4" style={{ color: 'var(--color-primary-500)' }} />
+            <p className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: 'var(--color-primary-600)' }}>
               Email
             </p>
           </div>
-          <p className="text-sm text-gray-700 font-mono">{data.email}</p>
+          <p className="text-sm text-text/70 font-mono">{data.email}</p>
         </div>
 
         {/* Skills */}
         {data.skills && data.skills.length > 0 && (
           <div>
             <div className="flex items-center space-x-2 mb-2">
-              <Code2 className="w-4 h-4 text-green-600" />
-              <p className="text-xs font-semibold text-green-700 uppercase tracking-wide">
+              <Code2 className="w-4 h-4" style={{ color: 'var(--color-primary-500)' }} />
+              <p className="text-xs font-semibold uppercase tracking-wide"
+                style={{ color: 'var(--color-primary-600)' }}>
                 Detected Skills
               </p>
             </div>
@@ -52,7 +56,11 @@ const ResumePreview = ({ data, onEdit }) => {
               {data.skills.map((skill, index) => (
                 <span
                   key={index}
-                  className="inline-block px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full"
+                  className="inline-block px-3 py-1 text-sm font-medium rounded-full"
+                  style={{
+                    background: 'var(--color-primary-100)',
+                    color: 'var(--color-primary-700)'
+                  }}
                 >
                   {skill}
                 </span>
@@ -64,11 +72,13 @@ const ResumePreview = ({ data, onEdit }) => {
         {/* Preview Text */}
         {data.previewText && (
           <div>
-            <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2"
+              style={{ color: 'var(--color-primary-600)' }}>
               Preview
             </p>
-            <div className="bg-white border border-green-200 rounded-lg p-4 max-h-48 overflow-y-auto">
-              <p className="text-sm text-gray-700 whitespace-pre-wrap font-mono">
+            <div className="rounded-lg p-4 max-h-48 overflow-y-auto border card-surface"
+              style={{ borderColor: 'var(--color-primary-200)' }}>
+              <p className="text-sm text-text/80 whitespace-pre-wrap font-mono">
                 {data.previewText}
               </p>
             </div>
@@ -77,19 +87,24 @@ const ResumePreview = ({ data, onEdit }) => {
       </div>
 
       {/* Separator */}
-      <div className="border-t-2 border-green-200 my-4"></div>
+      <div className="my-4" style={{ borderTop: '2px solid var(--color-primary-200)' }}></div>
 
       {/* Action Buttons */}
       <div className="flex gap-3">
         <button
           onClick={onEdit}
-          className="flex-1 py-3 px-4 bg-white border-2 border-green-300 text-green-700 font-semibold rounded-lg hover:bg-green-50 transition flex items-center justify-center space-x-2"
+          className="flex-1 py-3 px-4 font-semibold rounded-lg hover:opacity-80 transition flex items-center justify-center space-x-2 border-2"
+          style={{
+            borderColor: 'var(--color-primary-400)',
+            color: 'var(--color-primary-600)',
+            background: 'transparent'
+          }}
         >
           <Edit2 className="w-5 h-5" />
           <span>Upload Different Resume</span>
         </button>
         <button
-          className="flex-1 py-3 px-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+          className="flex-1 py-3 px-4 font-semibold rounded-lg transition btn-brand opacity-60 cursor-not-allowed"
           disabled
         >
           Continuing Analysis...
@@ -97,8 +112,13 @@ const ResumePreview = ({ data, onEdit }) => {
       </div>
 
       {/* Info Message */}
-      <div className="mt-4 p-4 bg-green-100 rounded-lg border border-green-300">
-        <p className="text-sm text-green-800">
+      <div className="mt-4 p-4 rounded-lg border"
+        style={{
+          background: 'var(--color-primary-50)',
+          borderColor: 'var(--color-primary-200)',
+          color: 'var(--color-primary-700)'
+        }}>
+        <p className="text-sm">
           ℹ️ We've successfully read your resume. Your resume is now being analyzed for gaps, skills, and optimization opportunities.
         </p>
       </div>

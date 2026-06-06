@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-gray-900 shadow-md sticky top-0 z-50 transition-colors duration-300">
+    <nav className="bg-surface border-b border-accent/25 shadow-md sticky top-0 z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -50,7 +50,7 @@ const Navbar = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-300"
+              className="p-2 rounded-lg bg-page hover:bg-accent/40 border border-accent/30 transition-all duration-300"
               aria-label="Toggle dark mode"
             >
               {isDarkMode ? (
@@ -123,7 +123,7 @@ const Navbar = () => {
           {mobileOpen && (
             <div className="fixed inset-0 z-50">
               <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
-              <div className="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-white dark:bg-gray-900 p-6 shadow-xl">
+              <div className="absolute top-0 right-0 w-3/4 max-w-xs h-full bg-surface border-l border-accent/20 p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center">

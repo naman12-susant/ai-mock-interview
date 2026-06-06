@@ -6,28 +6,29 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-      <div className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-3xl p-8 w-full max-w-3xl shadow-2xl relative overflow-hidden transition-all duration-300 transform scale-100">
+      <div className="card-surface border border-accent/20 rounded-3xl p-8 w-full max-w-3xl shadow-2xl relative overflow-hidden transition-all duration-300 transform scale-100">
         
         {/* Decorative Glow */}
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-primary-400/20 to-purple-500/20 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-emerald-400/10 to-blue-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-3xl pointer-events-none hidden sm:block" style={{ background: 'radial-gradient(circle at center, var(--color-primary-400) 0%, transparent 60%)', opacity: 0.18 }}></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full blur-3xl pointer-events-none hidden sm:block" style={{ background: 'radial-gradient(circle at center, var(--color-accent) 0%, transparent 60%)', opacity: 0.12 }}></div>
 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          className="absolute top-6 right-6 p-2 rounded-full text-text/50 hover:text-text hover:bg-page transition"
         >
           <X className="w-6 h-6" />
         </button>
 
         <div className="text-center mb-8">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-black rounded-full uppercase tracking-wider mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-black rounded-full uppercase tracking-wider mb-3"
+            style={{ background: 'var(--color-primary-100)', color: 'var(--color-primary-600)' }}>
             <Zap className="w-3.5 h-3.5 fill-current" /> Custom Experience
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white leading-tight">
+          <h2 className="text-3xl sm:text-4xl font-black text-text leading-tight">
             Choose Your Interview Experience
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-lg mx-auto">
+          <p className="text-text/60 mt-2 max-w-lg mx-auto">
             Select how you would like to interact with AIRA, your personal interview assistant. You can practice sequentially or simulate a live session.
           </p>
         </div>
@@ -48,10 +49,10 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
                   Recommended for Beginners
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h3 className="text-xl font-bold text-text group-hover:opacity-80 transition-opacity">
                 Question-wise Training
               </h3>
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p className="mt-3 text-sm text-text/60 leading-relaxed">
                 Practice interview questions one-by-one. Take your time, submit voice/text answers, and receive detailed AI feedback instantly after each reply.
               </p>
             </div>
@@ -77,10 +78,10 @@ const InterviewModeModal = ({ isOpen, onClose, onSelectPractice, onSelectLive })
                   Real Interview Simulation
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+              <h3 className="text-xl font-bold text-text group-hover:opacity-80 transition-opacity">
                 Conversational AIRA Interviewer
               </h3>
-              <p className="mt-3 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p className="mt-3 text-sm text-text/60 leading-relaxed">
                 Experience a real-time, interactive virtual voice interview with AIRA. She speaks, listens hands-free, and asks intelligent conversational follow-up questions.
               </p>
             </div>

@@ -55,6 +55,10 @@ body.dark {
   --color-primary-300: #006060;
   --color-primary-400: #008a8a;
   --color-primary-500: #00FFFF; /* Neon Cyan */
+  --color-primary-600: #00e5e5;
+  --color-primary-700: #00cccc;
+  --color-primary-800: #00b2b2;
+  --color-primary-900: #009999;
   --color-accent: #0047AB; /* Cobalt */
   --color-cta: #00FFFF; /* Neon Cyan for CTAs in dark */
   --color-text: #E5E4E2; /* Platinum Gray */

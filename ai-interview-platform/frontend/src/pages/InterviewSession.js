@@ -317,7 +317,7 @@ const InterviewSession = () => {
   const progress = ((currentQuestionIndex + 1) / interview.questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-8 transition-colors duration-300 relative overflow-hidden">
+    <div className="min-h-screen bg-page text-text py-8 transition-colors duration-300 relative overflow-hidden">
       {/* Animated Background Elements */}
       <motion.div
         animate={{ 
@@ -326,7 +326,7 @@ const InterviewSession = () => {
           scale: [1, 1.2, 1]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-green-100/30 to-emerald-100/30 dark:from-blue-500/20 dark:to-purple-500/20 rounded-full blur-3xl hidden sm:block"
+        className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-brand/20 to-brand/5 dark:from-accent/20 dark:to-accent/5 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
       <motion.div
         animate={{ 
@@ -335,7 +335,7 @@ const InterviewSession = () => {
           scale: [1, 1.3, 1]
         }}
         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-yellow-100/30 to-amber-100/30 dark:from-pink-500/20 dark:to-orange-500/20 rounded-full blur-3xl hidden sm:block"
+        className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-accent/20 to-accent/5 dark:from-brand/20 dark:to-brand/5 rounded-full blur-3xl hidden sm:block"
       ></motion.div>
 
       <div className="max-w-4xl mx-auto px-4 relative z-10">
@@ -348,22 +348,22 @@ const InterviewSession = () => {
         >
           <div className="flex items-center justify-between mb-4">
             <motion.h1 
-              className="text-3xl font-black text-gray-900 dark:text-white"
+              className="text-3xl font-black text-text"
               whileHover={{ scale: 1.02, x: 5 }}
             >
               {interview.role} Interview
             </motion.h1>
             <motion.div 
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-900 rounded-xl shadow-lg border-2 border-gray-100 dark:border-gray-800"
+              className="flex items-center gap-2 px-4 py-2 bg-surface rounded-xl shadow-lg border-2 border-accent/25 dark:border-gray-800"
               whileHover={{ scale: 1.05, y: -2 }}
             >
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
               >
-                <Clock className="w-5 h-5 text-green-600 dark:text-blue-400" />
+                <Clock className="w-5 h-5 text-brand" />
               </motion.div>
-              <span className="font-bold text-gray-900 dark:text-white">
+              <span className="font-bold text-text">
                 Question {currentQuestionIndex + 1} of {interview.questions.length}
               </span>
             </motion.div>
@@ -375,7 +375,7 @@ const InterviewSession = () => {
             whileHover={{ scale: 1.02 }}
           >
             <motion.div
-              className="bg-gradient-to-r from-green-500 to-emerald-600 dark:from-blue-500 dark:to-purple-600 h-3 rounded-full relative overflow-hidden"
+              className="bg-gradient-to-r from-brand to-accent h-3 rounded-full relative overflow-hidden"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
@@ -404,12 +404,12 @@ const InterviewSession = () => {
               {/* Question Card */}
               <TiltCard>
               <motion.div 
-                className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border-2 border-gray-100 dark:border-gray-800 relative overflow-hidden"
+                className="bg-surface rounded-2xl shadow-2xl p-8 border-2 border-accent/20 dark:border-gray-800 relative overflow-hidden"
                 whileHover={{ y: -4 }}
               >
                 {/* Animated Background */}
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5 dark:from-blue-500/10 dark:to-purple-500/10"
+                  className="absolute inset-0 bg-gradient-to-br from-brand/5 to-brand/10 dark:from-brand/10 dark:to-brand/20"
                   animate={{ 
                     backgroundPosition: ['0% 0%', '100% 100%'],
                   }}
@@ -418,7 +418,7 @@ const InterviewSession = () => {
 
                 <div className="relative flex items-start gap-4 mb-6">
                   <motion.div 
-                    className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-blue-500 dark:to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
+                    className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-brand to-accent rounded-xl flex items-center justify-center shadow-lg"
                     whileHover={{ rotate: 360, scale: 1.2 }}
                     transition={{ duration: 0.6 }}
                     animate={{ 
@@ -451,7 +451,7 @@ const InterviewSession = () => {
                       </motion.span>
                     </div>
                     <motion.h2 
-                      className="text-2xl font-black text-gray-900 dark:text-white leading-relaxed"
+                      className="text-2xl font-black text-text leading-relaxed"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
@@ -464,7 +464,7 @@ const InterviewSession = () => {
                 {/* Answer Input */}
                 <div className="relative space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-bold text-text/75">
                       Your Answer
                     </label>
                     {isRecording && (
@@ -504,7 +504,7 @@ const InterviewSession = () => {
                     value={answer}
                     onChange={(e) => setAnswer(e.target.value)}
                     placeholder="Type your answer here or use voice input..."
-                    className="w-full h-48 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-green-500 dark:focus:ring-blue-500 focus:border-transparent resize-none transition-all"
+                    className="w-full h-48 px-4 py-3 border-2 border-accent/20 dark:border-gray-800 bg-page text-text rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent resize-none transition-all outline-none"
                     disabled={submitting}
                     whileFocus={{ scale: 1.01 }}
                   />
@@ -543,10 +543,10 @@ const InterviewSession = () => {
                   <div className="flex items-center justify-between flex-wrap gap-4">
                     <motion.button
                       onClick={toggleRecording}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg ${
+                      className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all shadow-lg text-white ${
                         isRecording
-                          ? 'bg-red-600 text-white hover:bg-red-700'
-                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                          ? 'bg-cta hover:opacity-90'
+                          : 'bg-brand dark:text-gray-900 hover:opacity-90'
                       }`}
                       disabled={submitting}
                       whileHover={{ scale: 1.05, y: -2 }}
@@ -568,7 +568,7 @@ const InterviewSession = () => {
                     <motion.button
                       onClick={handleSubmitAnswer}
                       disabled={submitting || !answer.trim()}
-                      className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-blue-500 dark:to-purple-600 text-white rounded-xl font-bold hover:from-green-600 hover:to-emerald-700 dark:hover:from-blue-600 dark:hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
+                      className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-brand to-accent text-white dark:text-gray-900 rounded-xl font-bold hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -595,11 +595,11 @@ const InterviewSession = () => {
                 initial={{ opacity: 0, scale: 0.8, rotateX: -30 }}
                 animate={{ opacity: 1, scale: 1, rotateX: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-8 border-2 border-gray-100 dark:border-gray-800 relative overflow-hidden"
+              className="bg-surface rounded-2xl shadow-2xl p-8 border-2 border-accent/20 dark:border-gray-800 relative overflow-hidden"
             >
               {/* Animated Background */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 dark:from-green-500/20 dark:to-emerald-500/20"
+                className="absolute inset-0 bg-gradient-to-br from-brand/10 to-brand/5 dark:from-brand/20 dark:to-brand/5"
                 animate={{ 
                   scale: [1, 1.1, 1],
                   opacity: [0.5, 0.8, 0.5]
@@ -616,7 +616,7 @@ const InterviewSession = () => {
                   <CheckCircle className="w-20 h-20 text-green-500 dark:text-green-400 mx-auto mb-4" />
                 </motion.div>
                 <motion.h2 
-                  className="text-3xl font-black text-gray-900 dark:text-white mb-3"
+                  className="text-3xl font-black text-text mb-3"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
@@ -628,7 +628,7 @@ const InterviewSession = () => {
                   whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
                   transition={{ duration: 0.5 }}
                 >
-                  <p className="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                  <p className="text-5xl font-black bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
                     {evaluation.score}/10
                   </p>
                 </motion.div>

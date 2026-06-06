@@ -52,8 +52,8 @@ const VoiceRecorder = ({ onTranscriptChange, onRecordingComplete }) => {
 
   if (!isSupported) {
     return (
-      <div className="text-center p-6 bg-red-50 rounded-lg">
-        <p className="text-red-600">
+      <div className="text-center p-6 rounded-lg" style={{ background: 'var(--color-surface)', border: '1px solid var(--color-cta)' }}>
+        <p style={{ color: 'var(--color-cta)' }}>
           Speech recognition is not supported in your browser. Please use Chrome or Edge.
         </p>
       </div>
@@ -69,7 +69,7 @@ const VoiceRecorder = ({ onTranscriptChange, onRecordingComplete }) => {
           className={`w-20 h-20 rounded-full flex items-center justify-center transition-all transform hover:scale-110 ${
             isListening
               ? 'bg-red-500 hover:bg-red-600 animate-pulse'
-              : 'bg-primary-600 hover:bg-primary-700'
+              : 'btn-brand'
           }`}
         >
           {isListening ? (
@@ -82,22 +82,22 @@ const VoiceRecorder = ({ onTranscriptChange, onRecordingComplete }) => {
         {isListening && (
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm font-medium text-text">
               Recording: {formatTime(recordingTime)}
             </span>
           </div>
         )}
 
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-text/60">
           {isListening ? 'Click to stop recording' : 'Click to start recording'}
         </p>
       </div>
 
       {/* Transcript Display */}
       {transcript && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-sm font-medium text-gray-700 mb-2">Your Answer:</p>
-          <p className="text-gray-900">{transcript}</p>
+        <div className="mt-6 p-4 rounded-lg border card-surface" style={{ borderColor: 'var(--color-primary-300)' }}>
+          <p className="text-sm font-medium text-text/70 mb-2">Your Answer:</p>
+          <p className="text-text">{transcript}</p>
         </div>
       )}
     </div>

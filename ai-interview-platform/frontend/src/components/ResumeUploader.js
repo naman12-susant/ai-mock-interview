@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, X, Loader, AlertCircle, CheckCircle } from 'lucide-react';
+import { Upload, FileText, X, Loader, AlertCircle } from 'lucide-react';
 import { resumeAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import ResumePreview from './ResumePreview';
@@ -104,26 +104,28 @@ const ResumeUploader = ({ onUploadSuccess }) => {
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all ${
             isDragActive
-              ? 'border-primary-500 bg-primary-50'
-              : 'border-gray-300 hover:border-primary-400 hover:bg-gray-50'
+              ? 'border-primary-500'
+              : 'border-primary-300 hover:border-primary-500'
           }`}
+          style={isDragActive ? { background: 'var(--color-primary-50)' } : { background: 'transparent' }}
         >
           <input {...getInputProps()} />
-          <Upload className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-          <p className="text-lg font-medium text-gray-700 mb-2">
+          <Upload className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--color-primary-400)' }} />
+          <p className="text-lg font-medium text-text mb-2">
             {isDragActive ? 'Drop your resume here' : 'Drag & drop your resume'}
           </p>
-          <p className="text-sm text-gray-500 mb-4">or click to browse</p>
-          <p className="text-xs text-gray-400">PDF, DOC, DOCX, JPG, or PNG • Max 5MB</p>
+          <p className="text-sm text-text/60 mb-4">or click to browse</p>
+          <p className="text-xs text-text/40">PDF, DOC, DOCX, JPG, or PNG • Max 5MB</p>
         </div>
       ) : (
-        <div className="border-2 border-primary-500 rounded-xl p-6 bg-primary-50">
+        <div className="border-2 rounded-xl p-6 card-surface"
+          style={{ borderColor: 'var(--color-primary-400)' }}>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <FileText className="w-10 h-10 text-primary-600" />
+              <FileText className="w-10 h-10" style={{ color: 'var(--color-primary-500)' }} />
               <div>
-                <p className="font-medium text-gray-900">{file.name}</p>
-                <p className="text-sm text-gray-500">
+                <p className="font-medium text-text">{file.name}</p>
+                <p className="text-sm text-text/60">
                   {(file.size / 1024 / 1024).toFixed(2)} MB
                 </p>
               </div>
@@ -147,7 +149,7 @@ const ResumeUploader = ({ onUploadSuccess }) => {
           <button
             onClick={handleUpload}
             disabled={uploading}
-            className="w-full py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            className="w-full py-3 btn-brand rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold"
           >
             {uploading ? (
               <>

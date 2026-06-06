@@ -504,9 +504,9 @@ const LiveAIInterview = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center text-white">
-        <Loader2 className="w-12 h-12 animate-spin text-purple-500 mb-4" />
-        <p className="text-gray-400 font-medium">Initializing AIRA Live Interview Room...</p>
+      <div className="min-h-screen bg-page flex flex-col items-center justify-center text-text">
+        <Loader2 className="w-12 h-12 animate-spin text-brand mb-4" />
+        <p className="opacity-75 font-medium animate-pulse">Initializing AIRA Live Interview Room...</p>
       </div>
     );
   }
@@ -531,63 +531,63 @@ const LiveAIInterview = () => {
 
   if (!hasStarted) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white p-4 relative overflow-hidden">
+      <div className="min-h-screen bg-page flex items-center justify-center text-text p-4 relative overflow-hidden">
         {/* Dynamic Glowing Neons */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-3xl pointer-events-none hidden md:block"></div>
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand/10 rounded-full blur-3xl pointer-events-none hidden md:block"></div>
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="max-w-md w-full bg-gray-900/60 border border-gray-800 rounded-3xl p-8 backdrop-blur-xl relative z-10 shadow-2xl"
+          className="max-w-md w-full bg-surface border border-accent/20 dark:border-gray-800 rounded-3xl p-8 backdrop-blur-xl relative z-10 shadow-2xl"
         >
           {/* Glowing Avatar Placeholder */}
           <div className="flex justify-center mb-6">
             <div className="relative">
-              <div className="absolute inset-0 bg-purple-500/30 rounded-full blur-xl animate-pulse"></div>
-              <div className="w-24 h-24 rounded-full flex items-center justify-center relative border border-purple-400/50 overflow-hidden">
+              <div className="absolute inset-0 bg-brand/35 rounded-full blur-xl animate-pulse"></div>
+              <div className="w-24 h-24 rounded-full flex items-center justify-center relative border border-brand/50 overflow-hidden">
                 <img src={interviewerAvatar} alt="AIRA" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
 
           <div className="text-center mb-8">
-            <span className="inline-flex items-center gap-1.5 bg-purple-900/40 text-purple-300 border border-purple-800 text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest mb-3">
+            <span className="inline-flex items-center gap-1.5 bg-brand/10 text-brand border border-brand/35 text-[10px] px-3 py-1 rounded-full font-black uppercase tracking-widest mb-3">
               <Sparkles className="w-3 h-3 animate-pulse" /> Virtual Lobby
             </span>
             <h1 className="text-3xl font-black tracking-tight mb-2">Connect with AIRA</h1>
-            <p className="text-gray-400 text-sm">
+            <p className="opacity-75 text-sm">
               Your AI Interview Assistant is ready to conduct your live session.
             </p>
           </div>
 
           {/* Session details */}
-          <div className="bg-gray-950/50 border border-gray-800 rounded-2xl p-4 mb-6 space-y-3">
+          <div className="bg-page/50 border border-accent/25 dark:border-gray-800 rounded-2xl p-4 mb-6 space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500 font-medium">Role:</span>
-              <span className="font-bold text-gray-200">{interview.role}</span>
+              <span className="opacity-60 font-medium">Role:</span>
+              <span className="font-bold text-text">{interview.role}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500 font-medium">Style / Difficulty:</span>
-              <span className="font-bold text-cyan-400 capitalize">{interview.difficulty || 'Intermediate'}</span>
+              <span className="opacity-60 font-medium">Style / Difficulty:</span>
+              <span className="font-bold text-brand capitalize">{interview.difficulty || 'Intermediate'}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500 font-medium">Interview Type:</span>
-              <span className="font-bold text-purple-400 capitalize">{interview.type}</span>
+              <span className="opacity-60 font-medium">Interview Type:</span>
+              <span className="font-bold text-accent capitalize">{interview.type}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500 font-medium">Total Questions:</span>
-              <span className="font-bold text-gray-200">{interview.questions.length} Questions</span>
+              <span className="opacity-60 font-medium">Total Questions:</span>
+              <span className="font-bold text-text">{interview.questions.length} Questions</span>
             </div>
           </div>
 
           {/* Audio Setup Instructions */}
-          <div className="border-t border-gray-800/80 pt-5 mb-6">
-            <h3 className="text-xs font-black uppercase tracking-wider text-gray-400 mb-3 flex items-center gap-1.5">
-              <Mic className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> Microphone Check:
+          <div className="border-t border-accent/15 dark:border-gray-800/80 pt-5 mb-6">
+            <h3 className="text-xs font-black uppercase tracking-wider opacity-70 mb-3 flex items-center gap-1.5">
+              <Mic className="w-3.5 h-3.5 text-brand animate-pulse" /> Microphone Check:
             </h3>
-            <ul className="text-xs text-gray-500 space-y-1.5 list-disc pl-4">
+            <ul className="text-xs opacity-75 space-y-1.5 list-disc pl-4">
               <li>Please use a quiet environment for best voice capture.</li>
               <li>Ensure your microphone is enabled and permission is granted.</li>
               <li>Wear headphones to prevent audio feedback or echo.</li>
@@ -597,7 +597,7 @@ const LiveAIInterview = () => {
           {/* Action Button */}
           <button
             onClick={startInterviewSession}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl font-black shadow-lg shadow-purple-500/20 hover:shadow-purple-500/45 transition duration-300 flex items-center justify-center gap-2.5 active:scale-[0.98] text-base"
+            className="w-full py-4 bg-gradient-to-r from-brand to-accent hover:opacity-95 text-white dark:text-gray-900 rounded-2xl font-black shadow-lg shadow-brand/20 transition duration-300 flex items-center justify-center gap-2.5 active:scale-[0.98] text-base"
           >
             <Play className="w-5 h-5 fill-current" />
             <span>Connect & Start Interview</span>
@@ -608,17 +608,17 @@ const LiveAIInterview = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 py-8 px-4 flex flex-col justify-between text-white relative overflow-hidden">
+    <div className="min-h-screen bg-page py-8 px-4 flex flex-col justify-between text-text relative overflow-hidden">
       {/* Dynamic Glowing Neons */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-3xl pointer-events-none hidden md:block"></div>
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand/10 rounded-full blur-3xl pointer-events-none hidden md:block"></div>
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none hidden sm:block"></div>
 
       <div className="max-w-5xl mx-auto w-full flex-grow flex flex-col gap-6 relative z-10">
         
         {/* Top bar info */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-800 pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-accent/25 dark:border-gray-800 pb-4">
           <div>
-            <span className="inline-flex items-center gap-1 bg-purple-900/50 text-purple-300 border border-purple-800 text-xs px-3 py-1 rounded-full font-black uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1 bg-brand/15 text-brand border border-brand/30 text-xs px-3 py-1 rounded-full font-black uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Adaptive AI Interview Experience
             </span>
             <h1 className="text-2xl font-black mt-2 tracking-tight">
@@ -626,9 +626,9 @@ const LiveAIInterview = () => {
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <div className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-2 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
-              <span className="font-bold text-sm text-gray-300">Live Time: {formatTime(timeSpent)}</span>
+            <div className="bg-surface border border-accent/20 dark:border-gray-800 rounded-xl px-4 py-2 flex items-center gap-2 shadow-lg">
+              <span className="w-2.5 h-2.5 rounded-full bg-cta animate-ping"></span>
+              <span className="font-bold text-sm text-text">Live Time: {formatTime(timeSpent)}</span>
             </div>
             <button
               onClick={() => {
@@ -636,9 +636,9 @@ const LiveAIInterview = () => {
                 stopVoiceRecognition();
                 navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-gray-900 border border-gray-800 rounded-xl font-bold text-sm hover:bg-gray-800 text-gray-400 hover:text-white transition flex items-center gap-2"
+              className="px-4 py-2 bg-surface border border-accent/20 dark:border-gray-800 rounded-xl font-bold text-sm hover:opacity-90 transition flex items-center gap-2 shadow-lg"
             >
-              <LogOut className="w-4 h-4" /> Quit Room
+              <LogOut className="w-4 h-4 text-cta" /> Quit Room
             </button>
           </div>
         </div>
@@ -647,7 +647,7 @@ const LiveAIInterview = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow items-stretch">
           
           {/* Left panel: Pulsing AI Avatar (Take 2 columns for premium view) */}
-          <div className="lg:col-span-2 bg-gray-900/50 border border-gray-800/80 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-md">
+          <div className="lg:col-span-2 bg-surface/70 border border-accent/20 dark:border-gray-800/80 rounded-3xl p-8 flex flex-col items-center justify-center relative overflow-hidden backdrop-blur-md">
             
             {/* Visual AI Avatar Wave */}
             <div className="relative w-64 h-64 flex items-center justify-center">
@@ -658,12 +658,12 @@ const LiveAIInterview = () => {
                   <motion.div 
                     animate={{ scale: [1, 2.2, 1], opacity: [0.15, 0, 0.15] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 rounded-full border-2 border-purple-500/30"
+                    className="absolute inset-0 rounded-full border-2 border-brand/30"
                   />
                   <motion.div 
                     animate={{ scale: [1, 1.7, 1], opacity: [0.3, 0, 0.3] }}
                     transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-                    className="absolute inset-4 rounded-full border-2 border-purple-400/40"
+                    className="absolute inset-4 rounded-full border-2 border-brand/40"
                   />
                 </>
               )}
@@ -673,12 +673,12 @@ const LiveAIInterview = () => {
                   <motion.div 
                     animate={{ scale: [1, 1.9, 1], opacity: [0.2, 0, 0.2] }}
                     transition={{ duration: 2.5, repeat: Infinity }}
-                    className="absolute inset-0 rounded-full border-2 border-emerald-500/20"
+                    className="absolute inset-0 rounded-full border-2 border-accent/20"
                   />
                   <motion.div 
                     animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
                     transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                    className="absolute inset-8 rounded-full border-2 border-emerald-400/30"
+                    className="absolute inset-8 rounded-full border-2 border-accent/30"
                   />
                 </>
               )}
@@ -687,34 +687,34 @@ const LiveAIInterview = () => {
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
-                  className="absolute inset-0 rounded-full border-4 border-dashed border-cyan-500/30"
+                  className="absolute inset-0 rounded-full border-4 border-dashed border-brand/35"
                 />
               )}
 
               {/* Glowing Inner Core */}
               <div className={`w-40 h-40 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
-                aiState === 'speaking' || aiState === 'intro' ? 'bg-gradient-to-tr from-purple-600 to-indigo-600 shadow-purple-500/40' :
-                aiState === 'listening' ? 'bg-gradient-to-tr from-emerald-600 to-teal-500 shadow-emerald-500/40 scale-105' :
-                aiState === 'thinking' ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 shadow-cyan-500/40' :
-                'bg-gray-800'
+                aiState === 'speaking' || aiState === 'intro' ? 'bg-gradient-to-tr from-brand to-accent shadow-brand/40' :
+                aiState === 'listening' ? 'bg-gradient-to-tr from-accent to-brand shadow-accent/40 scale-105' :
+                aiState === 'thinking' ? 'bg-gradient-to-tr from-brand to-accent shadow-brand/40' :
+                'bg-page'
               }`}>
-                <div className="w-36 h-36 rounded-full bg-gray-950 flex flex-col items-center justify-center border-4 border-transparent relative overflow-hidden">
+                <div className="w-36 h-36 rounded-full bg-page flex flex-col items-center justify-center border-4 border-transparent relative overflow-hidden">
                   
                   {/* Subtle pulsing background */}
                   <div className={`absolute inset-0 opacity-10 transition-all duration-500 ${
-                    aiState === 'speaking' || aiState === 'intro' ? 'bg-purple-500 animate-pulse' :
-                    aiState === 'listening' ? 'bg-emerald-500 animate-ping' :
+                    aiState === 'speaking' || aiState === 'intro' ? 'bg-brand animate-pulse' :
+                    aiState === 'listening' ? 'bg-accent animate-ping' :
                     'bg-transparent'
                   }`}></div>
 
                   <img src={interviewerAvatar} alt="AIRA" className="w-full h-full object-cover rounded-full" />
                   
                   {/* Subtle translucent status pill overlay */}
-                  <div className="absolute bottom-2 bg-black/60 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
+                  <div className="absolute bottom-2 bg-black/70 backdrop-blur-sm border border-white/10 px-2 py-0.5 rounded-full flex items-center gap-1 z-10">
                     <span className={`w-1.5 h-1.5 rounded-full ${
-                      aiState === 'speaking' || aiState === 'intro' ? 'bg-purple-400 animate-bounce' :
-                      aiState === 'listening' ? 'bg-emerald-400 animate-pulse' :
-                      aiState === 'thinking' ? 'bg-cyan-400 animate-spin' :
+                      aiState === 'speaking' || aiState === 'intro' ? 'bg-brand animate-bounce' :
+                      aiState === 'listening' ? 'bg-accent animate-pulse' :
+                      aiState === 'thinking' ? 'bg-cta animate-spin' :
                       'bg-gray-500'
                     }`} />
                     <span className="text-[8px] font-black tracking-widest text-gray-200 uppercase">
@@ -729,28 +729,28 @@ const LiveAIInterview = () => {
 
             {/* AI Prompts and Subtitles */}
             <div className="mt-8 text-center max-w-xl w-full">
-              <h3 className="text-gray-500 dark:text-gray-400 text-xs font-black uppercase tracking-wider mb-2">
+              <h3 className="opacity-70 text-xs font-black uppercase tracking-wider mb-2">
                 {isFollowUpPhase ? 'AIRA Follow-up Question' : `Topic ${currentQuestionIndex + 1} of ${interview.questions.length}`}
               </h3>
-              <p className="text-xl sm:text-2xl font-bold leading-relaxed text-gray-100 px-4">
+              <p className="text-xl sm:text-2xl font-bold leading-relaxed text-text px-4">
                 "{currentPromptQuestion}"
               </p>
             </div>
 
             {/* Voice controls bar */}
-            <div className="flex items-center justify-center gap-4 mt-8 bg-gray-900 border border-gray-800 rounded-full px-6 py-2">
+            <div className="flex items-center justify-center gap-4 mt-8 bg-surface border border-accent/20 dark:border-gray-800 rounded-full px-6 py-2 shadow-md">
               <button
                 onClick={toggleTtsMute}
                 className={`p-2 rounded-full transition ${
-                  isTtsMuted ? 'text-red-500 hover:text-red-600 bg-red-950/20' : 'text-gray-400 hover:text-white'
+                  isTtsMuted ? 'text-cta hover:opacity-90 bg-cta/15' : 'text-text/70 hover:text-text'
                 }`}
                 title={isTtsMuted ? 'Unmute voice output' : 'Mute voice output'}
               >
                 {isTtsMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
-              <span className="w-px h-6 bg-gray-800"></span>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400">
-                <span className={`w-2 h-2 rounded-full ${aiState === 'listening' ? 'bg-emerald-500 animate-pulse' : 'bg-gray-600'}`}></span>
+              <span className="w-px h-6 bg-accent/30"></span>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-text/80">
+                <span className={`w-2 h-2 rounded-full ${aiState === 'listening' ? 'bg-accent animate-pulse' : 'bg-gray-600'}`}></span>
                 {getStatusMessage()}
               </div>
             </div>
@@ -758,12 +758,12 @@ const LiveAIInterview = () => {
           </div>
 
           {/* Right panel: Response details, visualizer & text-entry */}
-          <div className="bg-gray-900/50 border border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between backdrop-blur-md">
+          <div className="bg-surface/70 border border-accent/20 dark:border-gray-800/80 rounded-3xl p-6 flex flex-col justify-between backdrop-blur-md shadow-lg">
             
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-purple-500" />
+                <h2 className="text-lg font-bold flex items-center gap-2 text-text">
+                  <MessageSquare className="w-5 h-5 text-brand" />
                   Your Response
                 </h2>
                 <div className="flex items-center gap-2">
@@ -771,19 +771,19 @@ const LiveAIInterview = () => {
                     onClick={toggleMicrophone}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase border transition duration-300 ${
                       isRecordingRef.current
-                        ? 'bg-emerald-950/80 border-emerald-500 text-emerald-400 animate-pulse'
-                        : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700'
+                        ? 'bg-accent/10 border-accent text-brand animate-pulse'
+                        : 'bg-surface border-accent/20 text-text/75 hover:opacity-90'
                     }`}
                     title={isRecordingRef.current ? 'Mute/Pause Microphone' : 'Activate Microphone'}
                   >
                     {isRecordingRef.current ? (
                       <>
-                        <Mic className="w-3.5 h-3.5 text-emerald-400" />
+                        <Mic className="w-3.5 h-3.5 text-brand" />
                         <span>Listening</span>
                       </>
                     ) : (
                       <>
-                        <MicOff className="w-3.5 h-3.5 text-gray-500" />
+                        <MicOff className="w-3.5 h-3.5 text-text/60" />
                         <span>Mic Off</span>
                       </>
                     )}
@@ -800,7 +800,7 @@ const LiveAIInterview = () => {
                     setInterimSpeechText(''); // Clear interim speech text on manual typing edit
                   }}
                   placeholder="Your answer will automatically transcribe here as you speak. You can also type directly..."
-                  className="w-full h-72 bg-gray-950 border-2 border-gray-800 hover:border-gray-700 focus:border-purple-600 rounded-2xl p-4 text-sm leading-relaxed text-gray-200 resize-none outline-none transition duration-300"
+                  className="w-full h-72 bg-page border-2 border-accent/20 dark:border-gray-800 focus:border-brand rounded-2xl p-4 text-sm leading-relaxed text-text resize-none outline-none transition duration-300"
                 />
               </div>
 
@@ -814,7 +814,7 @@ const LiveAIInterview = () => {
                         handleSendResponse();
                       }, 150);
                     }}
-                    className="px-4 py-2 bg-purple-900/40 border border-purple-700/60 rounded-xl text-xs font-bold text-purple-200 hover:bg-purple-800/50 transition active:scale-95"
+                    className="px-4 py-2 bg-brand/10 border border-brand/35 rounded-xl text-xs font-bold text-brand hover:bg-brand/20 transition active:scale-95"
                   >
                     👍 Yes, I am ready!
                   </button>
@@ -822,7 +822,7 @@ const LiveAIInterview = () => {
                     onClick={() => {
                       setUserAnswerText("Not ready yet, give me a few seconds.");
                     }}
-                    className="px-4 py-2 bg-gray-900/40 border border-gray-800 rounded-xl text-xs font-bold text-gray-400 hover:bg-gray-800/50 transition active:scale-95"
+                    className="px-4 py-2 bg-surface border border-accent/20 rounded-xl text-xs font-bold text-text/70 hover:bg-accent/25 transition active:scale-95"
                   >
                     ⏳ Not ready yet
                   </button>
@@ -831,24 +831,24 @@ const LiveAIInterview = () => {
 
               {/* Audio visual waves when listening */}
               {isRecordingRef.current && (
-                <div className="bg-emerald-950/20 border border-emerald-900/40 rounded-xl p-3 flex items-center justify-center gap-3">
+                <div className="bg-accent/15 border border-accent/30 rounded-xl p-3 flex items-center justify-center gap-3">
                   <div className="flex items-end gap-1 h-6">
-                    <motion.div animate={{ scaleY: [1, 2.5, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.1 }} className="w-1 bg-emerald-500 rounded" style={{ height: '8px' }} />
-                    <motion.div animate={{ scaleY: [1, 3.5, 1] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }} className="w-1 bg-emerald-400 rounded" style={{ height: '10px' }} />
-                    <motion.div animate={{ scaleY: [1, 2.0, 1] }} transition={{ duration: 0.7, repeat: Infinity, delay: 0.3 }} className="w-1 bg-emerald-500 rounded" style={{ height: '6px' }} />
-                    <motion.div animate={{ scaleY: [1, 3.0, 1] }} transition={{ duration: 0.4, repeat: Infinity, delay: 0.4 }} className="w-1 bg-emerald-400 rounded" style={{ height: '9px' }} />
-                    <motion.div animate={{ scaleY: [1, 1.8, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.5 }} className="w-1 bg-emerald-500 rounded" style={{ height: '7px' }} />
+                    <motion.div animate={{ scaleY: [1, 2.5, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.1 }} className="w-1 bg-brand rounded" style={{ height: '8px' }} />
+                    <motion.div animate={{ scaleY: [1, 3.5, 1] }} transition={{ duration: 0.5, repeat: Infinity, delay: 0.2 }} className="w-1 bg-accent rounded" style={{ height: '10px' }} />
+                    <motion.div animate={{ scaleY: [1, 2.0, 1] }} transition={{ duration: 0.7, repeat: Infinity, delay: 0.3 }} className="w-1 bg-brand rounded" style={{ height: '6px' }} />
+                    <motion.div animate={{ scaleY: [1, 3.0, 1] }} transition={{ duration: 0.4, repeat: Infinity, delay: 0.4 }} className="w-1 bg-accent rounded" style={{ height: '9px' }} />
+                    <motion.div animate={{ scaleY: [1, 1.8, 1] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.5 }} className="w-1 bg-brand rounded" style={{ height: '7px' }} />
                   </div>
-                  <span className="text-xs font-bold text-emerald-400">Microphone picking up...</span>
+                  <span className="text-xs font-bold text-brand">Microphone picking up...</span>
                 </div>
               )}
             </div>
 
-            <div className="space-y-3 pt-4 border-t border-gray-800">
+            <div className="space-y-3 pt-4 border-t border-accent/15 dark:border-gray-800">
               <button
                 onClick={handleSendResponse}
                 disabled={aiState === 'thinking' || !(userAnswerText.trim() || interimSpeechText.trim())}
-                className="w-full py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl font-black shadow-lg hover:shadow-purple-500/20 transition flex items-center justify-center gap-2 text-base active:scale-[0.99]"
+                className="w-full py-4 bg-gradient-to-r from-brand to-accent disabled:opacity-50 disabled:cursor-not-allowed text-white dark:text-gray-900 rounded-2xl font-black shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2 text-base active:scale-[0.99]"
               >
                 {aiState === 'thinking' ? (
                   <>
@@ -871,16 +871,16 @@ const LiveAIInterview = () => {
               <div className="flex items-center justify-between gap-3">
                 <button
                   onClick={handleSkipQuestion}
-                  className="flex-1 py-2.5 bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white font-bold text-xs transition flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 bg-surface border border-accent/20 dark:border-gray-800 hover:bg-page rounded-xl text-text/75 font-bold text-xs transition flex items-center justify-center gap-1.5"
                 >
-                  <SkipForward className="w-3.5 h-3.5" /> Skip
+                  <SkipForward className="w-3.5 h-3.5 text-cta" /> Skip
                 </button>
                 
                 <button
                   onClick={() => speakText(currentPromptQuestion)}
-                  className="flex-1 py-2.5 bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-xl text-gray-400 hover:text-white font-bold text-xs transition flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 bg-surface border border-accent/20 dark:border-gray-800 hover:bg-page rounded-xl text-text/75 font-bold text-xs transition flex items-center justify-center gap-1.5"
                 >
-                  <Play className="w-3.5 h-3.5" /> Repeat AIRA Voice
+                  <Play className="w-3.5 h-3.5 text-brand" /> Repeat AIRA Voice
                 </button>
               </div>
             </div>

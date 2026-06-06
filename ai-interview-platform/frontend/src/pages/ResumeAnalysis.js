@@ -8,7 +8,7 @@ import {
   Target, TrendingUp, AlertCircle, CheckCircle, Sparkles,
   FileText, Zap, BarChart3, Brain, ArrowRight, Loader, ChevronDown,
   ChevronUp, Star, XCircle, Lightbulb, Shield, Edit3, RefreshCw,
-  Download, Eye, FileDown, Copy
+  Eye, FileDown, Copy
 } from 'lucide-react';
 
 /* ── PDF Generator (Canvas based) ── */
@@ -834,23 +834,23 @@ const ResumeAnalysis = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-        <Loader className="w-12 h-12 animate-spin text-primary-600" />
+      <div className="min-h-screen flex items-center justify-center bg-page">
+        <Loader className="w-12 h-12 animate-spin text-brand" />
       </div>
     );
   }
 
   if (!activeResume) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black py-16">
+      <div className="min-h-screen bg-page text-text py-16">
         <div className="max-w-xl mx-auto px-4 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-10 border-2 border-gray-100 dark:border-gray-800">
-            <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">No Resume Found</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">Upload a resume first to run AI gap analysis</p>
+            className="bg-surface rounded-2xl shadow-lg p-10 border-2 border-accent/20 dark:border-gray-800">
+            <FileText className="w-16 h-16 text-text/30 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2">No Resume Found</h2>
+            <p className="opacity-75 mb-6">Upload a resume first to run AI gap analysis</p>
             <button onClick={() => navigate('/resume')}
-              className="px-6 py-3 bg-primary-600 text-white rounded-xl hover:bg-primary-700 transition font-bold">
+              className="px-6 py-3 btn-brand text-white rounded-xl hover:opacity-90 transition font-bold">
               Upload Resume
             </button>
           </motion.div>
@@ -860,44 +860,44 @@ const ResumeAnalysis = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-8 transition-colors duration-300 relative overflow-hidden">
+    <div className="min-h-screen bg-page text-text py-8 transition-colors duration-300 relative overflow-hidden">
       {/* Background orbs */}
       <motion.div animate={{ y: [0, -30, 0], rotate: [0, 180, 360] }}
         transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-blue-100/20 to-purple-100/20 dark:from-blue-500/10 dark:to-purple-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
+        className="absolute top-10 right-10 w-72 h-72 bg-gradient-to-br from-brand/20 to-brand/5 dark:from-accent/20 dark:to-accent/5 rounded-full blur-3xl pointer-events-none hidden sm:block" />
       <motion.div animate={{ y: [0, 30, 0], rotate: [360, 180, 0] }}
         transition={{ duration: 25, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-green-100/20 to-emerald-100/20 dark:from-green-500/10 dark:to-emerald-500/10 rounded-full blur-3xl pointer-events-none hidden sm:block" />
+        className="absolute bottom-10 left-10 w-80 h-80 bg-gradient-to-br from-accent/20 to-accent/5 dark:from-brand/20 dark:to-brand/5 rounded-full blur-3xl pointer-events-none hidden sm:block" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="flex items-center gap-3 mb-1">
-            <Brain className="w-8 h-8 text-primary-600" />
-            <h1 className="text-4xl font-black text-gray-900 dark:text-white">AI Resume Gap Analysis</h1>
+            <Brain className="w-8 h-8 text-brand" />
+            <h1 className="text-4xl font-black">AI Resume Gap Analysis</h1>
           </div>
-          <p className="text-gray-500 dark:text-gray-400 ml-11">
-            Analyzing: <span className="font-semibold text-gray-700 dark:text-gray-300">{activeResume.fileName}</span>
+          <p className="opacity-75 ml-11">
+            Analyzing: <span className="font-semibold">{activeResume.fileName}</span>
           </p>
         </motion.div>
 
         {/* Role Selector + Action Buttons */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border-2 border-gray-100 dark:border-gray-800">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary-600" /> Select Target Role & Requirements
+          className="bg-surface rounded-2xl shadow-lg p-6 border-2 border-accent/20 dark:border-gray-800">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-brand" /> Select Target Role & Requirements
           </h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold opacity-60 uppercase tracking-wider mb-1">
                 Target Role
               </label>
               <input
                 type="text" value={targetRole} onChange={e => setTargetRole(e.target.value)}
                 placeholder="e.g., Frontend Developer"
                 list="roles-list"
-                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
+                className="w-full px-4 py-3 border-2 border-accent/20 dark:border-gray-700 bg-page text-text rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition"
               />
               <datalist id="roles-list">
                 {popularRoles.map(r => <option key={r} value={r} />)}
@@ -906,38 +906,38 @@ const ResumeAnalysis = () => {
             <div className="flex flex-wrap gap-2">
               {popularRoles.slice(0, 6).map(role => (
                 <button key={role} onClick={() => setTargetRole(role)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition border ${
                     targetRole === role
-                      ? 'bg-primary-600 text-white shadow-md'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      ? 'bg-brand text-white dark:text-gray-900 border-brand shadow-md'
+                      : 'bg-page text-text border-accent/20 hover:bg-accent/15'
                   }`}>
                   {role}
                 </button>
               ))}
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold opacity-60 uppercase tracking-wider mb-1">
                 Job Description (Optional)
               </label>
               <textarea
                 value={jobDescription} onChange={e => setJobDescription(e.target.value)}
                 placeholder="Paste the job description or posting here to analyze gaps and optimize your resume..."
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition resize-none"
+                className="w-full px-4 py-3 border-2 border-accent/20 dark:border-gray-700 bg-page text-text rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition resize-none"
               />
             </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <button onClick={handleAnalyze} disabled={analyzing || !targetRole.trim()}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-600 to-blue-600 text-white rounded-xl hover:from-primary-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
+                className="flex items-center gap-2 px-6 py-3 btn-brand text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
                 {analyzing ? <><Loader className="w-5 h-5 animate-spin" /> Analyzing...</> : <><Sparkles className="w-5 h-5" /> Analyze Resume</>}
               </button>
               <button onClick={handleOptimize} disabled={optimizing || !activeResume}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent to-cta text-white dark:text-gray-900 rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
                 {optimizing ? <><Loader className="w-5 h-5 animate-spin" /> Optimizing...</> : <><Zap className="w-5 h-5" /> One-Click Optimize</>}
               </button>
               {gapAnalysis && (
                 <button onClick={handleAnalyze} disabled={analyzing}
-                  className="flex items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition font-medium">
+                  className="flex items-center gap-2 px-4 py-3 bg-page text-text border border-accent/20 rounded-xl hover:bg-accent/10 transition font-medium">
                   <RefreshCw className="w-4 h-4" /> Re-analyze
                 </button>
               )}
@@ -1340,26 +1340,26 @@ const ResumeAnalysis = () => {
 
         {/* Section Rewriter */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-6 border-2 border-gray-100 dark:border-gray-800">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Edit3 className="w-5 h-5 text-primary-600" /> AI Section Rewriter
+          className="bg-surface rounded-2xl shadow-lg p-6 border-2 border-accent/25 dark:border-gray-800">
+          <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <Edit3 className="w-5 h-5 text-brand" /> AI Section Rewriter
           </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <p className="text-sm opacity-75 mb-4">
             Paste any section from your resume and AI will rewrite it with stronger language and ATS optimization.
           </p>
           <div className="space-y-3">
             <div className="flex gap-3">
               <select value={rewriteType} onChange={e => setRewriteType(e.target.value)}
-                className="px-4 py-2 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                className="px-4 py-2 border-2 border-accent/20 dark:border-gray-700 bg-page text-text rounded-lg focus:ring-2 focus:ring-brand focus:border-transparent outline-none">
                 {sectionTypes.map(t => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
               </select>
             </div>
             <textarea value={rewriteText} onChange={e => setRewriteText(e.target.value)}
               placeholder="Paste your resume section here... e.g., 'Made website using React.'"
               rows={4}
-              className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none transition" />
+              className="w-full px-4 py-3 border-2 border-accent/20 dark:border-gray-700 bg-page text-text rounded-xl focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition resize-none" />
             <button onClick={handleRewrite} disabled={rewriting || !rewriteText.trim()}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-brand to-cta text-white dark:text-gray-900 rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition font-bold shadow-lg">
               {rewriting ? <><Loader className="w-5 h-5 animate-spin" /> Rewriting...</> : <><Sparkles className="w-5 h-5" /> Rewrite Section</>}
             </button>
           </div>
@@ -1369,29 +1369,29 @@ const ResumeAnalysis = () => {
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                 className="mt-4 space-y-3">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-200 dark:border-red-800">
-                    <p className="text-xs font-bold text-red-600 mb-2">BEFORE</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">{rewriteText}</p>
+                  <div className="p-4 bg-cta/10 rounded-xl border border-cta/30">
+                    <p className="text-xs font-bold text-cta mb-2">BEFORE</p>
+                    <p className="text-sm opacity-75">{rewriteText}</p>
                   </div>
-                  <div className="p-4 bg-green-50 dark:bg-green-900/10 rounded-xl border border-green-200 dark:border-green-800">
-                    <p className="text-xs font-bold text-green-600 mb-2">AFTER (AI Improved)</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">{rewriteResult.improved}</p>
+                  <div className="p-4 bg-brand/10 rounded-xl border border-brand/35">
+                    <p className="text-xs font-bold text-brand mb-2">AFTER (AI Improved)</p>
+                    <p className="text-sm font-semibold">{rewriteResult.improved}</p>
                   </div>
                 </div>
                 {rewriteResult.changes?.length > 0 && (
-                  <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl">
-                    <p className="text-xs font-bold text-blue-600 mb-1">Changes Made:</p>
+                  <div className="p-3 bg-accent/15 rounded-xl border border-accent/30">
+                    <p className="text-xs font-bold text-brand mb-1">Changes Made:</p>
                     <ul className="space-y-0.5">
                       {rewriteResult.changes.map((c, i) => (
-                        <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-1">
-                          <span className="text-blue-500">•</span> {c}
+                        <li key={i} className="text-xs opacity-80 flex items-start gap-1">
+                          <span className="text-brand">•</span> {c}
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
                 <button onClick={() => { navigator.clipboard.writeText(rewriteResult.improved); toast.success('Copied to clipboard!'); }}
-                  className="flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium">
+                  className="flex items-center gap-1.5 text-sm text-brand hover:opacity-90 font-medium">
                   <Copy className="w-3.5 h-3.5" /> Copy improved text
                 </button>
               </motion.div>
@@ -1401,11 +1401,11 @@ const ResumeAnalysis = () => {
 
         {/* CTA */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="bg-gradient-to-r from-primary-600 to-blue-600 rounded-2xl p-6 text-white text-center shadow-xl">
+          className="bg-gradient-to-r from-brand to-accent rounded-2xl p-6 text-white dark:text-gray-900 text-center shadow-xl">
           <h3 className="text-2xl font-black mb-2">Ready to Practice?</h3>
-          <p className="text-blue-100 mb-4">Use your optimized resume to start an AI mock interview</p>
+          <p className="opacity-90 mb-4">Use your optimized resume to start an AI mock interview</p>
           <button onClick={() => navigate('/interview/new')}
-            className="flex items-center gap-2 mx-auto px-8 py-3 bg-white text-primary-600 rounded-xl font-bold hover:bg-blue-50 transition shadow-lg">
+            className="flex items-center gap-2 mx-auto px-8 py-3 bg-surface text-brand rounded-xl font-bold hover:opacity-90 transition shadow-lg">
             Start Interview <ArrowRight className="w-5 h-5" />
           </button>
         </motion.div>

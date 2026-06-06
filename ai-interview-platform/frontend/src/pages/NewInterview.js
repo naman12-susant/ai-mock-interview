@@ -124,30 +124,30 @@ const NewInterview = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black py-8">
+    <div className="min-h-screen bg-page text-text py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl font-bold mb-4">
             Start New Interview
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg opacity-75">
             Choose your role, difficulty, and type to get fully personalized, AIRA-generated questions
           </p>
         </div>
 
         {/* Resume Warning */}
         {!checkingResume && !hasResume && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <div className="mb-6 bg-cta/10 border border-cta/35 rounded-xl p-4 flex items-start space-x-3 text-text">
+            <AlertCircle className="w-5 h-5 text-cta flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-red-900">Resume Required</h3>
-              <p className="text-red-800 text-sm mt-1">
+              <h3 className="font-semibold text-cta">Resume Required</h3>
+              <p className="text-sm opacity-80 mt-1">
                 You need to upload a resume first to generate personalized interview questions.
               </p>
               <button
                 onClick={() => navigate('/dashboard')}
-                className="mt-3 inline-block px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm font-medium"
+                className="mt-3 inline-block px-4 py-2 bg-cta text-white rounded hover:opacity-90 transition text-sm font-medium"
               >
                 Go to Dashboard & Upload Resume
               </button>
@@ -156,11 +156,11 @@ const NewInterview = () => {
         )}
 
         {/* Form */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-surface rounded-2xl border border-accent/25 dark:border-gray-800 shadow-lg p-8">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Role Selection */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
+              <label className="block text-lg font-semibold mb-4">
                 Select Your Role
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,16 +173,16 @@ const NewInterview = () => {
                       onClick={() => setField('role', role)}
                       className={`p-4 rounded-lg border-2 transition-all text-left ${
                         isSelected
-                          ? 'border-primary-600 bg-primary-50'
-                          : 'border-gray-200 hover:border-primary-300'
+                          ? 'border-brand bg-brand/10 shadow-sm'
+                          : 'border-accent/15 dark:border-gray-800 hover:border-brand/40'
                       }`}
                     >
                       <div className="flex items-center space-x-3">
                         <Briefcase className={`w-5 h-5 ${
-                          isSelected ? 'text-primary-600' : 'text-gray-400'
+                          isSelected ? 'text-brand' : 'text-text/50'
                         }`} />
                         <span className={`font-medium ${
-                          isSelected ? 'text-primary-900' : 'text-gray-700'
+                          isSelected ? 'text-brand' : 'text-text/85'
                         }`}>
                           {role}
                         </span>
@@ -196,7 +196,7 @@ const NewInterview = () => {
             {/* Custom Role Input */}
             {isOtherRole && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm opacity-75 mb-2">
                   Enter Your Role
                 </label>
                 <input
@@ -204,7 +204,7 @@ const NewInterview = () => {
                   value={customRole}
                   autoFocus
                   placeholder="e.g., Machine Learning Engineer"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-accent/35 dark:border-gray-700 bg-page text-text rounded-lg focus:ring-2 focus:ring-brand focus:border-transparent outline-none transition-all"
                   onChange={(e) => setCustomRole(e.target.value)}
                   onKeyDown={(e) => e.stopPropagation()}
                 />
@@ -213,7 +213,7 @@ const NewInterview = () => {
 
             {/* Interview Type Selection */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4">
+              <label className="block text-lg font-semibold mb-4">
                 Interview Type
               </label>
               <div className="space-y-3">
@@ -222,8 +222,8 @@ const NewInterview = () => {
                     key={type.value}
                     className={`flex items-start p-4 rounded-lg border-2 cursor-pointer transition-all ${
                       formData.type === type.value
-                        ? 'border-primary-600 bg-primary-50'
-                        : 'border-gray-200 hover:border-primary-300'
+                        ? 'border-brand bg-brand/10 shadow-sm'
+                        : 'border-accent/15 dark:border-gray-800 hover:border-brand/40'
                     }`}
                   >
                     <input
@@ -236,11 +236,11 @@ const NewInterview = () => {
                     />
                     <div>
                       <div className={`font-semibold ${
-                        formData.type === type.value ? 'text-primary-900' : 'text-gray-900'
+                        formData.type === type.value ? 'text-brand' : 'text-text'
                       }`}>
                         {type.label}
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm opacity-75 mt-1">
                         {type.description}
                       </div>
                     </div>
@@ -251,8 +251,8 @@ const NewInterview = () => {
 
             {/* Difficulty/Style Selection */}
             <div>
-              <label className="block text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Sliders className="w-5 h-5 mr-2 text-primary-600" />
+              <label className="block text-lg font-semibold mb-4 flex items-center">
+                <Sliders className="w-5 h-5 mr-2 text-brand" />
                 Interview Difficulty / Style
               </label>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -263,17 +263,17 @@ const NewInterview = () => {
                     onClick={() => setField('difficulty', diff.value)}
                     className={`p-4 rounded-lg border-2 transition-all text-left ${
                       formData.difficulty === diff.value
-                        ? 'border-primary-600 bg-primary-50'
-                        : 'border-gray-200 hover:border-primary-300'
+                        ? 'border-brand bg-brand/10 shadow-sm'
+                        : 'border-accent/15 dark:border-gray-800 hover:border-brand/40'
                     }`}
                   >
                     <div>
                       <span className={`font-semibold block ${
-                        formData.difficulty === diff.value ? 'text-primary-900' : 'text-gray-900'
+                        formData.difficulty === diff.value ? 'text-brand' : 'text-text'
                       }`}>
                         {diff.label}
                       </span>
-                      <span className="text-xs text-gray-500 mt-1 block">
+                      <span className="text-xs opacity-60 mt-1 block">
                         {diff.description}
                       </span>
                     </div>
@@ -283,18 +283,18 @@ const NewInterview = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="flex space-x-4 border-t border-gray-100 pt-6">
+            <div className="flex space-x-4 border-t border-accent/15 dark:border-gray-800 pt-6">
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                className="flex-1 py-3 px-6 border-2 border-accent/30 text-text rounded-lg hover:bg-surface transition font-semibold"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading || !effectiveRole || !hasResume}
-                className="flex-1 py-3 px-6 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold"
+                className="flex-1 py-3 px-6 btn-brand text-white rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 font-semibold"
               >
                 {loading ? (
                   <>
@@ -312,9 +312,9 @@ const NewInterview = () => {
         </div>
 
         {/* Info Box */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-blue-900 mb-2">📝 What to Expect:</h3>
-          <ul className="space-y-2 text-blue-800">
+        <div className="mt-8 bg-accent/10 border border-accent/25 rounded-lg p-6">
+          <h3 className="font-semibold text-brand mb-2 flex items-center gap-1.5">📝 What to Expect:</h3>
+          <ul className="space-y-2 opacity-80 text-sm">
             <li>• AIRA will generate 10 personalized questions based on your role, resume, and difficulty style</li>
             <li>• You can answer using voice or text</li>
             <li>• Get instant feedback and scores for each answer</li>

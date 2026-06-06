@@ -105,28 +105,28 @@ const LandingPage = () => {
 
         {/* Light mode bg */}
         <div className="absolute inset-0 dark:hidden">
-          <div className="absolute inset-0 bg-white" />
+          <div className="absolute inset-0 bg-page" />
           <div ref={lightBlobRef} className="absolute inset-0 pointer-events-none transition-all duration-300" />
-          <motion.div animate={{ opacity:[0.5,0.75,0.5] }} transition={{ duration:6, repeat:Infinity }}
+          <motion.div animate={{ opacity:[0.3,0.5,0.3] }} transition={{ duration:6, repeat:Infinity }}
             className="absolute top-0 bottom-0 -left-32 w-72 pointer-events-none hidden sm:block"
-            style={{ background:'linear-gradient(to right, rgba(134,239,172,0.35) 0%, transparent 100%)' }} />
-          <motion.div animate={{ opacity:[0.4,0.65,0.4] }} transition={{ duration:7, repeat:Infinity, delay:1 }}
+            style={{ background:'linear-gradient(to right, rgba(157,193,131,0.2) 0%, transparent 100%)' }} />
+          <motion.div animate={{ opacity:[0.2,0.4,0.2] }} transition={{ duration:7, repeat:Infinity, delay:1 }}
             className="absolute top-0 bottom-0 -right-32 w-72 pointer-events-none hidden sm:block"
-            style={{ background:'linear-gradient(to left, rgba(134,239,172,0.3) 0%, transparent 100%)' }} />
-          <motion.div animate={{ opacity:[0.3,0.55,0.3] }} transition={{ duration:8, repeat:Infinity, delay:2 }}
+            style={{ background:'linear-gradient(to left, rgba(255,218,185,0.2) 0%, transparent 100%)' }} />
+          <motion.div animate={{ opacity:[0.15,0.3,0.15] }} transition={{ duration:8, repeat:Infinity, delay:2 }}
             className="absolute bottom-0 right-0 w-96 h-96 pointer-events-none hidden sm:block"
-            style={{ background:'radial-gradient(circle at bottom right, rgba(167,243,208,0.4) 0%, transparent 65%)' }} />
+            style={{ background:'radial-gradient(circle at bottom right, rgba(226,114,91,0.15) 0%, transparent 65%)' }} />
         </div>
 
         {/* Dark mode bg */}
         <div className="absolute inset-0 hidden dark:block">
-          <div className="absolute inset-0 bg-[#0a0a14]" />
-          <div className="absolute inset-0 opacity-[0.07]"
-            style={{ backgroundImage:'linear-gradient(rgba(99,102,241,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.5) 1px,transparent 1px)', backgroundSize:'60px 60px' }} />
-          <motion.div animate={{ scale:[1,1.3,1], opacity:[0.25,0.5,0.25] }} transition={{ duration:5, repeat:Infinity }}
-            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/30 rounded-full blur-3xl hidden md:block" />
-          <motion.div animate={{ scale:[1,1.4,1], opacity:[0.2,0.45,0.2] }} transition={{ duration:6, repeat:Infinity, delay:1.5 }}
-            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-3xl hidden md:block" />
+          <div className="absolute inset-0 bg-page" />
+          <div className="absolute inset-0 opacity-[0.05]"
+            style={{ backgroundImage:'linear-gradient(rgba(0,255,255,0.3) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,255,0.3) 1px,transparent 1px)', backgroundSize:'60px 60px' }} />
+          <motion.div animate={{ scale:[1,1.3,1], opacity:[0.2,0.4,0.2] }} transition={{ duration:5, repeat:Infinity }}
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-cobalt/35 rounded-full blur-3xl hidden md:block" />
+          <motion.div animate={{ scale:[1,1.4,1], opacity:[0.15,0.35,0.15] }} transition={{ duration:6, repeat:Infinity, delay:1.5 }}
+            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-brand/25 rounded-full blur-3xl hidden md:block" />
           {PARTICLES.map((p, i) => <Particle key={i} style={p} />)}
         </div>
 
@@ -135,9 +135,9 @@ const LandingPage = () => {
           <motion.h1 initial={{ opacity:0, y:40 }} animate={{ opacity:1, y:0 }}
             transition={{ duration:0.9, ease:'easeOut' }}
             className="text-7xl md:text-9xl font-black leading-[1.05] mb-6 tracking-tight">
-            <span className="text-gray-900 dark:text-white block">Ace Your</span>
+            <span className="text-text block">Ace Your</span>
             <motion.span
-              className="block text-[#10b981] dark:bg-gradient-to-r dark:from-[#6366f1] dark:to-[#a855f7] dark:bg-clip-text dark:text-transparent"
+              className="block bg-gradient-to-r from-brand via-accent to-cta bg-clip-text text-transparent"
               animate={{ backgroundPosition:['0% 50%','100% 50%','0% 50%'] }}
               transition={{ duration:5, repeat:Infinity }} style={{ backgroundSize:'200% 200%' }}>
               Dream Interview
@@ -181,30 +181,30 @@ const LandingPage = () => {
       </section>
 
       {/* ── FEATURES ── */}
-      <section className="relative py-28 bg-white dark:bg-[#0a0a14] transition-colors duration-500">
+      <section className="relative py-28 bg-page transition-colors duration-500">
         <div className="dark:hidden">
-          <motion.div animate={{ opacity:[0.4,0.65,0.4] }} transition={{ duration:8, repeat:Infinity }}
+          <motion.div animate={{ opacity:[0.3,0.5,0.3] }} transition={{ duration:8, repeat:Infinity }}
             className="absolute top-0 bottom-0 -left-20 w-64 pointer-events-none"
-            style={{ background:'linear-gradient(to right, rgba(134,239,172,0.3) 0%, transparent 100%)' }} />
-          <motion.div animate={{ opacity:[0.35,0.6,0.35] }} transition={{ duration:9, repeat:Infinity, delay:1.5 }}
+            style={{ background:'linear-gradient(to right, rgba(157,193,131,0.15) 0%, transparent 100%)' }} />
+          <motion.div animate={{ opacity:[0.25,0.45,0.25] }} transition={{ duration:9, repeat:Infinity, delay:1.5 }}
             className="absolute top-0 bottom-0 -right-20 w-64 pointer-events-none"
-            style={{ background:'linear-gradient(to left, rgba(134,239,172,0.25) 0%, transparent 100%)' }} />
+            style={{ background:'linear-gradient(to left, rgba(255,218,185,0.15) 0%, transparent 100%)' }} />
         </div>
-        <motion.div animate={{ scale:[1,1.2,1], opacity:[0.3,0.5,0.3] }} transition={{ duration:8, repeat:Infinity }}
-          className="absolute top-0 right-0 w-96 h-96 hidden sm:dark:block bg-blue-900/20 rounded-full blur-3xl pointer-events-none" />
-        <motion.div animate={{ scale:[1,1.3,1], opacity:[0.2,0.4,0.2] }} transition={{ duration:10, repeat:Infinity, delay:2 }}
-          className="absolute bottom-0 left-0 w-96 h-96 hidden sm:dark:block bg-purple-900/20 rounded-full blur-3xl pointer-events-none" />
+        <motion.div animate={{ scale:[1,1.2,1], opacity:[0.15,0.3,0.15] }} transition={{ duration:8, repeat:Infinity }}
+          className="absolute top-0 right-0 w-96 h-96 hidden sm:dark:block bg-cobalt/20 rounded-full blur-3xl pointer-events-none" />
+        <motion.div animate={{ scale:[1,1.3,1], opacity:[0.1,0.25,0.1] }} transition={{ duration:10, repeat:Infinity, delay:2 }}
+          className="absolute bottom-0 left-0 w-96 h-96 hidden sm:dark:block bg-brand/20 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
             viewport={{ once:true }} transition={{ duration:0.6 }} className="text-center mb-16">
             <motion.span whileHover={{ scale:1.05 }}
-              className="inline-block px-5 py-2 bg-green-100 dark:bg-blue-900/40 text-green-700 dark:text-blue-300 rounded-full text-sm font-bold border border-green-200 dark:border-blue-700 mb-5">
+              className="inline-block px-5 py-2 bg-accent/20 dark:bg-cobalt/35 text-text rounded-full text-sm font-bold border border-accent/40 dark:border-cobalt/50 mb-5">
               POWERFUL FEATURES
             </motion.span>
-            <h2 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-4">
+            <h2 className="text-5xl md:text-6xl font-black text-text mb-4">
               Everything You Need<br />
-              <span className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-brand to-cta bg-clip-text text-transparent">
                 To Succeed
               </span>
             </h2>
@@ -221,17 +221,17 @@ const LandingPage = () => {
                   <Link to={f.link} className="block h-full">
                     <motion.div whileHover={{ y:-8, boxShadow:'0 30px 60px rgba(0,0,0,0.12)' }}
                       transition={{ type:'spring', stiffness:300, damping:25 }}
-                      className="relative h-full bg-white dark:bg-[#111827] rounded-3xl p-8 border border-gray-100 dark:border-gray-800 shadow-lg overflow-hidden group">
+                      className="relative h-full bg-surface rounded-3xl p-8 border border-accent/20 dark:border-gray-800 shadow-lg overflow-hidden group">
                       <div className={`absolute inset-0 bg-gradient-to-br ${f.iconBg} opacity-0 group-hover:opacity-[0.04] dark:group-hover:opacity-[0.08] transition-opacity duration-500 rounded-3xl`} />
                       <motion.div whileHover={{ rotate:[0,-8,8,-8,0], scale:1.1 }} transition={{ duration:0.5 }}
                         className={`w-16 h-16 bg-gradient-to-br ${f.iconBg} rounded-2xl flex items-center justify-center mb-5 shadow-lg`}>
                         {f.icon}
                       </motion.div>
-                      <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 group-hover:text-green-600 dark:group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-xl font-black text-text mb-3 group-hover:text-brand transition-colors">
                         {f.title}
                       </h3>
                       <p className="text-gray-500 dark:text-gray-400 mb-6 leading-relaxed text-sm">{f.description}</p>
-                      <motion.div className="flex items-center gap-2 text-green-600 dark:text-blue-400 font-bold text-sm" whileHover={{ x:4 }}>
+                      <motion.div className="flex items-center gap-2 text-cta font-bold text-sm" whileHover={{ x:4 }}>
                         <span>{f.action}</span>
                         <ArrowRight className="w-4 h-4" />
                       </motion.div>
@@ -250,7 +250,7 @@ const LandingPage = () => {
 
       {/* ── CTA ── */}
       <section className="relative py-28 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 dark:from-blue-900 dark:via-purple-900 dark:to-indigo-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand via-accent to-cta dark:from-accent dark:via-cobalt dark:to-brand" />
         <motion.div animate={{ scale:[1,1.3,1], rotate:[0,90,0] }} transition={{ duration:20, repeat:Infinity }}
           className="absolute -top-20 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl hidden sm:block" />
         <motion.div animate={{ scale:[1,1.4,1], rotate:[0,-90,0] }} transition={{ duration:25, repeat:Infinity }}
@@ -274,7 +274,7 @@ const LandingPage = () => {
       </section>
 
       {/* ── FOOTER STATS ── */}
-      <footer className="bg-[#05050a] border-t border-gray-800 py-16">
+      <footer className="bg-surface border-t border-accent/20 py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-around items-center gap-10">
             {stats.map((s, i) => (
