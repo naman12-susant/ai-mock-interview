@@ -1,0 +1,204 @@
+:root{
+  /* Light mode – Sage Green primary, Soft Peach accent, Terracotta CTA, Warm Cream background, Espresso for text */
+  --bg: #FFFDD0;               /* Warm Cream */
+  --surface: #FFFFFF;
+  --primary: #9DC183;          /* Sage Green */
+  --accent: #FFDAB9;           /* Soft Peach */
+  --cta: #E2725B;              /* Terracotta */
+  --muted: #6B5E55;            /* Espresso toned muted */
+  --text: #2B1E16;             /* Espresso Brown */
+  --glass: rgba(255,255,255,0.6);
+  --card-shadow: 0 6px 18px rgba(43,30,22,0.08);
+  --orb-shadow: 0 8px 30px rgba(157,193,131,0.18);
+  --glow: rgba(226,114,91,0.12);
+}
+
+:root.dark{
+  /* Dark mode – Neon Cyan primary, Obsidian background, Deep Charcoal surfaces, Platinum Gray text, Cobalt for depth orbs */
+  --bg: #121212;               /* Obsidian */
+  --surface: #1E1E1E;          /* Deep Charcoal */
+  --primary: #00FFFF;          /* Neon Cyan */
+  --accent: #0047AB;           /* Cobalt Blue used for secondary accents / depth orbs */
+  --cta: #00FFFF;              /* for strong CTAs we can use cyan with warm highlight if needed */
+  --muted: #BDBDBD;
+  --text: #E5E4E2;             /* Platinum Gray */
+  --glass: rgba(255,255,255,0.03);
+  --card-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  --orb-shadow: 0 8px 30px rgba(0,255,255,0.06);
+  --glow: rgba(0,255,255,0.12);
+}
+
+/* Base layout */
+*{box-sizing:border-box}
+html,body{
+  height:100%;
+  margin:0;
+  font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Container */
+.app {
+  min-height:100vh;
+  padding:32px;
+  transition:background-color 300ms ease, color 300ms ease;
+  background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 95%, var(--glass) 5%) 100%);
+}
+
+/* Cards and surfaces */
+.card {
+  background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface), var(--glass) 4%));
+  border-radius:14px;
+  padding:20px;
+  box-shadow: var(--card-shadow);
+  transition: transform 300ms ease, box-shadow 300ms ease, background 300ms ease;
+  transform-style:preserve-3d;
+  will-change: transform;
+}
+
+/* Buttons */
+.btn {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:10px;
+  border: none;
+  cursor:pointer;
+  font-weight:600;
+  transition: transform 160ms cubic-bezier(.2,.9,.2,1), box-shadow 160ms ease;
+  box-shadow: 0 6px 16px rgba(43,30,22,0.06);
+  background:transparent;
+  color:var(--text);
+}
+
+.btn:focus{outline:3px solid color-mix(in srgb, var(--primary), var(--surface) 35%); outline-offset:3px}
+.btn:hover{transform:translateY(-2px)}
+
+/* Primary */
+.btn-primary{
+  background: linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary), black 6%));
+  color:var(--surface);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--primary), black 70%);
+}
+
+/* CTA (Terracotta in light mode; Neon in dark mode) */
+.btn-cta{
+  background: linear-gradient(180deg, var(--cta), color-mix(in srgb, var(--cta), black 8%));
+  color:var(--surface);
+  box-shadow: 0 10px 30px var(--glow);
+  border-radius:12px;
+}
+
+/* Inputs */
+.input {
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid color-mix(in srgb, var(--muted), var(--surface) 60%);
+  background:transparent;
+  color:var(--text);
+  transition:box-shadow 160ms ease, border-color 160ms ease;
+}
+.input:focus{
+  border-color:var(--primary);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--primary), black 80%);
+  outline:none;
+}
+
+/* Metrics / badges */
+.metric {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--surface), var(--glass) 10%), var(--surface));
+  box-shadow: var(--card-shadow);
+  color:var(--text);
+}
+
+/* 3D depth orbs (pure CSS) */
+.orb-wrap{
+  position:relative;
+  width:220px;
+  height:220px;
+  perspective:900px;
+  display:inline-block;
+}
+.orb{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  transform-style:preserve-3d;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--primary), white 24%), color-mix(in srgb, var(--primary), black 12%));
+  box-shadow: var(--orb-shadow), inset 0 -20px 60px rgba(255,255,255,0.03);
+  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.08));
+  transition: transform 400ms cubic-bezier(.2,.9,.2,1);
+}
+
+/* layered orbs for depth */
+.orb .layer{
+  position:absolute;
+  border-radius:50%;
+  inset:10%;
+  background: radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--accent), transparent 40%), transparent 60%);
+  mix-blend-mode:screen;
+}
+
+/* Glow ring */
+.orb::after{
+  content:"";
+  position:absolute;
+  inset:-12%;
+  border-radius:50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--primary), var(--glow) 60%) 0%, transparent 40%);
+  filter: blur(14px);
+  opacity:0.85;
+  pointer-events:none;
+}
+
+/* Simple floating + spin animation for orbs */
+@keyframes orbFloat {
+  0%{ transform: translateY(0) rotateX(0) rotateY(0) translateZ(0); }
+  50%{ transform: translateY(-10px) rotateX(6deg) rotateY(6deg) translateZ(20px); }
+  100%{ transform: translateY(0) rotateX(0) rotateY(0) translateZ(0); }
+}
+.orb.animate{ animation: orbFloat 6s ease-in-out infinite; }
+
+/* Card tilt on pointer move (JS-driven via data-tilt class) — CSS fallback */
+.card.tilt{
+  transform: perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+}
+
+/* Small metric pulse for important numbers */
+@keyframes metricPulse {
+  0%{ transform:scale(1); box-shadow:0 6px 20px rgba(0,0,0,0.06) }
+  50%{ transform:scale(1.04); box-shadow:0 14px 40px rgba(0,0,0,0.08) }
+  100%{ transform:scale(1); box-shadow:0 6px 20px rgba(0,0,0,0.06) }
+}
+.metric.pulse{ animation: metricPulse 2.8s ease-in-out infinite; }
+
+/* small UI niceties */
+.header{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+/* Responsive */
+@media (max-width:720px){
+  .orb-wrap{ width:160px; height:160px }
+  .app{ padding:20px }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .orb.animate, .metric.pulse{ animation: none; transform:none }
+  .btn:hover{ transform:none }
+  .card{ transition:none }
+}
