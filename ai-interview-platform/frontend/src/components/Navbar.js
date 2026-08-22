@@ -11,12 +11,31 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  const prevScrollY = React.useRef(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
+    const onScroll = () => {
+      const currentY = window.scrollY;
+      setScrolled(currentY > 20);
+
+      // Don't hide if mobile menu is open
+      if (!mobileOpen) {
+        const diff = currentY - prevScrollY.current;
+        if (currentY <= 10) {
+          setNavHidden(false);
+        } else if (diff > 10) {
+          setNavHidden(true);
+        } else if (diff < -10) {
+          setNavHidden(false);
+        }
+      }
+
+      prevScrollY.current = currentY;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [mobileOpen]);
 
   const handleLogout = () => {
     logout();
@@ -24,7 +43,13 @@ const Navbar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4">
+    <div
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4"
+      style={{
+        transform: navHidden ? 'translateY(-100%)' : 'translateY(0)',
+        transition: 'transform 300ms ease-in-out',
+      }}
+    >
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
