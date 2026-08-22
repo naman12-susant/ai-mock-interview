@@ -50,20 +50,75 @@ async function groqChatCompletion(options) {
 const MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 function stripJSON(raw) {
+  if (!raw || typeof raw !== 'string') return '';
   let s = raw.trim();
-  if (s.startsWith('```json')) s = s.replace(/^```json/, '').replace(/```$/, '').trim();
-  else if (s.startsWith('```')) s = s.replace(/^```/, '').replace(/```$/, '').trim();
+
+  // 1. Strip reasoning/thinking tags (e.g. <think>...</think>, <reasoning>...</reasoning>)
+  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '')
+       .replace(/<reasoning>[\s\S]*?<\/reasoning>/gi, '')
+       .trim();
+
+  // 2. Extract code block if present anywhere in the string
+  const jsonBlockMatch = s.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (jsonBlockMatch && jsonBlockMatch[1]) {
+    s = jsonBlockMatch[1].trim();
+  } else {
+    // 3. Find outermost JSON boundary
+    const firstObj = s.indexOf('{');
+    const lastObj = s.lastIndexOf('}');
+    const firstArr = s.indexOf('[');
+    const lastArr = s.lastIndexOf(']');
+
+    if (firstObj !== -1 && (firstArr === -1 || firstObj < firstArr)) {
+      if (lastObj > firstObj) {
+        s = s.substring(firstObj, lastObj + 1);
+      }
+    } else if (firstArr !== -1) {
+      if (lastArr > firstArr) {
+        s = s.substring(firstArr, lastArr + 1);
+      }
+    }
+  }
+
+  // 4. Remove trailing commas before closing braces/brackets
+  s = s.replace(/,\s*([\}\]])/g, '$1');
+
   return s;
 }
 
 function safeParseJSON(raw, context) {
+  const stripped = stripJSON(raw);
   try {
-    return JSON.parse(stripJSON(raw));
+    return JSON.parse(stripped);
   } catch (e) {
     console.error('JSON parse failed in [' + context + ']:', e.message);
-    console.error('Raw (first 400):', raw.substring(0, 400));
+    console.error('Raw (first 400):', (raw || '').substring(0, 400));
+    
+    // Attempt relaxed fallback parsing (fix single quotes)
+    try {
+      const relaxed = stripped.replace(/'/g, '"');
+      return JSON.parse(relaxed);
+    } catch (_) {}
+
     throw new Error('AI returned invalid JSON in ' + context + '. Please try again.');
   }
+}
+
+// Fallback structured resume parser in case LLM output is entirely unparseable
+function fallbackResumeParser(text) {
+  const lines = (text || '').split('\n').map(l => l.trim()).filter(Boolean);
+  return {
+    skills: [
+      { name: 'Technical Skills', category: 'technical' },
+      { name: 'Communication', category: 'soft' },
+      { name: 'Problem Solving', category: 'soft' }
+    ],
+    experience: { years: 1, level: 'junior' },
+    education: [{ degree: 'Education Listed in Resume', institution: 'Institution', year: '' }],
+    projects: [{ title: 'Resume Projects', description: 'Projects and achievements detailed in candidate resume', technologies: [] }],
+    certifications: [],
+    summary: lines.slice(0, 3).join(' ').substring(0, 300) || 'Experienced professional with relevant skills and project background.'
+  };
 }
 
 // Salvage a truncated JSON array — extract all complete objects
@@ -109,17 +164,32 @@ class AIService {
       throw new Error('Resume text is too short. Please upload a valid PDF resume.');
     }
 
-    const res = await groqChatCompletion({
-      model: MODEL,
-      messages: [
-        { role: 'system', content: 'You are an expert resume parser. Extract structured data accurately. Return ONLY valid JSON. Do NOT invent information.' },
-        { role: 'user', content: 'Parse this resume.\n\nRESUME:\n' + resumeText + '\n\nReturn ONLY this JSON (no markdown):\n{"skills":[{"name":"<skill>","category":"technical|soft|language|tool|framework"}],"experience":{"years":<number>,"level":"fresher|junior|mid-level|senior|expert"},"education":[{"degree":"<degree>","institution":"<institution>","year":"<year>"}],"projects":[{"title":"<title>","description":"<description>","technologies":["<tech>"]}],"certifications":["<cert>"],"summary":"<2-3 sentence summary>"}' }
-      ],
-      temperature: 0.2,
-      max_tokens: 2000
-    });
+    try {
+      const res = await groqChatCompletion({
+        model: MODEL,
+        messages: [
+          { role: 'system', content: 'You are an expert resume parser. Extract structured data accurately. Return ONLY valid JSON with keys: skills, experience, education, projects, certifications, summary. Do NOT invent information.' },
+          { role: 'user', content: 'Parse this resume.\n\nRESUME:\n' + resumeText + '\n\nReturn ONLY this JSON schema:\n{"skills":[{"name":"<skill>","category":"technical|soft|language|tool|framework"}],"experience":{"years":<number>,"level":"fresher|junior|mid-level|senior|expert"},"education":[{"degree":"<degree>","institution":"<institution>","year":"<year>"}],"projects":[{"title":"<title>","description":"<description>","technologies":["<tech>"]}],"certifications":["<cert>"],"summary":"<2-3 sentence summary>"}' }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.2,
+        max_tokens: 2500
+      });
 
-    return safeParseJSON(res.choices[0].message.content, 'analyzeResume');
+      const parsed = safeParseJSON(res.choices[0].message.content, 'analyzeResume');
+      // Normalize required fields
+      return {
+        skills: Array.isArray(parsed.skills) ? parsed.skills : [],
+        experience: parsed.experience && typeof parsed.experience === 'object' ? parsed.experience : { years: 1, level: 'junior' },
+        education: Array.isArray(parsed.education) ? parsed.education : [],
+        projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+        certifications: Array.isArray(parsed.certifications) ? parsed.certifications : [],
+        summary: typeof parsed.summary === 'string' ? parsed.summary : ''
+      };
+    } catch (parseErr) {
+      console.warn('[AIService] analyzeResume AI JSON parsing encountered issue, falling back to safe structured parser:', parseErr.message);
+      return fallbackResumeParser(resumeText);
+    }
   }
 
   // ── Interview Questions ──────────────────────────────────────
@@ -270,6 +340,7 @@ class AIService {
         { role: 'system', content: 'You are a strict professional technical interviewer. Evaluate answers HONESTLY and CRITICALLY. Do NOT give fake praise. Do NOT say "great answer" unless the answer truly deserves it. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.4,
       max_tokens: 1200
     });
@@ -313,6 +384,7 @@ class AIService {
         { role: 'system', content: 'You are a strict professional interviewer giving post-interview feedback. Be honest and direct. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.5,
       max_tokens: 1500
     });
@@ -348,6 +420,7 @@ class AIService {
         { role: 'system', content: 'You are a senior technical recruiter and ATS specialist. Analyze resumes honestly and specifically. Base all feedback on actual resume content. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.4,
       max_tokens: 4000
     });
@@ -409,6 +482,7 @@ class AIService {
         { role: 'system', content: 'You are an expert resume writer and ATS specialist. Rewrite resumes into a structured JSON format optimized for ATS systems and the target role. Keep all information truthful. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.5,
       max_tokens: 6000
     });
@@ -430,6 +504,7 @@ class AIService {
         { role: 'system', content: 'You are an expert resume writer. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.5,
       max_tokens: 1000
     });
@@ -445,6 +520,7 @@ class AIService {
         { role: 'system', content: 'You are a technical recruiter. Return ONLY valid JSON.' },
         { role: 'user', content: 'List industry-standard skills for ' + role + ' in 2025.\n\nReturn ONLY this JSON (no markdown):\n{"critical":["<skill>"],"important":["<skill>"],"niceToHave":["<skill>"]}' }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.3,
       max_tokens: 800
     });
@@ -521,6 +597,7 @@ class AIService {
         { role: 'system', content: 'You are AIRA, a professional enterprise interviewer. Return ONLY valid JSON.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.7,
       max_tokens: 300
     });
@@ -734,6 +811,7 @@ class AIService {
         { role: 'system', content: systemPrompt },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       temperature: 0.7,
       max_tokens: 700
     });

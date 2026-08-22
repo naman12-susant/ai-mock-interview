@@ -122,7 +122,6 @@ class ResumeService {
     try {
       console.log('[EXTRACTION] Starting OCR extraction (this may take 10-30 seconds)...');
       
-      // Convert buffer to base64 for Tesseract
       const base64 = fileBuffer.toString('base64');
       const result = await Tesseract.recognize(
         `data:image/png;base64,${base64}`,
@@ -134,16 +133,18 @@ class ResumeService {
             }
           }
         }
-      );
+      ).catch(err => {
+        throw new Error(`OCR processing error: ${err.message || err}`);
+      });
 
-      const text = result.data.text;
+      const text = result?.data?.text;
       if (!text || text.trim().length === 0) {
-        throw new Error('OCR returned empty text');
+        throw new Error('OCR returned empty text. Image may be unreadable.');
       }
       console.log('[EXTRACTION] OCR successful');
       return text;
     } catch (error) {
-      throw new Error(`OCR extraction failed: ${error.message}`);
+      throw new Error(`OCR failed: ${error.message}`);
     }
   }
 
