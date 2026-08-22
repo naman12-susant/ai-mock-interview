@@ -316,7 +316,7 @@ class ResumeService {
       const sampleText = text.substring(0, 2000);
       
       const message = await groq.chat.completions.create({
-        model: 'llama-3.1-8b-instant',
+        model: process.env.GROQ_MODEL || 'openai/gpt-oss-20b',
         messages: [
           {
             role: 'user',

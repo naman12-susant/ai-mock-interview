@@ -21,20 +21,33 @@ async function groqChatCompletion(options) {
   try {
     return await getGroq().chat.completions.create(options);
   } catch (error) {
+    // Surface model_not_found as a clear, actionable error
+    const isModelNotFound = error.status === 404 ||
+                            error.message?.includes('model_not_found') ||
+                            error.message?.includes('does not exist');
+    if (isModelNotFound) {
+      console.error(`[Groq] Model not found: "${options.model}". Update GROQ_MODEL env var to a supported model. Error: ${error.message}`);
+      throw new Error(`Groq model "${options.model}" is not available. Please update the GROQ_MODEL environment variable to a supported model (e.g. openai/gpt-oss-20b).`);
+    }
+
+    // Rate-limit fallback: try the lighter model
     const isRateLimit = error.status === 429 ||
                         error.message?.includes('rate_limit') ||
                         error.message?.includes('Rate limit') ||
                         error.message?.includes('429');
-    if (isRateLimit && options.model === 'llama-3.3-70b-versatile') {
-      console.warn(`[Groq] llama-3.3-70b-versatile rate limited. Falling back to llama-3.1-8b-instant. Error: ${error.message}`);
-      const fallbackOptions = { ...options, model: 'llama-3.1-8b-instant' };
+    if (isRateLimit && options.model === MODEL) {
+      const fallbackModel = 'openai/gpt-oss-20b';
+      console.warn(`[Groq] ${MODEL} rate limited. Falling back to ${fallbackModel}. Error: ${error.message}`);
+      const fallbackOptions = { ...options, model: fallbackModel };
       return await getGroq().chat.completions.create(fallbackOptions);
     }
     throw error;
   }
 }
 
-const MODEL = 'llama-3.3-70b-versatile';
+// Primary model — read from env so it can be swapped without code changes.
+// Supported Groq production models: openai/gpt-oss-20b, openai/gpt-oss-120b, qwen/qwen3.6-27b
+const MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-20b';
 
 function stripJSON(raw) {
   let s = raw.trim();
