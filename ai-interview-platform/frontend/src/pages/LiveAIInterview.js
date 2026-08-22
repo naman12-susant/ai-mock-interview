@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { interviewAPI } from '../services/api';
 import { Mic, MicOff, Volume2, VolumeX, MessageSquare, Play, Loader2, Sparkles, LogOut, SkipForward, ArrowRight, CheckCircle } from 'lucide-react';
-import interviewerAvatar from '../assets/ai_interviewer_avatar.png';
 
 const LiveAIInterview = () => {
   const { id } = useParams();
