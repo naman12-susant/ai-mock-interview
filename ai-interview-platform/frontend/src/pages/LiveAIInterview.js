@@ -616,19 +616,19 @@ const LiveAIInterview = () => {
       <div className="max-w-5xl mx-auto w-full flex-grow flex flex-col gap-6 relative z-10">
         
         {/* Top bar info */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-accent/25 dark:border-gray-800 pb-4">
-          <div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-accent/25 dark:border-gray-800 pb-4">
+          <div className="min-w-0 flex-1">
             <span className="inline-flex items-center gap-1 bg-brand/15 text-brand border border-brand/30 text-xs px-3 py-1 rounded-full font-black uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Adaptive AI Interview Experience
             </span>
-            <h1 className="text-2xl font-black mt-2 tracking-tight">
-              Live Human-like AI Interviewer: {interview.role}
+            <h1 className="text-xl sm:text-2xl font-black mt-2 tracking-tight break-words">
+              Live AI Interviewer: {interview.role}
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="bg-surface border border-accent/20 dark:border-gray-800 rounded-xl px-4 py-2 flex items-center gap-2 shadow-lg">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <div className="bg-surface border border-accent/20 dark:border-gray-800 rounded-xl px-3 sm:px-4 py-2 flex items-center gap-2 shadow-lg">
               <span className="w-2.5 h-2.5 rounded-full bg-cta animate-ping"></span>
-              <span className="font-bold text-sm text-text">Live Time: {formatTime(timeSpent)}</span>
+              <span className="font-bold text-xs sm:text-sm text-text whitespace-nowrap">Live Time: {formatTime(timeSpent)}</span>
             </div>
             <button
               onClick={() => {
@@ -636,7 +636,7 @@ const LiveAIInterview = () => {
                 stopVoiceRecognition();
                 navigate('/dashboard');
               }}
-              className="px-4 py-2 bg-surface border border-accent/20 dark:border-gray-800 rounded-xl font-bold text-sm hover:opacity-90 transition flex items-center gap-2 shadow-lg"
+              className="px-3 sm:px-4 py-2 bg-surface border border-accent/20 dark:border-gray-800 rounded-xl font-bold text-xs sm:text-sm hover:opacity-90 transition flex items-center gap-1.5 sm:gap-2 shadow-lg whitespace-nowrap"
             >
               <LogOut className="w-4 h-4 text-cta" /> Quit Room
             </button>
@@ -752,13 +752,13 @@ const LiveAIInterview = () => {
               <h3 className="opacity-70 text-xs font-black uppercase tracking-wider mb-2">
                 {isFollowUpPhase ? 'AIRA Follow-up Question' : `Topic ${currentQuestionIndex + 1} of ${interview.questions.length}`}
               </h3>
-              <p className="text-xl sm:text-2xl font-bold leading-relaxed text-text px-4">
+              <p className="text-lg sm:text-xl md:text-2xl font-bold leading-relaxed text-text px-2 sm:px-4 break-words">
                 "{currentPromptQuestion}"
               </p>
             </div>
 
             {/* Voice controls bar */}
-            <div className="flex items-center justify-center gap-4 mt-8 bg-surface border border-accent/20 dark:border-gray-800 rounded-full px-6 py-2 shadow-md">
+            <div className="flex items-center justify-center gap-3 sm:gap-4 mt-6 sm:mt-8 bg-surface border border-accent/20 dark:border-gray-800 rounded-full px-4 sm:px-6 py-2 shadow-md max-w-full flex-wrap">
               <button
                 onClick={toggleTtsMute}
                 className={`p-2 rounded-full transition ${
@@ -768,10 +768,10 @@ const LiveAIInterview = () => {
               >
                 {isTtsMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
               </button>
-              <span className="w-px h-6 bg-accent/30"></span>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-text/80">
-                <span className={`w-2 h-2 rounded-full ${aiState === 'listening' ? 'bg-accent animate-pulse' : 'bg-gray-600'}`}></span>
-                {getStatusMessage()}
+              <span className="w-px h-6 bg-accent/30 hidden sm:inline-block"></span>
+              <div className="flex items-center gap-1.5 text-xs font-bold text-text/80 text-center">
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${aiState === 'listening' ? 'bg-accent animate-pulse' : 'bg-gray-600'}`}></span>
+                <span>{getStatusMessage()}</span>
               </div>
             </div>
 

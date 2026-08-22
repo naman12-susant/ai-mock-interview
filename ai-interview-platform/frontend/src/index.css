@@ -65,11 +65,6 @@ body.dark {
   --color-orb: #0047AB; /* Cobalt for orbs */
 }
 
-/* Map common utility classes to the theme variables (light & dark) */
-.bg-white { background-color: var(--color-surface) !important; }
-.text-gray-900 { color: var(--color-text) !important; }
-.dark .text-white { color: var(--color-text) !important; }
-
 /* Buttons */
 .btn-brand {
   background: linear-gradient(180deg, var(--color-primary-400), var(--color-primary-600));
@@ -213,11 +208,11 @@ code {
   @apply bg-gray-600;
 }
 
-/* Smooth transitions for dark mode - exclude interactive elements */
-*:not(button):not(a):not(input):not(select):not(textarea) {
+/* Smooth transitions for theme switching on main layout elements */
+body, nav, header, main, footer, section, .card-surface, .bg-page, .bg-surface {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+  transition-duration: 250ms;
 }
 
 /* Neon glow effect for dark mode */
